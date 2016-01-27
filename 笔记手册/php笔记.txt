@@ -1,0 +1,2488 @@
+cellpadding文字内容与边框距离
+cellspacing格子之间的距离
+框架集
+<frameset rows/cols="50%,*" >
+<frame src=1.html noresize(不移动窗口边缘) frameboder=0(无边框) scrollling="no"(无滚动条)>
+<frame src=2.html>
+</frameset>
+target="name"(目标)
+<base target="_blank">
+target=_blank(在新窗口打开)/_self（（默认值）在本窗口打开)/_parent(父窗口)/_top（整个浏览器窗口）_
+<fieldset>控件组
+<legend>说明
+
+Dispiay:inline表示行内元素方式显示
+display：block表示块元素方式显示
+
+@import url("引入的CSS的URL")  
+
+list-style-type:none;
+
+repeat;no-repeat;repeat-x;repeat-y;
+
+
+
+font-weight:bold;
+
+position:relative;(absolute,fixed)定位 z-index
+
+
+widow.alert="警告"
+window.location="跳转"
+document.title="页面标题"
+ 
+background-position:100% -50px;
+
+查看端口 netstat -an  细看端口 netstat -anb
+
+error_reporting(E_ALL ^ E_NOTICE);
+
+PHP构造方法
+1.PHP4中构造方法和类名相同，PHP5的构造方法可以和类名相同
+  也可以是__construct(){}
+2.构造方法没有返回值
+3.主要作用是完成对新对象的初始化，并不是创建对象本身
+4.在创建对象后，系统会自动调用该类的构造方法
+5.一个类有且只有一个构造方法
+6.如果没有给类自定义构造方法，则该类使用系统默认的构造方法
+7.如果给类自定义了构造方法，则该类的默认构造方法被覆盖
+8.构造方法的默认访问修饰符是public
+
+
+PHP析构方法
+1.PHP5中加入析构方法function __destruct(){}
+2.没有返回值
+3.主要作用是释放资源的操作，不是销毁对象本身
+4.在销毁对象前，系统自动调用该类的析构方法
+5.一个类最多只有一个析构方法
+
+
+静态变量（类变量）
+1.类变量与类相关，属于公共的属性
+2.加上static称为类变量或静态变量，否则称为实例变量
+3.实例变量属于每个对象个体的属性
+4.访问：类中 self::$变量名、类名::$变量名   类外 对象::$变量名、类名::$变量名
+
+静态方法（类方法）
+1.静态方法只能操作静态变量
+2.普通的成员方法，既可以操作静态变量，也可以操作非静态变量
+3.访问：类中 self::方法名、类名::方法名   类外 对象->方法名、对象::方法名、类名::方法名 
+
+
+抽象
+定义一个类的时候，把一类事物的共有属性和行为提取出来，形成一个物理模型（模板），
+这种研究问题的方法，称为抽象。
+
+封装
+就是把抽象出的数据和对数据的操作封装在一起，数据被保护在内部，程序的其他部分
+只有通过授权的操作（成员方法），才能对数据进行操作。
+
+继承
+1.一个子类把父类的一些（public protected）属性和一些（public protectted）方法继承下来。
+class 子类名 extends 父类名
+{
+  //独有的属性或方法
+}
+2.一个类只能继承一个父类（直接继承），如果希望继承多个类的属性和方法，
+则使用多层继承
+class A{  }
+calss B extends A {}
+calss C extends B {}
+3.在创建某个子对象时，默认情况下（子类里写了构造方法）不会调用父类的构造方法，与JAVA不同。
+4.在子类中（子类里的方法）要访问父类的方法（修饰符是public/protected）,可以使用
+父类名::父类方法名（或者parent::方法名（仅仅是父类））来完成。
+5.当一个子类的方法名和父类的方法名完全一样，称为方法覆盖（方法重写）
+
+
+方法重载(overload)
+函数名一样，通过函数的参数个数或者参数类型的不同，达到调用同一个函数名，
+但是可以区分不同的函数。
+1.php5默认情况下，不直接支持方法重载
+2.php5可以通过__call魔术方法，模拟方法重载效果
+
+
+方法覆盖/方法覆盖（override）
+方法重写就是子类有一个方法，和父类的某个方法名称、参数个数一样，那就是子类的这个方法
+重写了父类的这个方法。
+用法：当一个父类知道子类都有一个方法，但是父类不能确定该方法具体怎么写，可以让子类去
+覆盖这个方法。
+1.要求子类的方法名、参数个数和父类的完全一样（不管是不是继承了）；
+2.方法覆盖访问修饰符可以不一样，但是子类不能缩小父类的访问权限
+（子类的访问范围必须大于或等于父类的访问范围）
+3.要访问父类的被覆盖的方法用  父类名::函数名 或者 parent::函数名
+
+多态的体现
+当子类没有覆盖父类的方法时，（同一条调用语句）调用父类的方法，否则调用子类的方法
+
+
+抽象类
+1.在实际开发中，有一种类是其他类的父类，但它本身不需要实例化，主要是让子类继承，
+  达到代码复用。
+2.如果一个类用abstract修饰就是抽象类，一个方法用abstract修饰就是抽象方法（抽象方法不能有
+ 方法体），不能实现。
+3.抽象类可以没有抽象方法，可以有实现了的具体方法。
+4.一旦一个类中有abstract方法（抽象方法），该类必须声明为abstract类（抽象类）
+5.如果一个类继承了某个抽象类，则它必须实现该抽象类的所有抽象方法（除非它自己也是抽象类）
+
+
+接口(interface)
+声明一些方法，供其他类来实现，接口体现出编程中希望高内聚低耦合的特点
+1.当一个类实现了某个接口，则该类必须实现这个接口的所有方法
+2.接口里的方法不能有方法体(可以有属性，但必须是常量（访问用 接口名::常量名）)
+3.一个类可以实现多个接口，用逗号隔开
+4.接口的方法是public的
+5.一个接口可以直接继承多个接口（类实现了这些接口必须把接口所有的方法实现）
+6.类可以同时继承别的类和实现口
+
+接口与继承的区别
+1.实现接口可以看做是对继承的一种补充，继承是层级式的，不太灵活
+2.实现接口可以在不破坏继承关系的前提下，对某个类功能扩展，非常灵活
+
+
+final(最后的)
+1.如果我们希望某个类不被其他的类来继承（可能出于安全考虑...），用final
+2.如果希望某个方法，不能被子类改写（覆盖），用final修饰该方法
+3.final不能修饰成员属性（变量）和常量
+
+const（常量）
+1.当不希望一个成员变量被修改，希望该变量的值是固定不变的，用const
+2.定义常量是要赋值，不能有修饰符
+3.访问：self::常量名（仅本类中），类名::常量名，接口名::常量名
+
+
+PHP处理错误方式
+1.简单的"die()"语句；
+ 结束程序
+ (1).file_exists("aaa.txt") or die("end");
+ (2).if(!file_exists("aaa.txt"))
+        {  echo "不存在";
+	   exit();
+	 //die("不存在");
+        }else {echo "文件存在";}
+2.自定义错误处理器和错误触发器；
+ 如果有错误,默认php处理
+ 
+ error_function(error_level,error_message,error_file,error_line,error_context)
+ 该函数必须有能力处理至少两个参数 (error level 和 error message)，
+ 但是可以接受最多五个参数（可选的：file, line-number 以及 error context）
+ 处理器：（系统上的错误）
+ 步骤：
+(1)定义函数：
+ function error($error_val,$error_info,$file,$line)
+	{
+	 echo "$error_val<br>";
+	 echo "$error_info<br>";
+	 echo "$file<br>";
+	 echo "$line<br>";
+	 exit();
+	}
+(2)改写set_error_handler处理器：
+set_error_handler("error",E_WARNING);
+
+  触发器：（逻辑上的错误）
+(2)trigger_error("aaaaa****",E_USER_WARNING);
+(1)function error($val,$info,$file,$line,$context)
+         {
+	      echo "$val||$info||$file||$line||$context";
+	      //exit();
+         }
+    set_error_handler("error",E_USER_WARNING);
+
+
+
+3.错误日志；
+bool error_log 
+(string $message [,int $message_type = 0 [,string $destination [,string $extra_headers]]] )
+用法 function error($val,$info,$file,$line,$context)
+         {
+	      echo "$val||$info||$file||$line||$context";
+	      //exit();
+	      $error_info="$val||$info||$file||$line||$context";
+	      date_default_timezone_set("PRC");
+	      error_log("错误信息".$error_info."时间".date("Y-m-d G:i:s")."\r\n",3,"D:php/error.txt");
+         }
+文档换行 \r\n
+设置时区 date_default_timezone_set("PRC");
+输出时间 date("Y-m-d G:i:s");
+
+
+php异常处理
+1.基本语法
+  try{
+      //可能出现错误或是异常的代码
+  }catch(Exception $e){
+      //处理异常
+        //1.自己处理
+	//2.自己不处理，将其抛出throw $e;(启动PHP默认的异常处理器)
+  }
+  catch 捕获  Excepeion 是异常类
+
+  如果失败 throw new Exception("异常原因");
+2.当捕获一个异常，tyr{}里的以后代码不会执行
+3.自定义异常顶级处理器
+	function Exc($e)
+	{
+		echo "顶级处理器".$e->getmessage().$e->getline();
+	}
+	set_exception_handler("Exc");
+/////4.使用多个catch代码块可以捕获不同种类的异常
+	class exception1 extends Exception{}
+	class exception2 extends Exception{}
+	function A(){ throw new exception1("类型1");}
+	function B(){ throw new exception2("类型2");}
+	function C()
+	{
+		try{
+		A();
+		B();
+		}catch(exception1 $e1)
+		{
+			echo $e1->getMessage();
+		}catch(exception2 $e2)
+		{
+			echo $e2->getMessage();
+		}
+	}
+	C();
+
+
+
+http协议
+1.浏览器发出http请求
+  (1)解析主机名
+  (2)在hosts找主机名IP
+  (3)去DNS找
+2.链接apache服务器
+  (1)尝试连接
+  (2)成功后发出http请求
+3.apache
+  (1)解析主机
+  (2)解析资源(uri)
+  (3)找到资源后执行资源
+  (4)向浏览器返回静态页面
+
+数组$_SERVER;
+常用
+HTTP_HOST  当前请求头中 Host: 项的内容，如果存在的话(获取主机名)
+'REMOTE_ADDR' 浏览当前页面的用户的 IP 地址
+'DOCUMENT_ROOT' 当前运行脚本所在的文档根目录。在服务器配置文件中定义
+'REQUEST_URI' 获取请求资源名
+
+
+http请求的两种主要方式
+post/get
+区别：
+1.安全性：get请求提交的数据会显示在地址栏上，post放在http协议的消息体
+2.数据大小：
+ (1)http没有限制数据大小,
+ (2)是浏览器在限制,get请求数据2k+35,post没限制
+3.get请求可以更好的添加到收藏夹
+
+跳转页面
+header("Location: ???.php");
+
+防盗链
+if(isset($_SERVER['HTTP_REFERER'])){
+	//判断$_SERVER['HTTP_REFERE']是不是以 http://.... 开头的,用全等;
+	if(strpos($_SERVER['HTTP_REFERE']),"http://...")===0){
+		echo "OK";
+	}else{
+		//跳转
+		header("Location: Warning.php");
+	}
+}else{
+	//跳转
+	header("Location: Warning.php");
+}
+ 
+
+http响应
+一个http响应代表服务器回送的数据，同时告诉浏览器应当怎样处理数据
+
+状态码
+200 表示成功接收请求并以完成整个处理过程，常用200
+302 请求的资源已经移动到一个新地址(header)常用302  
+404 该页面不存在
+304 请求的资源在缓存中，并且服务器对请求的资源没有修改
+
+控制浏览器间隔一定时间重定向(跳转)
+header("Refresh 秒数; url=http://....");
+
+控制缓存
+header("Expires: -1");
+header("Cache-Control: no_cache");
+header("Pragma: no-cache");
+
+
+文件
+1.文件类型
+ (1)文本文件 ??.txt
+ (2)二进制文件 视频 音频 图片
+
+
+文件下载
+1.打开文件
+if(!file_exists(文件名))
+{
+    return;
+}else
+{
+    $fp=fopen(文件名,打开方式);
+}
+2.获取文件大小
+ $file_size=filesize(文件名);
+ //对中文文件名转码gb2312
+ $file_name=iconv("utf-8","gb2312","中文文件");
+ //绝对路径
+ $file_name=$_SERVER['DOCUMENT_ROOT']."test/".$file_name;
+3.文件下载的header
+ //返回的文件
+ header("Content-type: applocation/octet-stream");
+ //按照字节大小返回
+ header("Accept-Ranges: bytes");
+ //返回文件的大小
+ header("Accept-Length: $file_size");
+ //客户端弹出对话框对应的文件名
+ header("Content-Disposition: attachment; filename=".$file_name);
+4.向客户端传送数据
+ //定义读取字节大小
+ $buffer=1024;
+ //为了下载安全，最好做一个文件字节计数器
+ $file_count=0;
+ //feor(文件指针)判断文件是否结尾
+ while(!feof($fp)&&($file_size-$file_count)>0)
+ {
+ //fread()读取文件
+	$file_data=fread($fp,$buffer);
+	//统计读了多少个字节
+	$file_count+=$buffer;
+	//把部分数据传送给浏览器
+	echo $file_data;
+ }
+5.关闭文件
+fclose($fp);
+Tip:下载页面(下载结束前)不允许有其他的打印(echo);
+
+编码方式
+header("Content-Type: text/html; charset=utf-8");
+
+
+数据库编程
+1.mysql扩展库
+2.MySQLi扩展库
+3.pdo
+
+mysql扩展库编程步骤
+1.获取连接
+ $conn=mysql_connect('localhost:3306','root','admin');
+2.选择数据库
+ mysql_select_db('db_name');  use dd_name;
+3.设置操作编码（建议有）
+ mysql_query('set names utf8');
+4.发送指令sql
+ $result=mysql_query('sql语句',$conn);
+5.接收返回结果，并处理
+ (1)while($row=mysql_fetch_row($res))
+ {
+	echo $row[0].$row[1]....'<br>';
+ }
+  (2)while($row=mysql_fetch_row($res))
+ {
+	foreach($row as $val)
+	{
+	  echo $val.'|';
+	}
+	echo '<hr>';
+ }
+6.释放资源，关闭连接
+mysql_free_result($result);
+mysql_close($conn);//可以没有，建议有
+
+1.使用完结果集后，一定要及时释放资源
+2.mysql_close($conn);//可以没有，建议有(没有也会自动关闭)
+
+从结果级（dql）中获取数据
+1.mysql_fetch_row   返回索引数组
+2.mysql_fetch_assoc 返回关联数组
+3.mysql_fetch_array 返回索引和关联数组
+4.mysql_fetch_object 返回一个对象
+5.mysql_fetch_field()->name 返回字段名
+6.mysql_num_fields  返回字段数（多少列）
+  mysql_num_rows    返回航的数目（多少行）
+7.mysql_affected_rows(连接名) 影响行数（记录数）
+8.mysql_field_name(结果集,索引) 返回字段名
+9.mysql_insert_id() 最新插入记录的ID
+
+
+mysqli扩展库
+面向对象风格
+1.创建mysqli对象
+ $mysqli=new mysqli('localhost:3306','root','admin','db_name');
+ if($mysqli->connect_error){die(mysqli->connect_error);}
+2.发送sql语句
+ $result=$mysqli->query(sql语句);
+3.处理结果
+ while($row=$result->fetch_row())
+ {
+	foreach($row as $val)
+	{
+	echo $val;
+	}
+	echo "<br>";
+ }
+4.关闭资源
+ $resilt->free();
+ $mysqli->close();
+
+面向过程风格
+1.创建mysqli连接
+ $mysqli=mysqli_connect("localhost:3306",'root','admin','db_name');
+ if(!$mysqli){die(mysqli_connect_error());}
+2.发送sql语句
+ $result=mysqli_query($mysqli,"sql语句");
+3.处理得到的结果
+ while($row=mysqli_fetch_row($result))
+ {
+ foreach($row as $val)
+ {
+ echo $val;
+ }
+ echo "<br>";
+ }
+4.关闭资源
+ mysqli_free_result($result);
+ mysqli_close($mysqli);
+
+从结果集中取数据
+1.mysqli_result::fetch_assoc
+2.mysqli_result::fetch_row
+3.mysqli_result::fetch_array
+4.mysqli_result::fetch_object
+
+释放结果集
+mysqli_result::free();
+mysqli_result::close();
+mysqli_result::free_result();
+
+
+批量执行sql语句
+批量执行dml语句
+bool mysqli::multi_query("sql1;sql2;...");
+
+批量执行dql语句（得到多个结果集）
+if($mysqli->multi_query($sqls))
+{
+	do
+	{
+	   //从mysqli连接取出第一个结果集
+	   $res=$mysqli->store_result();
+	   //取出记录
+	   while($row=$res->fetch_assoc())
+	   {
+		foreach($row as $val)
+		{
+		    echo $val;
+		}
+		echo "<br>";
+	   }
+	   //释放结果集
+	   $res->free();
+	   if(!$mysqli->more_results())
+	   { 
+	   //如果没有结果集了跳出循环
+	     break;
+	   }
+	   echo "<br>";
+	}while($mysqli->next_result())//指向下一个结果集
+}
+
+事务
+$mysqli->autocommit(false);
+成功：$mysqli->commit();
+失败：$mysqli->rollback();
+
+mysql事务设置保存点 savepoint val, rollback to val
+
+mysqli扩展库预处理技术
+dml语句
+1.创建mysqli对象
+2.创建预编译对象
+ $sql="insert into user1 (字段1,字段2,字段3...) values (?,?,?...)";
+ $mysqli_stmt=$mysqli->prepare($sql);
+3.绑定参数
+  $mysqli_stmt->bind_param("ssi",$字段1,$字段2,$字段3...);
+  //类型和字段顺序对应
+**$字段1="val";
+  $字段2="val";
+  $字段3="val";.......
+  //执行
+  bool $b=$mysql_stmt->execute();**
+  if(!$b)
+  {
+	die("error".$mysqli_stmt->error);
+  }
+
+dql语句
+1.创建预编译对象
+ $mysqli_stmt=$mysqli->prepare("select * from user1 where id=?");
+2.绑定参数
+ $mysqli_stmt->bind_param("i",$id);
+3.绑定结果集
+ $mysqli_stmt->bind_result($a,$b,$c,$d,$e);
+执行
+ $id=5;
+ $mysqli_stmt->execute();
+4.取出绑定的值
+ while($mysqli_stmt->fetch())
+ {
+	echo "$a$b$c$d$e";
+ }
+5.释放结果集关闭预处理
+ $mysqli_stmt->free_result();
+ $mysqli_stmt->close();
+
+
+其他函数
+多少行：$res->num_rows;
+多少列：$res->field_count;
+列名：$res->fetch_field->name;
+
+
+超全局变量(数组)
+1.$_GET
+2.$_POST
+3.$_REQUEST
+4.$_SERVER
+5.$_ENV
+6.$_FILE
+7.$_COOLIE
+8.$_SESSION
+9.$GLOBALS
+
+解决ie5.5和ie6中文奇数乱码
+<a href="global.php?id=1&name=哈哈哈　&age=2">连接</a>
+1.奇数中文后打全角空格，用trim去两端空格
+2.使用urlencode和//urldecode函数
+  echo $str=urlencode("哈哈哈");
+  echo "<a href="global.php?id=1&name=$str&age=2">连接</a>
+";
+
+判断是否为空
+if(empty($_GET['val']))
+{
+   echo "为空";
+}
+
+<a></a> header("location: http://....");都是get方式
+
+$_REQUEST
+包含$_GET,$_POST,$_COOKIE数组信息
+
+if($_SERVER['REQUEST_METHOD']=="POST")
+{
+   $_POST
+}else if($_SERVER['REQUEST_METHOD']=="GET")
+{
+   $_GET
+}
+
+基本表单元素
+<form action="global.php" method="post">
+用户名：<input type="text" name="user"><br>
+密　码：<input type="password" name="pass"><br>
+性　别：<input type="radio" name="sex" value="男">男&nbsp;<input type="radio" name="sex" value="女">女<br>
+爱　好：<input type="checkbox" name="happy[]" value="游泳">游泳<input type="checkbox" name="happy[]" value="下棋">下棋<input type="checkbox" name="happy[]" value="唱歌">唱歌<br>
+地　址：<select name="city" id=""><option value="西安">西安</option><option value="咸阳">咸阳</option></select><br>
+介　绍：<br>
+<textarea rows="10" cols="20" name="info">
+</textarea>
+<br>
+文　件：<input type="file" name="file"><br>
+<input type="submit" value="提交">
+</form>
+
+$_SERVER包含客户端（http）和服务器端的信息
+$_ENV环境变量信息（php5.3以上默认关闭）
+$GLOBALS二维数组，包含几乎所有超全局变量
+
+
+
+zend studio常用快捷键(windows->key里可以配置)
+1.提示符助手
+默认：alt+/
+2.复制当前行 ctrl+alt+下光标
+3.删除当前行 ctrl+d
+4.加注释 块注释 shift+ctrl+\ shift+ctrl+/  行注释 ctrl+/
+
+调试：
+f5跳入
+f6跳过(按顺序执行)
+f7跳出(从函数跳出)
+
+
+分页
+页数=ceil(总记录数/页面长度)
+
+limit ?,3;
+?=(当前页数-1)*页面长度
+
+for($i=1;$i<=页面数;$i++)
+{
+echo "<a href="#">$i</a>&nbsp";
+}
+
+
+
+
+
+
+分页核心代码
+
+echo "<div align=center>";
+//如果当期页数大于1，打印出下一页
+if($pagenow>1)
+{
+	$p=$pagenow-1;
+	echo "<a href=empList.php?pagenow=$p>上一页</a>";
+}
+//如果当前页小于总页数，打印出下一页
+if($pagenow<$pagecount)
+{
+	$p=$pagenow+1;
+	echo "<a href=empList.php?pagenow=$p>下一页</a>";
+}
+//显示页数1 2 3 4 5 6 7 8 9  10
+$pageview=10;
+//开始显示的页数 1~10=1 |  11~20=11 | 21~30=21......
+$pagestart=floor(($pagenow-1)/$pageview)*10+1;
+//固定判断条件
+$pagestart_temp=$pagestart;
+//如果当前页数大于显示的页数，打印出向前翻10页
+if($pagenow>$pageview)
+	echo "<a href=empList.php?pagenow=".($pagestart-1)."><<<</a>";
+//打印显示页数1 2 3 4 5 6 7 8 9  10
+for(;$pagestart<$pagestart_temp+$pageview;$pagestart++)
+{
+	//如果当前的$pagestart小于等于总页数就打印显示页数，否则就跳出当前循环
+	if($pagestart<=$pagecount)
+	{
+		echo "<a href=empList.php?pagenow=$pagestart>【".$pagestart."】</a>";
+	}else
+	{
+		break;
+	}
+}
+//如果循环结束后的$pagestart值小于总页数 ，就可以打印出后翻10页
+if($pagestart<$pagecount)
+{
+	echo "<a href=empList.php?pagenow=$pagestart>>>></a>";
+}
+//显示当前页数/总页数
+echo "&nbsp;&nbsp;{$pagenow}/{$pagecount}";
+echo "<br><br>";
+//跳转页面
+echo "<form action=empList.php>跳转：<input type='text' name='pagenow'><input type='submit' value='GO'></form>";
+echo "</div>";
+
+
+分层模式
+1.web层
+2.业务逻辑层
+3.数据层
+
+MVC
+1.MVC是一种软件设计模式（套路）
+2.M model 模型(处理业务逻辑) 
+  V view  视图/界面
+  C controller  控制器(接收请求并调用service方法,然后跳转)
+3.核心思想：强制程序员把数据的输入，数据的处理，数据的输出分开
+
+
+<input readonly="readonly">只读
+
+header("Location: ???.php") 可替换为  include("???.php"); exit();   或者  exit(include("???.php"));/die(include("???.php"));
+header可通过GET方式传递数据   include直接包含???.php不用传递数据，可直接用当前页面数据
+
+
+会话技术cookie session
+
+cookie
+保存在客户端
+
+1.创建cookie
+key<-->val
+setcookie(键,值,时间/秒);
+setcookie("name","val",time()+3600);
+
+2.从客户端获取cookie
+
+所有cookie
+echo "<pre>";
+print_r($_COOKIE);
+echo "</pre>";
+
+键名是name的cookie
+echo $name=$_COOKIE['name'];
+
+cookie保存中文值用urlencode编码方式(解码urldecode)
+不同键值对的cookie保存时间可以不一样
+
+3.更新cookie
+      以前有的：setcookie("name","哈哈",time+30);
+  更新以前有的：setcookie("name","嘻嘻",time+50);
+ 
+4.删除cookie
+  (1)指定删除某个cookie(删除名为key的cookie,时间设置为当前时间-任意整数(time()-1))
+   setcookie("key","",time()-1);
+  (2)删除所有(本网站的)
+   foreach($_COOKIE as $key=>$val)
+   {
+	setcookie($key,"",time()-1);
+   }
+
+Tip: cookie不设置保存时间则会保存在客户端的内存中，当会话结束或者浏览器关闭则cookie删除
+
+cookie默认是同一个网站的父级目录里的脚本设置的cookie父级目录脚本和子级目录脚本都可以访问，
+但是子级目录脚本里设置的cookie父级目录脚本不能访问.
+要达到同一个网站的所有脚本共享cookie数据,将第四个参数设置为根目录'/'
+setcookie('name','val',time()+?,'/');
+
+cookie跨域
+设置第五个参数可以使用相同二级域名设置的cookie
+setcookie('name','val',time()+?,'/','baidu.com'); //所有以baidu.com结尾的二级域名都共享该cookie
+
+
+应用
+
+显示上次登陆时间
+date_default_timezone_set('PRC');
+if(isset($_COOKIE['visitedtime']))
+{
+	echo "上次登陆时间是{$_COOKIE['visitedtime']}";
+	setcookie("visitedtime",date("Y-m-d H:i:s"),time()+3066);
+}else
+{
+	echo "您是第一次登陆";
+	setcookie("visitedtime",date("Y-m-d H:i:s"),time()+3066);
+}
+
+
+
+session
+session是服务器端技术
+!!!一个浏览器的一次会话在服务器端会单独创建一个用于该浏览器的session文件
+!!!一旦初始化session_start()就会创建session文件，但里面是空的
+1.创建session
+ (1)初始化session
+   session_start();
+ (2)保存数据
+   $_SESSION['key']="val";
+  
+  session_start();
+  $_SESSION["name"]="哈哈";
+  结果为
+  name|s:6:"哈哈";
+  (name键名,s数据类型,6数据大小(字节),"哈哈"数据值)
+
+TiP:
+  一个会话对应一个session文件
+  使用session前必须先初始化 session_start();
+  session可以保存 integer double string object array 数据类型
+
+2.获取session
+ session_start();
+ (1)单个
+ $val=$_SESSION["key"];
+ (2)所有
+ print_r($_SESSION);
+Tip:取出对象调用里面的属性方法时那个类必须被声明
+
+3.更新session
+  原session: $_SESSION['name']="哈哈";
+  更新：
+  session_start();
+  $_SESSION['name']="嘻嘻"；
+
+4.删除session
+  (1).删除单个
+   session_start();
+   unset($_SESSION["key"]);
+  (2).删除所有(当前用户的浏览器对应的session)
+   session_destroy();
+5.获取session的ID
+  session_id();
+
+
+session数据默认存放时间是1440秒(24分发呆时间),可以通过php.ini修改
+  session.gc_maxlifetime=1440
+session的存放路径默认是c:/windows/temp  可以修改
+   session.save_path=""
+
+!!!!访问一个站点本地创建一个cookie(本地没有该站点的cookie情况下)
+    一次会话的那个服务器创建一个session(客户端不禁用cookie的情况下)
+
+!!!!如果用户阻止接收cookie，那么访问每个有session_start()的页面都会在服务器端产生一个session文件，导致数据不能共享
+    原理：用户禁止cookie那么会话所产生的session的ID不会被客户端返回告知给服务器,服务器就不知道用哪个session
+    处理方法：
+    
+    方案1：
+    1.在每个要用到session的页面加上
+     if(isset($_GET['PHPSESSID']))
+	{
+		$id=$_GET['PHPSESSID'];
+		session_id($id);
+	}
+	session_start();
+	$sessid=session_id();
+    2.在每一个超链接加上PHPSESSID=sessid
+    
+    方案2:
+    1.在每个要用到session的页面加上
+     if(isset($_GET['PHPSESSID']))
+	{
+		$id=$_GET['PHPSESSID'];
+		session_id($id);
+	}
+	session_start();
+    2.在每一个超链接加上".SID."(常量)     (SID<=>PHPSESSID=session的ID号)
+
+    方案3
+    1.session.use_cookies=0 关闭cookie保存sessionID
+      session.use_only_cookie=0 指定sessionID可以通过cookie以外的方法传递
+    2.session.use_trans_sid 指定是否启用透明 SID 支持。默认为 0（禁用）
+      session.use_trans_sid=1;
+    tip:方案3只在location action 超链接支持透明发送SID，不支持JS
+
+
+
+session应用
+防止非法访问页面
+
+在登录处理页面设置
+session_start();
+$_SESSION[$user]=$val;
+//$user用$user为键名的session检查,  $page指定跳转到的页面
+
+//用户没有开启cookie
+//在跳转加上".SID."   header("Location: XXX.php?".SID."");
+function checklogin($user,$page)
+{
+	if(isset($_GET['PHPSESSID']))
+	{
+		session_id($_GET['PHPSESSID']);
+	}
+	session_start();
+	if(empty($_SESSION[$user]))
+	{
+		header("Location: $page");
+	}
+}
+//用户开启cookie
+function checklogin1($user, $page)
+{
+	session_start();
+	if(empty($_SESSION[$user]))
+	{
+		header("Location: $page");
+	}
+}
+
+
+配置session和cookie的php.ini
+
+名字：session.name=PHPSESSID
+保存路径：session.save_path="???" 路径必须存在
+自动发送SID：session.use_trans_sid=0/1
+
+控制session文件存在的时间
+1.session.gc_maxlifetime=1440最大生命周期(发呆时间)
+2.session.gc_probability=1
+3.session.gc_divisor=1000
+	当某个用户使用到session_start()时,
+        该函数有(session.gc_probability)/(session.gc_divisor=1000)的概率
+	启用session的gc(垃圾回收机制)(session文件要过期才会被删除)
+
+4.session.cookie_lifetime=0默认0
+  cookie的生命周期,0表示当浏览器关闭时，cookie失效
+
+5.自定义会话处理
+  session_set_save_handler=files/user
+  session可以保存在服务器端的：文件、memcache、数据库,还可以用nfs技术保存在网络
+
+
+PHP文件编程（IO编程）
+
+文件(二进制,文本)->数据源
+
+文件流
+在对文件的操作过程中，以流的概念操作
+
+输入流：文件(磁盘)->程序(内存)
+输出流：程序(内存)->文件(磁盘)
+
+1.获取文件信息
+ file_exists("file")判断文件是否存在
+(1)fopen 打开文件  $fp=fopen(url,[r|a+]); 返回指向文件的指针
+(2)fstat 获取文件信息 $file_info=fstat($fp);  返回数组 
+       [size] 文件大小
+       [atime]该文件上一次被访问的时间
+       [mtime]该文件上一次内容被修改的时间
+       [ctime]该文件上一次 文件所有者/文件所在组 修改时间
+(3)fclose($fp)关闭文件
+/*********/
+    filesize("url"); 大小
+    fileatime("url"); 访问时间
+    filemtime("url"); 修改时间
+    filectime("url");  文件所有者/文件所在组 修改时间
+
+
+2.读取文件
+(1)fopen 打开文件  $fp=fopen(url,[r|a+]); 返回指向文件的指针
+(2)$data=fread($fp,"size")读取文件内容  返回字符串
+!!!$data=str_replace("\r\n","<br>",$data);将$data里的"\r\n"替换成"<br>";
+(3)fclose($fp);
+/*************/
+  file_get_contents("url");读取文件整个内容 返回字符串
+/*************/循环读取（下载大文件）
+  $fp=fopen("file","r");
+  $buffer=1024;
+  while(!feof($fp))
+  {
+	$data=fread($fp,$buffer);
+	$str=str_replace("\r\n","<br>",$data);
+	echo $str;
+  }
+  fclose($fp);
+
+!!!数据库配置信息
+  parse_ini_file("???.ini"); 返回数组
+  .ini文件：key=val  key2=val2.....   注释 ;
+
+3.写文件
+(1)$fp=fopen("rul","a+");//追加(append附加)写入
+(2)fwrite($fp,"哈哈哈\r\n");//写入字符串
+(3)fclose($fp);
+/************/
+//不建议用循环,拼接好字符串再用
+file_put_contents("file","哈哈\r\n",FILE_APPEND) //写入字符串
+
+
+4.拷贝文件
+bool  copy("源文件路径","拷贝的路径");
+
+5.文件和文件夹的创建删除
+ 创建文件夹
+ mkdir("路径/文件夹");  is_dir("路径/文件夹")//判断是否存在该文件夹
+
+	!is_dir("D:\php\hah5") or die("error");
+	mkdir("D:\php\hah5")
+	多级文件夹
+	!is_dir("D:\a\b\c\d\e") or die("error");
+	mkdir("D:\a\b\c\d\e",0777,true);
+ 删除文件夹
+ rmdir();//空文件夹
+
+ 创建文件
+ $fp=fopen("已存在的路径","w+");
+ 删除文件
+ unlink("文件路径")/delete("文件的路径")
+
+ 6.文件上传
+ 界面
+ <form enctype="multipart/form-data" method="post">
+ <input type="file" name="file"> 
+ </form>
+ 接收process
+  超全局数组$_FILES
+ //is_uploaded_file — 判断文件是否是通过 HTTP POST 上传
+  (1)判断是否上传成功
+   if(is_uploaded_file($_FILES['myfile']['tmp_name']))
+   {
+	//把文件转存到其他目录
+	$res=move_uploaded_file($_FILES['myfile']['tmp_name'],iconv("utf-8","gbk",$_SERVER["DOCUMENT_ROOT"]."/dir/".$_FILES["myfile"]["name"]));
+	//如果目标文件存在，将会被覆盖
+	//随机文件名 time().rand(1,1000);
+	if($res)
+	{
+		echo "OK";
+	}else
+	{
+		echo "error";
+	}
+   }else
+   {
+	echo "error";
+   }
+
+//可以在php.ini文件里配置上传大小
+  upload_max_filesize=2M
+
+上传文件的细节
+1.控制上传大小
+$file_size=$_FILES['myfile']['size'];
+if($file_size>2*1024*1024)
+{
+	echo "超过2M";
+	exit();
+}
+2.控制文件的类型
+$file_type=$_FILES['myfile']['type'];
+if($file_type!="image/jpg")
+{
+	echo "不是图片";
+	exit();
+}
+3.防止文件同名覆盖
+ (1)每个用户一个文件夹
+  $user_path=$_SERVER["DOCUMENT_ROOT"]."/dir/".$username;
+  if(!file_exists($user_path))
+  {
+	mkdir($user_path);
+  }
+ (2)$move_to_file=$user_path."/".time().rand(1,1000).substr($_FILES['myfile']['name'],strrpos($_FILES['myfile']['name'],"."));
+
+//找出.最后出现的位置 $val=strrpos($string,".");
+//找出$val后(包含$val)的所有字符串$str=substr($string,$val);
+
+
+上传文件处理简单代码
+<?php
+$user=$_POST['user'];
+is_uploaded_file($_FILES['file']['tmp_name'])or die("上传方式不合法");
+if($_FILES['file']['size']>1024*1024)
+{
+	die("超过1M");
+}
+if($_FILES['file']['type']!="image/jpeg"&&$_FILES['file']['type']="image/bmp")
+{
+	die("不是图片");
+}
+//创建用户文件夹
+$user_dir=iconv("utf-8","gbk",$_SERVER['DOCUMENT_ROOT']."/file/".$user);
+if(!is_dir($user_dir))
+{
+	mkdir($user_dir);
+}
+//获取用户上传文件的类型
+$file_type=substr($_FILES['file']['name'],strrpos($_FILES['file']['name'],"."));
+//时间+随机数取名
+$file_name=time().rand(1,1000);
+move_uploaded_file($_FILES['file']['tmp_name'],$user_dir."/".$file_name.$file_type);
+echo $_FILES['file']['name']."上传成功！"
+?>
+
+
+
+
+报表技术/绘图技术
+以表格/图表的方式显示数据
+启用图像库
+extension=php_gd2.dll
+1.绘制画布
+2.绘制图形
+3.输出图像到网页、或者另存为
+4.销毁图片（释放内存）
+tip:网站开放常用的图片格式 gif jpg/jpeg peg
+    区别：
+    gif压缩率高,可以显示动画效果，但只能显示256色,可能造成颜色丢失
+    jpg/jpeg压缩率高，可以用较小的文件显示，网页常用格式
+    png综合了gif和jpg的优势，高保真，不能显示动画
+
+画椭圆
+//1.创建画布,默认背景是黑色
+$im=imagecreatetruecolor(400,300);
+//2.绘制图形
+    //创建一个颜色
+$red=imagecolorallocate($im,255,0,0);
+ //画椭圆
+imageellipse($im,50,50,20,20,$red);
+//3.输出到网页
+header("content-type: image/png");
+imagepng($im);
+//4.销毁图片（释放内存）
+imagedestory($im);
+
+//直线
+imageline($im,0,0,400,300,$red);
+//空心矩形
+imagerectangle($im,80,80,200,200,$red);
+//实心矩形
+imagefilledrectAngle($im,80,80,200,200,$red);
+//弧线
+imagearc($im,100,50,90,40,0,180,$red);
+//扇形
+imagefilledarc($im,100,50,90,40,0,180,$red,IMG_ARC_PIE);
+
+
+拷贝图片到画布
+//1.加载原图片
+$srcimage=imagecreatefromjpeg("???.jpg");
+//2.拷贝原图片到目标画布
+imagecopy($im,$srcimage,0,0,0,0,200,200);
+获取图片信息
+$info=getimagesize("???.jpg");
+写字
+(1)imagestring($im,5,0,0,"hello",$red);
+(2)imagettftext($im,15,10,20,20,$red,"msyhbd.ttf","你好");
+更改画布颜色
+imagefill($im,0,0,$white);
+
+柱状图
+for($i=150;$i>=50;$i--){
+imagefilledarc($im,250,$i,100,50,80,360,$red1,IMG_ARC_PIE);
+imagefilledarc($im,250,$i,100,50,0,40,$blue1,IMG_ARC_PIE);
+imagefilledarc($im,250,$i,100,50,40,80,$gray1,IMG_ARC_PIE);
+}
+imagefilledarc($im,250,$i-1,100,50,80,360,$red,IMG_ARC_PIE);
+imagefilledarc($im,250,$i-1,100,50,0,40,$blue,IMG_ARC_PIE);
+imagefilledarc($im,250,$i-1,100,50,40,80,$gray,IMG_ARC_PIE);
+
+
+
+
+jpGraph报表库
+安装配置
+1.下载jpGraph并放在htdocs目录下
+2.把example同级目录下的其他文件剪贴到example文件中(新建目录jpgraph)jpgraph目录下
+
+在其他网页中嵌入图表
+<img src="jpgraph.php">
+
+dechex 十进制转为16进制
+验证码：
+<?
+//产生16进制字符
+$checkcode="";
+for($i=0;$i<4;$i++)
+{
+	$checkcode.=dechex(rand(1,20));
+}
+//存入session
+session_start();
+$_SESSION['checkcode']=$checkcode;
+//创建画布
+$im=imagecreatetruecolor(100,40);
+//创建颜色
+$red=imagecolorallocate($im,255,0,0);
+//画出20条随机干扰线
+for($i=0;$i<20;$i++)
+{
+	imageline($im,rand(0,100),rand(0,40),rand(0,100),rand(0,40),imagecolorallocate($im,rand(0,255),rand(0,255),rand(0,255)));
+}
+//将字符串打印在画布上
+imagestring($im,rand(3,7),rand(0,50),rand(0,20),$checkcode,$red);
+//显示
+header("content-type: image/png");
+imagepng($im);
+imagedestroy($im);
+?>
+界面：
+点击验证码：<img src=img.php onclick=this.src='img.php?rand='+Math.random()>
+
+
+
+
+网上支付
+1.直接与银行对接（银行信得过的大网站）
+ 缺点：工作量大
+ 有点：安全
+2.与第三方(中间企业)对接（小网站）
+ 缺点：有安全隐患
+ 有点：开发维护方便
+
+
+正则表达式
+preg_replace(); 将匹配到的字符串替换
+
+ $str="1234asdadas1234dsad6549dsa12dsa2";
+ $preg="/\d{4}/i";
+ $newstr=preg_replace($preg,"哈哈哈哈",$str);
+ echo $newstr;
+ //替换数组
+ $preg=array('/(\d{4})/i');
+ $repla=array('<?php echo $this->tpl["${1}"] ?>'); //${1}表示反向引用第一个表达式的内容
+ $new_preg=preg_replace($preg,$repla,$str);
+ echo $new_preg;
+
+ 返回个数 preg_match_all($regexp,$str[,$arr]);  匹配到count($arr[0])个结果
+ 返回0或1 preg_match($regexp,$str[,$arr]);  匹配到count($arr))==1个结果(只找一次)
+
+ json
+
+ 生成json数据
+ json_encode($arr||$obj);
+
+ 解析json数据
+ json_decode($json[,true]);
+
+ PDO
+ php data object  数据抽象层
+ 数据库中间层类
+
+ PDO能够自动进行数据库的切换,而且能进行语法兼容处理
+
+ PDO类
+ 负责数据库的连接,发送SQL语句
+ 
+ PDOStatement类 
+ 结果集类
+
+ PDOException类
+ 用异常处理机制处理PDO所碰到的问题
+
+$pdo=new PDO('mysql:host=localhost;port=3306;dbname=ajax','root','admin');
+
+//insert
+$affect_rows=$pdo->exec('insert into shop1 value(null,"李明",0)');
+echo $affect_rows;
+
+//delete
+$affect_rows=$pdo->exec('delete from shop1 order by id desc limit 1');
+echo $affect_rows;
+
+//update
+$affect_rows=$pdo->exec('update shop1 set shop="ccc",type=2 order by id desc limit 1');
+echo $affect_rows;
+
+//select
+$res=$pdo->query('select * from shop');
+$mix_row=$res->fetch();
+var_dump($mix_row);
+
+POD::fetch()
+混合数组
+$res->fetch()
+
+关联数组
+$res->fetch(PDO::FETCH_ASSOC);
+或者
+$res->fetch(2);
+
+索引数组
+$res->fetch(PDO::FETCH_NUM);
+
+得到全部(二维数组)数据(关联)
+$res->fetchAll(PDO::FETCH_ASSOC);
+
+
+获取一条记录中的第2列数据，返回字符串
+$res->fetchColumn(1)
+1.减少代码冗余
+2.提高执行效率
+
+以对象的形式返回一条数据
+$res->fetchObject();
+
+绑定一条记录的指定字段字段值到一个变量 
+$res->bindColumn('字段名',变量);
+or
+$res->bindColumn('索引值',变量);  //索引值从1开始
+例子：
+$res->bindColumn('id',$id);
+or
+$res->bindColumn(1,$id);
+
+遍历数据1
+$pdo=new PDO('mysql:host=localhost;port=3306;dbname=ajax','root','admin');
+$res=$pdo->query('select * from shop1');
+while($row=$res->fetch(PDO::FETCH_ASSOC))
+{
+	$arr[]=$row;
+}
+foreach($arr as $arr_)
+{
+	foreach($arr_ as $val)
+	{
+		echo $val;
+	}
+	echo '<br>';
+}
+unset($res);
+unset($pdo);
+
+遍历数据2
+$pdo=new PDO('mysql:host=localhost;port=3306;dbname=ajax','root','admin');
+$res=$pdo->query('select * from shop1');
+$arr=$res->fetchAll(PDO::FETCH_NUM);
+for($i=0;$i<count($arr);$i++)
+{
+	for($j=0;$j<count($arr[$i]);$j++)
+	{
+		echo $arr[$i][$j];
+	}
+	echo '<br>';
+}
+unset($res);
+unset($pdo);
+
+预处理
+
+关联数组绑定
+$res=$pdo->prepare('insert into shop1 value(null,:shop,:type)');  //准备
+$arr=array(':shop'=>'MMMM',':type'=>2);				  //绑定参数
+$res->execute($arr);						  //执行
+
+索引数组绑定
+$res=$pdo->prepare('insert into shop1 value(null,?,?)');
+$arr=array('AAA',3);
+$res->execute($arr);
+
+索引bindParam方法绑定
+$res=$pdo->prepare('insert into shop1 value(?,?,?)');
+$id=null;
+$shop='xixi';
+$type=3;
+$res->bindParam(1,$id);
+$res->bindParam(2,$shop);
+$res->bindParam(3,$type);
+$res->execute();
+
+关联bindParam方法绑定
+$res=$pdo->prepare('insert into shop1 value(:id,:shop,:type)');
+$id=null;
+$shop='haha';
+$type=3;
+$res->bindParam(':id',$id);
+$res->bindParam(':shop',$shop);
+$res->bindParam(':type',$type);
+$res->execute();
+
+bindParam与bindValue的区别
+1.	bindParam必须要先声明变量，再使用变量；bindValue可以直接使用值
+2.	bindValue是一次性的，而bindParam可以无限使用（因为使用的引用传值，一旦变量的值进行改变，那么对应的组织SQL语句时所用到的变量的值也跟着改变）
+
+
+PDO事务处理
+
+1.开启事务
+beginTransaction()
+2.事务操作
+增删改
+3.事务提交
+成功:commit()
+失败:rollback()
+
+注意
+1.	要实现事务处理必须数据表的存储引擎为InnoDB
+2.	事务必须完整（开启->提交）
+
+
+PDO属性设置
+
+设置PDO在处理数据的过程中采用什么方式去处理
+PDO::setAttribute：设置属性
+PDO::getAttribute：获取属性
+
+常用属性
+PDO::ATTR_AUTOCOMMIT：设置当前连接Mysql服务器的客户端的SQL语句是否自动执行，默认是自动提交
+ 
+PDO::ATTR_CASE：当pdo从结果集中获取数据的时候，如何处理对应的字段的名字
+PDO::CASE_LOWER：将所有字段都小写显示
+PDO::CASE_UPPER：所有字段都大写显示
+PDO::CASE_NATURAL：原本怎么样就怎么样
+ 
+PDO::ATTR_ERRMODE：错误模式，当pdo出现错误的时候到底使用哪种模式进行处理
+PDO::ERRMODE_SILENT：静默模式，默认的出错了不管
+PDO::ERRMODE_WARNING：警告模式，如果出错了就会报出警告
+PDO::ERRMODE_EXCEPTION：异常模式，如果出错会采用异常来处理（PDOException）
+ 
+PDO::ATTR_PERSISTENT：当前对Mysql服务器的连接是否是长连接
+TRUE：是长连接（长连接的使用必须要配合：Apache（connection：keepAlive），Mysqld）
+FALSE：默认的，非长连接
+什么情况下使用长连接？
+1.	不同的脚本的执行间距非常短，同时每个脚本都要操作数据库（Mysql：mysql_pconnect()）
+
+
+PDO异常处理
+异常处理：当PHP碰到错误的时候，会直接报错，错误处理会变得相当麻烦。后来，当错误发生之后，会将错误信息不再直接输出，放到一个类的对象里（PDOException）
+
+要使用PDO异常处理
+1.	需要将错误处理模式变成异常模式
+2.	所有可能出错的语句都必须放到错误捕捉语句块里
+try{
+	//错误捕捉语句块
+	//凡是有可能出现错误的语句都放在这
+	//一旦出错会立即进入catch语句，把所有的错误信息放到PDOexception $e里面
+}catch(PDOExecption $e){
+	//将错误信息进行处理
+} 
+
+try{
+	$pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+	$pdo->exec('select * from shop2');
+}catch(PDOException $e){
+	//var_dump($e->errorInfo);
+	//echo '出现异常：<br>';
+	echo '文件：'.$e->getFile().' 行：'.$e->getLine().'<br>';
+	echo '信息：'.$e->getMessage().'<br>';
+	var_dump($e->getTrace()); //完整错误信息
+	die();
+}
+
+有的时候，如果数据执行没有任何错误，但是就是不符合指定的业务逻辑。一旦出现业务逻辑错误，
+异常是没有办法捕捉（异常只捕捉语法错误），一般认为的去通过判断语句的执行（结果），
+主动抛出异常，从而结束错误程序的运行。
+语法：throw new PDOException;
+
+
+反射
+反射就是将其他类的结构给反应出来，从而可以对类的结构进行了解便于对类的使用。
+Reflection
+
+ReflectionClass::export(要反射的类名)
+ 
+
+ReflectionClass类
+ 
+
+介绍几个方法
+getConstants：获取常量
+getProperties：获取所有属性
+getMethods：获取所有方法
+
+
+array_slice($arr,起始位置,长度) — 从数组中取出一段
+
+
+无限极分类(找父ID为$id的下级)
+//超级版
+function noLimitCate($arr,$id=0,$suojin=0,$stop_id=0){
+	static $newArr=array();
+	foreach($arr as $key=>$val){
+		if($val['c_id']!=$stop_id){
+			if($val['c_parent_id']==$id){
+				$val['suojin']=$suojin;
+				$newArr[]=$val;
+				unset($arr[$key]);
+				noLimitCate($arr,$val['c_id'],$suojin+1);
+			}
+		}
+	}
+	return $newArr;
+}
+//简单版
+function noLimit($arr,$cat_id=0,$level=0){
+	static $newArr=array();
+	foreach($arr as $k=>$v){
+		if($v['parent_id']==$cat_id){
+			$v['level']=$level;
+			$newArr[]=$v;
+			unset($arr[$k]);
+			noLimit($arr,$v['cat_id'],$level+1);
+		}
+	}
+	return $newArr;
+}
+
+面包屑导航(无限找id为$parent_id的上级)
+function getFamilyId($arr,$parent_id){
+	static $newArr=array;
+	foreach($arr as $k=>$v){
+		if($v['id']==$parent_id){
+			$newArr[]=$v;
+			unset($arr[$k]);
+			getFamily($arr,$v['parent_id']);
+		}
+	}
+	return $newArr;
+}
+
+请求的脚本的名称
+basename($_SERVER['SCRIPT_NAME']);
+
+去除$str最右边的 , 号
+rtrim($str,',');
+
+用array_map调用回调函数change使$arr数组的每个值加上单引号
+function change($val){
+	return "'".$val."'";
+}
+$newArr=array_map('change',$arr);
+
+用*在$num左边填充使它的长度为8
+str_pad($num,8,'*',STR_PAD_LEFT);
+
+判断键名是否在数组中
+array_key_exists($ext,$allow);
+
+将$arr1与$arr2中同下标不同值的$arr1的元素提取出来形成一个新数组
+$newArr=array_diff($arr1,$arr2);
+
+文件上传类
+class Uploads{
+		static $error;
+		static function upload($file,$allow,$size){
+			if(!is_array($file)){
+				self::$error='没有上传文件';
+				return false;
+			}
+			if(!in_array($file['type'],$allow)){
+				self::$error='文件类型不正确，应该是'.implode(',',$allow);
+				return false;
+			}
+			switch($file['error']){
+				case 1:
+					self::$error = '文件过大！已经超过服务器允许大小！';
+					return false;
+				case 2:
+					self::$error = '文件过大！已经超过浏览器允许大小！';
+					return false;
+				case 3:
+					self::$error = '文件上传不完整！';
+					return false;
+				case 4:
+					self::$error = '没有选择要上传的文件！';
+					return false;
+				case 6:
+					self::$error = '找不到服务器文件的临时目录！';
+					return false;
+				case 7:
+					self::$error = '没有权限将文件上传到目标文件夹！';
+					return false;
+				case 0:
+					//判断当前文件的大小是否在允许范围内
+					if($file['size'] > $size){
+						//超过当前商品上传文件的允许大小
+						self::$errorInfo = '文件太大，当前商品只允许上传' . $size . '字节大小！';
+						return false;
+					}
+			}
+			$name=time().mt_rand(100,999);
+			$ext=substr($file['name'],strrpos($file['name'],'.'));
+			$dir=str_replace('\\','/',dirname(dirname(__file__))).'/admin/uploads/'.$name.$ext;
+			if(move_uploaded_file($file['tmp_name'],$dir)){
+				return '../admin/uploads/'.$name;
+			}else{
+				self::$error='文件移动失败';
+				return false;
+			}
+		}
+	}
+
+
+略缩图制作
+class Image{
+		public $thum_width;
+		public $thum_height;
+		public $error;
+		public $allow=array(
+			'jpg'=>'jpeg',	
+			'jpeg'=>'jpeg',	
+			'pjpeg'=>'jpeg',	
+			'gif'=>'gif',	
+			'png'=>'png'	
+		);
+		public function __construct($width='',$height=''){
+			$this->thum_width=$width==''?100:$GLOBALS['conf']['width'];
+			$this->thum_height=$height==''?100:$GLOBALS['conf']['height'];
+		}
+		public function thum_image($file){
+			if(!is_file($file)){
+				$this->error='不是有效文件';
+				return false;
+			}
+
+			$ext=substr($file,strrpos($file,'.')+1);
+			if(!array_key_exists($ext,$this->allow)){
+				$this->error='不是图片';
+				return false;
+			}
+			//开始制作略缩图
+			$imagecreatefrom='imagecreatefrom'.$this->allow[$ext];
+			$imagesave='image'.$this->allow[$ext];
+			//可变函数获取图片资源
+			$src=$imagecreatefrom($file);
+			//创建略缩图资源
+			$im=imagecreatetruecolor($this->thum_width,$this->thum_height);
+			//多余部分补白
+			$bai=imagecolorallocate($im,255,255,255);
+			imagefill($im,0,0,$bai);
+			//获取文件尺寸
+			$fileSize=getimagesize($file);
+			//获取宽高比
+			$file_bi=$fileSize[0]/$fileSize[1];
+			$im_bi=$this->thum_width/$this->thum_height;
+			//判断比较(文件宽高比大于略缩图宽高比以略缩图的宽为基准，反之以略缩图的高为基准)
+			if($file_bi>$im_bi){
+			//略缩图按比例的宽高xy
+				$x=$this->thum_width;
+				$y=$this->thum_width/$file_bi;
+			}else{
+				$x=$this->thum_height*$file_bi;
+				$y=$this->thum_height;
+			}
+			//略缩图的开始坐标
+			$start_x=floor(($this->thum_width-$x)/2);
+			$start_y=floor(($this->thum_height-$y)/2);
+			//采样和复制
+			$res=imagecopyresampled($im,$src,$start_x,$start_y,0,0,$x,$y,$fileSize[0],$fileSize[1]);
+			if($res){
+				$name='thum_'.basename($file);
+				//保存
+				if($imagesave($im,'../admin/uploads/'.$name)){
+					return '../admin/uploads/'.$name;
+				}else{
+					$this->error='保存失败';
+					return false;
+				}
+			}else{
+				$this->error='采样失败';
+				return false;
+			}
+		}
+	}
+
+
+水印基本
+
+//获取原图与水印
+$img=imagecreatefromjpeg('../admin/uploads/1433220473506.jpg');
+$wat=imagecreatefromjpeg('../admin/uploads/thum_1433220355849.jpg');
+//获取宽高
+$imgInfo=getimagesize('../admin/uploads/1433220473506.jpg');
+$watInfo=getimagesize('../admin/uploads/thum_1433220355849.jpg');
+//计算出原图要水印的开始坐标(右下角)
+$x=$imgInfo[0]-$watInfo[0];
+$y=$imgInfo[1]-$watInfo[1];
+//拷贝并合并图像
+imagecopymerge($img,$wat,$x,$y,0,0,$imgInfo[0],$imgInfo[1],100);
+header('content-type: image/png');
+imagepng($img);
+
+
+spl_autoload_register('fun');//自动加载fun函数
+
+ucfirst($str) //首字母大写
+
+单一入口文件Application类
+<?php
+	defined('ACCESS') or exit;
+	class Application{
+		static function run(){
+			//设置字符集
+			self::setHeader();
+			//设置错误处理
+			self::setError();
+			//定义文件夹常量
+			self::setDir();
+			//创建文件夹
+			self::getDir();
+			//设置自动加载
+			self::setAutoload();
+			//设置session
+			self::setSession();
+			//设置配置文件
+			self::setConf();
+			//解析url
+			self::setUrl();
+			//设置权限
+			self::setPrivilege();
+			//分发
+			self::setDispatch();
+		}
+		//设置头信息
+		private static function setHeader(){
+			header('content-type: text/html;charset=utf-8');
+		}
+		//设置错误处理机制
+		private static function setError(){
+			@ini_set('error_reporting',1);
+			@ini_set('display_errors',1);
+		}
+		//定义文件夹路径常量
+		private static function setDir(){
+			define('ROOT_DIR',str_replace('\\','/',dirname(__DIR__)));
+			define('CORE_DIR',ROOT_DIR.'/Core');
+			define('MODEL_DIR',ROOT_DIR.'/Model');
+			define('VIEW_DIR',ROOT_DIR.'/View');
+			define('ACTION_DIR',ROOT_DIR.'/Action');
+			define('CONF_DIR',ROOT_DIR.'/Conf');
+			define('PUBLIC_DIR',ROOT_DIR.'/Public');
+		}
+		//创建文件夹
+		private static function getDir(){
+			if(!is_file(MODEL_DIR)) mkdir(MODEL_DIR);
+			if(!is_file(VIEW_DIR)) mkdir(VIEW_DIR);
+			if(!is_file(ACTION_DIR)) mkdir(ACTION_DIR);
+			if(!is_file(CONF_DIR)) mkdir(CONF_DIR);
+			if(!is_file(PUBLIC_DIR)) mkdir(PUBLIC_DIR);
+		}
+		//设置自动加载
+		public static function loadCore($class){
+			if(is_file(CORE_DIR.'/'.$class.'.class.php')){
+				include_once CORE_DIR.'/'.$class.'.class.php';
+			}
+		}
+		public static function loadModel($class){
+			if(is_file(MODEL_DIR.'/'.$class.'.class.php')){
+				include_once MODEL_DIR.'/'.$class.'.class.php';
+			}
+		} 
+		public static function loadView($class){
+			if(is_file(VIEW_DIR.'/'.$class.'.class.php')){
+				include_once VIEW_DIR.'/'.$class.'.class.php';
+			}
+		} 
+		public static function loadAction($class){
+			if(is_file(ACTION_DIR.'/'.$class.'.class.php')){
+				include_once ACTION_DIR.'/'.$class.'.class.php';
+			}
+		} 
+		private static function setAutoload(){
+			spl_autoload_register(array('Application','loadCore'));
+			spl_autoload_register(array('Application','loadModel'));
+			spl_autoload_register(array('Application','loadView'));
+			spl_autoload_register(array('Application','loadAction'));
+		}
+		//开启session
+		private static function setSession(){
+			@session_start();
+		}
+		//获取配置信息
+		private static function setConf(){
+			$GLOBALS['conf']=include_once CONF_DIR.'/conf.php';
+		}
+		//解析URL
+		private static function setUrl(){
+			$module=isset($_REQUEST['module'])?$_REQUEST['module']:'Privilege';
+			$action=isset($_REQUEST['action'])?$_REQUEST['action']:'login';
+			$module=ucfirst(strtolower($module));
+			$action=strtolower($action);
+			define('MODULE',$module);
+			define('ACTION',$action);
+		}
+		//设置权限
+		private static function setPrivilege(){
+			if(!(MODULE=='Privilege'&&(ACTION=='login'||ACTION=='captcha'||ACTION==' signin'))){
+				if(!isset($_SESSION['user'])){
+					if(isset($_COOKIE['user'])){
+						//验证登陆
+					}else{
+						header('location: index.php');
+					}
+				}
+			}
+		}
+		//派遣分发
+		private static function setDispatch(){
+			$module=MODULE.'Action';
+			$action=ACTION;
+			$module=new $module();
+			$module->$action();
+		}
+	}
+?>
+
+单例模式(使一个类只返回一个对象,指向的变量名可以不同)
+三私一公(私有静态属性，私有构造，私有克隆，公开静态创建的对象方法)
+class Single{
+		//保存对象
+		private static $obj;
+		//内部访问构造方法
+		private function __construct(){}
+		//内部访问克隆方法
+		private function __clone(){}
+		//外部用来创建类的静态方法
+		public static function getObj(){
+			if(isset(self::$obj)){
+				return self::$obj;
+			}else{
+				self::$obj=new Single();
+				return self::$obj;
+			}
+		}
+	}
+
+
+工厂模式：根据不同的需求，产生不同的对象(多个对象)
+public static function getObj($class){
+			//自动加载
+			self::setAutoload();
+			//返回需要的对象
+			return new $class;
+		}
+
+
+
+工厂单例模式(使不同的类只返回一个对象,指向的变量名可以不同)
+<?php
+	class FactorySingle{
+		//工厂单例模式
+		//3私1公(单例模式)
+		private static $obj=array();
+		private function __clone(){}
+		private function __construct(){}
+		public static function getObj($class){
+			self::setAutoload();
+			if(!isset(self::$obj[$class])){
+				self::$obj[$class]=new $class;
+			}
+			return self::$obj[$class];
+		}
+		//自动加载
+		public static function loadCore($class){
+			if(is_file('./Core/'.$class.'.class.php')){
+				include_once './Core/'.$class.'.class.php';
+			}
+		}
+		public static function loadAction($class){
+			if(is_file('./Action/'.$class.'.class.php')){
+				include_once './Action/'.$class.'.class.php';
+			}
+		}
+		private static function setAutoload(){
+			spl_autoload_register(array('Factory','loadCore'));
+			spl_autoload_register(array('Factory','loadAction'));
+		}
+	}
+	var_dump($a=FactorySingle::getObj('captcha'));echo '<br>';
+	var_dump($b=FactorySingle::getObj('captcha'));echo '<br>';
+	var_dump($b=FactorySingle::getObj('captcha'));echo '<br>'; 
+?>
+
+session机制
+
+session_start();
+1.初始化sessionID
+    1.1从cookie中获取
+    1.2自动生成sessionID
+2.将sessionid写入到响应头
+3.初始化$_SESSION
+    3.1创建$_SESSION变量
+    3.2将session文件中的数据进行反序列化
+存放到$_SESSION里
+
+$_session增删改查
+
+脚本执行结束
+1.释放所有内存，包括$_SESSION
+2.session系统会将$_SESSION里的数据进行序列化
+保存到sessionId对应的文件中
+
+
+
+
+session写入数据库
+//修改系统session机制
+session_set_save_handler('sess_open','sess_close','sess_read','sess_write','sess_destroy','sess_gc');
+//设置session垃圾处理的概率
+ini_set('session.gc_divisor',1);
+//开启session(session_start()时)
+function sess_open(){
+	mysql_connect('localhost:3306','root','admin');
+	mysql_select_db('session');
+}
+//session关闭(脚本结束)
+function sess_close(){
+	mysql_close();
+}
+//读取session文件
+function sess_read($sess_id){
+	$life_time=ini_get('session.gc_maxlifetime');
+	$max_time=time()-$life_time;
+	$sql="select * from session where sess_id='$sess_id' and sess_time>='$max_time'";
+	$res=mysql_query($sql);
+	$arr=mysql_fetch_assoc($res);
+	if($arr['sess_info']){
+		return $arr['sess_info'];
+	}
+}
+//写入session(脚本结束时)
+function sess_write($sess_id,$sess_info){
+	$sess_time=time();
+	$sql="replace into session set sess_id='$sess_id',sess_info='$sess_info',sess_time='$sess_time'";
+	mysql_query($sql);
+}
+//销毁当前session(session_destroy()时)
+function sess_destroy($sess_id){
+	$sql="delete from session where sess_id='$sess_id'";
+	mysql_query($sql);
+}
+//当session垃圾处理机制被触发时,删掉过期的session数据
+function sess_gc(){
+	$life_time=ini_get('session.gc_maxlifetime');
+	$max_time=time()-$life_time;
+	$sql="delete from session where sess_time<'$max_time'";
+}
+
+session入库类
+<?php
+	class Session extends DB{
+		protected $table='session';
+		function  __construct(){
+			//更改系统session机制
+			session_set_save_handler(
+				array($this,'sess_open'),
+				array($this,'sess_close'),
+				array($this,'sess_read'),
+				array($this,'sess_write'),
+				array($this,'sess_destroy'),
+				array($this,'sess_gc')
+			);
+			//开启session
+			@session_start();
+		}
+		function sess_open(){
+			//调用父类构造方法初始化数据库
+			parent::__construct();
+		}
+		function sess_close(){
+			//暂不关闭数据库，防止影响后续操作
+		}
+		//从数据库读取session
+		function sess_read($sess_id){
+			//比较session的过期时间 where s_expire>time
+			$time=time();
+			$sql="select * from {$this->getTableName()} where s_id='{$sess_id}' and s_expire>'{$time}'";
+			$row=$this->db_getRow($sql);
+			return $row['s_info'];
+		}
+		function sess_write($sess_id,$sess_info){
+			//计算出session的过期时间
+			$sess_expire=time()+ini_get('session.gc_maxlifetime');
+			$sql="replace into {$this->getTableName()} value('{$sess_id}','{$sess_info}','{$sess_expire}')";
+			return $this->db_insert($sql);
+		}
+		function sess_destroy($sess_id){
+			$sql="delete from {$this->getTableName()} where s_id='{$sess_id}' limit 1";
+			return $this->db_delete($sql);
+		}
+		function sess_gc(){
+			$time=time();
+			$sql="delete from {$this->getTableName()} where s_expire<'{$time}'";
+			return $this->db_delete($sql);
+		}
+
+	}
+?>
+
+
+转义
+addslashes()
+反转义
+stripslashes()
+
+ob缓存
+什么是ob缓存：
+ob缓存：output_buffering:输出缓存，我们请求一个php页面，实际上是通过三个缓存的。
+ob缓存(如果开启)-->程序缓存-->浏览器缓存，要注意：程序缓存和浏览器缓存必须存在
+
+ob_start(); //开启ob缓存
+ob_clean(); //清除ob缓存里的数据
+ob_end_clean(); //清除ob缓存里的数据并关闭ob缓存
+ob_flush(); //将ob缓存里的数据放到程序缓存中
+ob_end_flush(); //将ob缓存里的数据放到程序缓存中并关闭ob缓存
+ob_get_contents(); //获取ob缓存中的数据
+
+简单的ob缓存案例
+<?php
+	$filename='ob.html';
+	//缓存时间为10秒
+	if(is_file($filename)&&filemtime($filename)+10>time()){
+		include_once $filename;exit;
+	}
+	$pdo=new PDO('mysql:port=3306;dbname=ajax;host=localhost','root','admin');
+	$res=$pdo->query('select * from tq limit 10');
+	while($row=$res->fetch(PDO::FETCH_ASSOC)){
+		$arr[]=$row;
+	}
+	unset($res);
+	unset($pdo);
+	//开启ob缓存
+	ob_start();
+	echo time();
+?>
+<meta charset='utf-8'>
+<table border=1>
+<?php foreach($arr as $val):?>
+<tr><td><?php echo $val['code']?></td><td><?php echo $val['city']?></td></tr>
+<?php endforeach;?>
+</table>
+<?php
+	//得到ob缓存中的数据另存为$filename文件
+	$filecon=ob_get_contents();
+	file_put_contents($filename,$filecon);	
+?>
+
+
+从字符串中去除 HTML 和 PHP 标记
+strip_tags ( string $str [, string $allowable_tags ] )
+
+
+
+取出url中的参数字符串(分页条件不丢失)
+$_SERVER['QUERY_STRING']
+处理函数
+/**
+ *@part $flag 要去掉的url参数 如：'page' 则去掉url中page=xxx
+ *@part $type 返回值方式, 1直接输出url参数  0返回有用的数组数据
+**/
+function mkurl($flag,$type=0){
+		//取出url？号后的字符串
+		 $str=!empty($_SERVER['QUERY_STRING'])?$_SERVER['QUERY_STRING']:'page=1';
+		 //分解成数组
+		 $urlArr=explode('&',$str);
+		 //遍历去掉$flag标记的数值
+		 for($i=0;$i<count($urlArr);$i++){
+			 $urlArr[$i]=urldecode($urlArr[$i]);
+			if(preg_match('/'.$flag.'=/',$urlArr[$i])){
+				unset($urlArr[$i]);
+			}
+		 }
+		 if(!empty($urlArr)){
+			//合并成url字符串并去掉首尾&
+			$url=trim(implode('&',$urlArr),'&');
+			foreach($urlArr as $val){
+				//对数组的值再分解
+				$a=explode('=',$val);
+				$sou[$a[0]]=urldecode($a[1]);
+				//该字段表内重复需要指定表名
+				if($a[0]=='typeid')$a[0]='arc.typeid';
+				//值加上''号以便sql语句正确(同时进行中文url转码)
+				$urlarr[]=$a[0]."='".urldecode($a[1])."'";
+			}
+			//将新数组分解成where语句
+			$where=' and '.implode(' and ',$urlarr);
+		 }else{
+			//url参数为空处理
+			$url='';
+			$where='';
+		 }
+		 if($type!=0)echo $url;
+		 return array('url'=>$url,'where'=>$where,'urlArr'=>$urlArr,'sou'=>$sou);
+	 }
+
+
+
+生成唯一ID
+uniqid();
+
+
+文件锁
+$fp=fopen('path','r');
+$bool=flock($fp,LOCK_EX );//只允许加锁一次,其余的锁定返回false
+$bool=flock($fp,LOCK_UN);//文件解锁,使其余进程可以锁定
+fclos($fp);//关闭文件
+
+//文件锁,同一时间只能生成一个订单
+//@param int status 1加锁 0解锁
+private function fileLock($status=1){
+	$lock=false;
+	if($status==1){
+		//加锁
+		//将文件指针$fp存到当前对象的属性中(函数中建议存到常量或静态数组中)
+		$this->fileLock=$fp=fopen('./Public/lock','a+');
+		$try=10;
+		do{
+			$lock=flock($fp,LOCK_EX);
+			if(!$lock){
+				//延迟0.5毫秒(减轻服务器压力)
+				usleep(50000);
+			}
+		}while(!$lock&&$try-->1);
+	}elseif($status==0){
+		//解锁
+		$fp=$this->fileLock;
+		$lock=flock($fp,LOCK_UN);
+		fclose($fp);
+	}
+	return $lock;
+}
+
+
+
+
+
+链表
+
+<?php
+	//单链表
+	class hero{
+		var $name;
+		var $sn;
+		var $names;
+		var $next;
+		public function __construct($sn='',$name='',$names='',$next=''){
+			$this->name=$name;
+			$this->sn=$sn;
+			$this->names=$names;
+			$this->next=$next;
+		}
+	}
+	//头结点
+	$head=new hero();
+	//增加链表节点
+	function addHero($head,$hero){
+		$cul=$head;
+		while($cul->next!=null){
+			if($cul->next->sn>$hero->sn){
+				$hero->next=$cul->next;
+				$cul->next=$hero;
+				$flag='';
+				break;
+			}
+			$cul=$cul->next;
+		}
+		if(!isset($flag))
+		$cul->next=$hero;
+	}
+	//遍历链表
+	function showHero($head){
+		$cul=$head;
+		while($cul->next!=null){
+			echo $cul->next->sn.'　'.$cul->next->name.'　'.$cul->next->names.'<br>';
+			$cul=$cul->next;
+		}
+		//echo 'a'.$head->name.'<br>';
+	}
+	//删除链表节点
+	function delHero($head,$sn){
+		$cul=$head;
+		while($cul->next!=null){
+			if($cul->next->sn==$sn){
+				$cul->next=$cul->next->next;
+				$flag='';
+				break;
+			}
+			$cul=$cul->next;
+		}
+		if(!isset($flag))echo $sn.'的英雄没找到<br>';
+		
+	}
+	//修改节点
+	function editHero($head,$hero){
+		$cul=$head;
+		while($cul->next!=null){
+			if($hero->sn==$cul->next->sn){
+				
+				$hero->next=$cul->next->next;
+				$cul->next=$hero;
+				$flag='';
+				break;
+			}
+			$cul=$cul->next;
+		}
+		if(!isset($flag))echo $hero->sn.'的英雄没找到<br>';
+	}
+
+
+
+	//测试
+	
+	//增加节点
+	$hero=new hero(1,'小宝','小宝宝');
+	addHero($head,$hero);
+	$hero=new hero(2,'小贝','小贝贝');
+	addHero($head,$hero);
+	$hero=new hero(3,'小白','小白白');
+	addHero($head,$hero);
+	$hero=new hero('6','香兰','向兰兰');
+	addHero($head,$hero);
+	$hero=new hero('4','李峰','李峰分');
+	addHero($head,$hero);
+	$hero=new hero('5','刘雪','刘雪雪');
+	addHero($head,$hero);
+	$hero=new hero('7','寒梅','韩梅梅');
+	addHero($head,$hero);
+	
+	//遍历节点
+	showHero($head);
+
+	//删除节点
+	echo '<br><br>删除后<hr>';
+	delHero($head,2);
+	showHero($head);
+
+	//修改节点
+	echo '<br><br>修改后<hr>';
+	$hero=new hero('4','赵峰','赵凤凤');
+	editHero($head,$hero);
+	showHero($head);
+?>
+
+
+<?php
+	//约瑟夫问题
+	//环形链表
+
+	
+	class child{
+		var $sn;
+		var $next;
+		public function __construct($sn){
+			$this->sn=$sn;
+		}
+	}
+
+	//创建环形链表
+	
+	function create(&$first,$k){
+		for($i=0;$i<$k;$i++){
+			if($i==0){
+				//单个元素构成环形链表
+				$first=new child($i+1);
+				$cur=$first;
+				//$cur->next=$first;
+			}else{
+				//多个元素构成环形链表
+				$cur->next=new child($i+1);
+				$cur=$cur->next;
+				//$cur->next=$first;
+			}
+		}
+		$cur->next=$first;
+	}
+
+	//遍历环形链表
+	function show($first){
+		$cur=$first;
+		while($cur->next!=$first){
+			echo $cur->sn.'<br>';
+			$cur=$cur->next;
+		}
+		//最后一个元素
+		echo $cur->sn.'<br>';
+
+		/****或者直接全部遍历
+		do{
+			echo $cur->sn.'号<br>';
+			$cur=$cur->next;
+		}while($cur!=$first);
+		*****/
+	}
+	//约瑟夫问题
+	/*
+	*param1 object first 环形链表头
+	*param2	int	   m	 从第几个元素开始
+	*param3 int    n     步长
+	*/
+	function yuesefu(&$first,$m,$n){
+		$cur=$first;
+		//找出最后一个元素
+		while($cur->next!=$first){
+			$cur=$cur->next;
+		}
+		$curl=$cur;
+
+		//从第m个元素开始
+		for($i=1;$i<$m;$i++){
+			$first=$first->next;
+		}
+
+		//步长为n，开始出列
+		while($curl!=$first){
+			for($i=1;$i<$n;$i++){
+				$curl=$curl->next;
+				$first=$first->next;
+			}
+			echo $first->sn.'号出列<br>';
+			//断掉节点
+			$first=$first->next;
+			$curl->next=$first;
+		}
+
+		//最后剩下的元素
+		echo $first->sn;
+
+	}
+
+
+	//测试
+
+	$first=null;
+	$k=8080;
+	$m=26;
+	$n=8;
+	create($first,$k);
+	//show($first);
+
+	yuesefu($first,$m,$n);
+?>
+
+
+
+
+数据采集curl
+！！需要开启扩展
+
+使用：
+1.初始化curl
+2.设置参数
+3.执行curl
+4.关闭句柄
+
+操作步骤：
+1、初始化     $ch = curl_init()
+2、设置参数   curl_setopt($ch,参数,val)
+3、执行       curl_exec($ch)
+4、关闭       curl_close($ch)
+输出错误信息：curl_error($ch)
+
+第2步设置时，常用参量
+CURLOPT_URL  请求url
+CURLOPT_RETURNTRANSFER（1）捕获url响应信息，不输出
+CURLOPT_HEADER(0或1) 设置请求头信息
+CURLOPT_POST(1) 设置是否使用POST请求，1开启
+CURLOPT_POSTFIELDS 设置传输的数据，数组
+//禁止SSL校检操作
+curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
+
+<?php
+header('Content-type:text/html;charset=utf-8');
+$url = "http://www.xiaohuangji.com/ajax.php";
+//1、初始化curl
+$ch = curl_init();
+//2、设置参数,参数1初始化$ch,参数2设置常量,参数3常量的值
+//设置请求url网址
+curl_setopt($ch,CURLOPT_URL,$url);
+//捕获url响应信息不输出
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+//设置请求头信息
+curl_setopt($ch,CURLOPT_HEADER,0);
+//设置传输post数组
+$data = array(
+'para'=>$keyword
+);
+//设置开启POST请求
+curl_setopt($ch,CURLOPT_POST,1);
+//传输参数值
+curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+//3、执行curl
+$contentStr = curl_exec($ch);
+//4、关闭句柄
+curl_close($ch);
+
+?>
+
+
+
+命名空间
+在php语言里面,语法规则同名的函数、类名、常量在一个请求里不允许出现多次，如果有的程序不得以必须出现
+同名的函数、类名、常量，可以吧它们放到不同的空间里面做请求，这个空间就是命名空间
+
+命名空间针对函数、类名、常量起作用,统称为元素
+
+常量声明
+define(key,val);//忽略命名空间
+const key=val; //受命名空间影响
+
+访问元素
+1.默认当前空间(挨着最近的空间)(非限定名称)
+2.访问其他空间的元素       \空间名\元素(完全限定名称)
+3.访问当前空间子空间的元素  当前空间子空间名\元素 (限定名称) 当前空间和子空间名拼接
+
+
+引入机制(降低空间书写复杂度)
+
+空间引入
+use a\b\c\d;
+echo d\fun(); //通过限定名称方式访问(限定名称是引入空间名的最后一级名称)
+
+元素引入（只能引入类）
+use a\b\c\d\类名;
+echo 类名::$name; //非限定名称访问
+如果当前空间有元素和引入的元素重名，应该给引入的元素起别名
+use a\b\c\d\类名 as 类名X;
+echo 类名X::$name; //非限定名称访问
+
+公共空间(无namespace关键字)
+在有命名空间的设置的程序中访问用  \元素
+通过非限定方式访问:先找当前空间元素(没有再找公共空间)
+
+注意
+1.第一个namespace前面不能有任何代码(header也要写在下面)
+2.命名空间名称可以重复,但是同名空间里不能有同名元素
+
+<?php
+	//namespace 空间名
+	namespace space1;
+
+	const USER='root';
+	function a(){
+		echo 'a';
+	}
+
+	namespace space2;
+
+	const USER='admin';
+	function a(){
+		echo 'b';
+	}
+	
+	//默认当前空间(挨着最近的空间)
+	a();
+	echo USER;
+
+
+	//访问其他空间的元素
+	\space1\a();
+	echo \space1\USER;
+	
+
+	echo '<hr>';
+	
+
+	//多级空间
+	namespace xian\yanta\yuhua;
+
+	class stu{
+		public $name='xiaobai';
+		static $age='12';
+	}
+
+	namespace xianyang\liquan\junma;
+
+	class stu{
+		public $name='xiaohei';
+	}
+
+	//访问当前空间
+	$stu=new stu();
+	echo $stu->name;
+
+	//访问其他空间
+	$stu=new \xian\yanta\yuhua\stu();
+	echo $stu->name;
+
+	echo '<hr>';
+
+	namespace d1;
+	
+	function e(){
+		echo 'e';
+	}
+	
+	namespace d2\a;
+	function e(){
+		echo 'e2';
+	}
+
+	namespace d2;
+	
+	function e(){
+		echo 'e1';
+	}
+	//1.非限定名称
+	e();
+
+	//2.完全限定名称
+	\d1\e();
+
+	//3.限定名称(自动拼接空间名)
+	a\e();
+
+	echo '<hr>';
+	//空间引入
+	use xian\yanta\yuhua;  //引入空间
+	$stu=new yuhua\stu();  //限定名称方式访问
+	echo $stu->name;
+
+	echo '<hr>';
+	//元素引入(仅类)
+	use xian\yanta\yuhua\stu;
+	echo stu::$age; //非限定名称访问
+?>
+
+
+

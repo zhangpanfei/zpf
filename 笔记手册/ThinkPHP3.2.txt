@@ -1,0 +1,53 @@
+项目index.php
+define(‘APP_DEBUG’,true);//开启开发模式
+include_once ‘../ThinkPHP/ThinkPHP.php’;
+
+模板常量
+{$Think.const.常量}
+
+空操作(空方法)
+1.每个控制器中或者父类中 function __call($m,$arg){}
+控制器父类位置 Thinkphp/Libray/Think/Controller.class.php
+2.使用空方法 function _empty(){}
+
+$this->display('C/V');//其他控制器的模板
+
+文件被谁引入的,器相对地址就相对引入文件设置
+
+
+tp常量(模板可以直接写)(参考行为目录里的ParseTemplateBehavior.class.php)
+__MODULE__  分组路由
+__CONTROLLER__  控制器路由
+__ACTION__   方法路由
+__SELF__  路由地址的全部信息(包含参数)
+__APP__  当前应用地址
+__ROOT__  当前网站地址
+
+MODEL_NAME  分组名
+CONTROLLER_NAME  控制器名
+ACTION_NAME 方法名
+
+获取全部常量(arr)
+get_defined_constants(true);
+
+分组
+'DEFAULT_MODULE' => 'Home',
+'MODULE_ALLOW_LIST' => array('Home','Admin'),
+
+模板替换
+'TMPL_PARSE_STRING'  =>array(     '__PUBLIC__' => '/Common', // 更改默认的/Public 替换规则     '__JS__'     => '/Public/JS/', // 增加新的JS类库路径替换规则     '__UPLOAD__' => '/Uploads', // 增加新的上传路径替换规则)
+
+模板使用函数
+{:函数(参数)}  //会输出该函数的返回值
+{参数|函数} 或  {参数|函数=###,'参数2','参数3'|函数2=###,'参数2'}
+
+
+页面调试信息显示
+'SHOW_PAGE_TRACE' =>true,
+
+$model->select(2)  //查询id=2
+$model->select('1,2,3,4,5')  //查询 id in('1,2,3,4,5');
+
+
+RBAC
+基于角色的权限控制

@@ -1,0 +1,272 @@
+模型表：dede_channeltype
+栏目表：dede_arctype
+内容表：dede_archives
+模型附加表：dede_addonXXX
+
+单标签
+{dede:标签名 属性1=val 属性2=val.../}
+{dede:global.cfg_templets_skin/}
+双标签
+{dede:标签名 属性1=val 属性2=val...}
+[field:字段名称/]
+{/dede:标签名}
+
+模板位置名字查看
+栏目管理>> 修改栏目>> 高级选项
+
+标签不能嵌套
+需要嵌套改成字段标签
+{dede:global.cfg_templets_skin/} => [field:global.cfg_templets_skin/]
+
+
+取出栏目(dede_arctype)
+{dede:channel type='top' row='8' currentstyle="<li><a href='~typelink~' class='thisclass'>~typename~</a> </li>"}
+ <li><a href='[field:typelink/]'>[field:typename/]</a> </li>
+{/dede:channel}
+
+typeid = '0' 上级栏目ID
+row = '100' 调用栏目数
+col = '1' 分多少列显示（默认为单列）
+type = 'son' son表示下级栏目,self表示同级栏目,top顶级栏目
+currentstyle = '' 应用样式
+
+取出具体内容(dede_archives)
+{dede:arclist  channelid='17' addfields='附加表的字段逗号隔开'  flag='h' typeid='' row='' col='' titlelen='' infolen='' 
+imgwidth='' imgheight='' listtype='' orderby='' keyword='' limit='0,1'}
+<a href='[field:arcurl/]'>[field:litpic/]</a>
+<a href='[field:arcurl/]'>[field:title/]</a>
+{/dede:arclist}
+
+col='' 分多少列显示（默认为单列）
+row='10' 返回文档列表总数
+typeid='' 栏目ID,在列表模板和档案模板中一般不需要指定，在封面模板中允许用","分开表示多个栏目；
+titlelen = '30' 标题长度 等同于titlelength
+infolen='160' 表示内容简介长度 等同于infolength
+imgwidth='120' 缩略图宽度
+imgheight='90' 缩略图高度
+listtype='all' 栏目类型（顶级栏目？？）
+orderby='sortrank' 文档排序方式
+§ orderby='hot' 或 orderby='click' 表示按点击数排列
+§ orderby='sortrank' 或 orderby='pubdate' 按出版时间排列
+§ orderby='near'
+§ orderby=='lastpost' 按最后评论时间
+§ orderby=='scores' 按得分排序
+§ orderby='id' 按文章ID排序
+§ orderby='rand' 随机获得指定条件的文档列表
+keyword='' 含有指定关键字的文档列表，多个关键字用","分
+innertext = '' 单条记录样式
+aid='' 指定文档ID
+idlist ='' 提取特定文档（文档ID）
+isweight = 'n' 开启按照权重排序,默认为n/N,如果设为y/Y,则内容会按照weight字段排序,数值越小越靠前
+channelid 频道ID
+limit='' 起始,结束 表示限定的记录范围（如：limit='1,2'）
+flag = 'h' 自定义属性值：头条[h]推荐[c]图片[p]幻灯[f]滚动[s]跳转[j]图文[a]加粗[b]
+noflag = '' 同flag，但这里是表示不包含这些属性
+orderway='desc' 值为 desc 或 asc ，指定排序方式是降序还是顺向排序，默认为降序
+subday='天数' 表示在多少天以内的文档
+
+引入文件(里面有标签替换后)
+{dede:include filename='head.htm'/}
+
+自动增长
+[field:global.autoindex/]
+
+字段标签中可以使用php函数
+[field:字段名 function='php函数']
+[field:typename function='md5(@me)'] //@me表示该字段输出的内容
+如果想使用自定义函数在 include/extend.func.php 文件中定义
+//获取星星
+function getstar($num){
+	global $cfg_templets_skin;
+	$jin=floor($num/2);
+	$hui=5-$jin;
+	$img='';
+	for($i=0;$i<$jin;$i++){
+		$img.="<img src='".$cfg_templets_skin."/images/star.jpg'>";
+	}
+	for($j=0;$j<$hui;$j++){
+		$img.="<img src='".$cfg_templets_skin."/images/star_grid.jpg'>";
+	}
+	return $img;
+}
+
+[field:pingfen function='getstar(@me)'/]
+
+
+字段标签中可以使用php函数处理简单的逻辑
+[field:字段名 runphp='yes']
+php代码
+[/field:字段名]
+
+[field:id runphp='yes']
+ if(@me=='1'){                //@me表示字段id的值
+	@me='第一个';
+ }else{
+	@me='不是第一个';
+ }
+[/field:id]
+
+全局变量 include/common.inc.php
+{dede:global.全局变量名/}
+
+
+修改arclist标签 include/taglib/arclist.lib.php
+增加按pingfen字段排序
+else if($orderby == 'pingfen') $ordersql = " order by arc.pingfen $orderWay";
+
+取出所有栏目包括下面子栏目(该标签可以嵌套)
+{dede:channelartlist typeid='0'}
+{dede:field name='typename'/}|
+{dede:channel}
+[field:typename/]
+{/dede:channel}<br>
+{/dede:channelartlist}
+取出顶级栏目id为7(电影)的栏目
+{dede:channelartlist typeid='7' row='3'} //typeid副栏目ID
+{dede:field name='typename'/}| //副栏目名字
+{dede:arclist row=3}   //或者row='0,3'
+[field:title/]&nbsp
+{/dede:arclist}<br>
+{/dede:channelartlist}
+
+typeid = '0' 频道ID,多个请用","分隔
+row = '20' 获取的栏目返回值
+
+
+自定义条件
+在标签php文件中合适的位置加上
+$mywhere=$ctag->getatt('mywhere');
+	if(!empty($mywhere)){
+		$orwheres[] = $mywhere;
+	}
+
+{dede:arclist mywhere="diqu='大陆' and yuan='国语' "}
+
+内容详情页面取出单个数据
+{dede:field.字段名/}
+
+面包屑导航
+{dede:field.position/}
+
+内容详情页面中取出和当前内容同一栏目(类型)的数据
+{dede:arclist} //您可能还喜欢
+
+在内容详情页面中取出栏目名称
+{dede:type}[field:typename/][field:typelink]{/dede:type}
+或者{dede:field.typename/}
+或者{dede:field name='typename'/}
+
+在/plus/目录下可以创建自己写的php页面（如ajax.php）
+
+采集
+修改后台./templets/co_add_step0.htm文件
+$dsql->SetQuery("Select id,typename From `#@__channeltype` where id in(1,2,17) order by id asc "); //增加新ID 17
+
+采集原理
+打开扩展 extension=php_curl.dll
+
+<?php
+	$s=curl_init(); //初始化curl会话
+	$url='http://zz.dede.com/a/dianying/';//指定一个采集地址
+	//设置curl传输项
+	/*
+	 *curl_setopt($s,CURLOPT_URL,$url);直接输出
+	 *curl_setopt($s,CURLOPT_RETURNTRANSFER,1);//返回字符串
+	 */
+	curl_setopt($s,CURLOPT_URL,$url);
+	curl_setopt($s,CURLOPT_RETURNTRANSFER,1);
+	echo curl_exec($s);
+	//采集图片
+    $url='http://zz.dede.com/uploads/allimg/150804/1-150P41000490-L.jpg';
+	curl_setopt($s,CURLOPT_URL,$url);
+	curl_setopt($s,CURLOPT_RETURNTRANSFER,1);
+	curl_setopt($s,CURLOPT_REFERER,'http:://zz.dede.com/');//采集防盗链的网站(在http请求头中加入referer信息)
+	$str=curl_exec($s);
+	file_put_contents('2.jpg',$str);
+?>
+
+
+计算当天最后时间戳 mktime(23,59,59,date('m'),date('d'),date('Y'));
+
+计算arcurl（参考arclist.lib.php文件）
+sql语句：$sql="SELECT arc.*,tp.typedir,tp.typename,tp.corank,tp.isdefault,tp.defaultname,tp.namerule,tp.namerule2,tp.ispart,
+            tp.moresite,tp.siteurl,tp.sitepath,addf.yuyan,addf.pingfen 
+             FROM `dede_archives` arc left join `dede_arctype` tp on arc.typeid=tp.id
+          left join `dede_addonmovie` addf on addf.aid=arc.id where arc.channel=17";
+$dsql->setquery($sql);
+ $dsql->execute('me');
+ while($row=$dsql->getarray('me')){
+	 $row['arcurl'] = GetFileUrl($row['id'],$row['typeid'],$row['senddate'],$row['title'],$row['ismake'],$row['arcrank'],$row['namerule'],$row['typedir'],$row['money'],$row['filename'],$row['moresite'],$row['siteurl'],$row['sitepath']);
+	 $data[]=$row;
+ }
+计算typelink同arcurl做法，参考channel.lib.php文件,写出相应的sql语句（参考文件中最近的sql语句）,在每条记录数组中加入$row['typelink']
+
+sql语句标签
+{dede:sql sql='sql语句'}
+[field:字段名/]
+{/dede:sql}
+
+
+邮箱邮件发送
+具体代码：
+<?php
+        require 'PHPMailer/class.phpmailer.php'; //引入邮件发送类
+        $mail             = new PHPMailer();
+		/*服务器相关信息*/
+		$mail->IsSMTP();                        //设置使用SMTP服务器发送
+		$mail->SMTPAuth   = true;               //开启SMTP认证
+		$mail->Host       = 'smtp.163.com';   	    //设置 SMTP 服务器,自己注册邮箱服务器地址
+		$mail->Username   = 'phpdaxia001';  		//发信人的邮箱名称
+		$mail->Password   = 'php1234';          //发信人的邮箱密码
+		/*内容信息*/
+		$mail->IsHTML(true); 			         //指定邮件格式为：html
+		$mail->CharSet    ="UTF-8";			     //编码
+		$mail->From       = 'phpdaxia001@163.com';	 		 //发件人完整的邮箱名称
+		$mail->FromName   = '中国武术网2';			 //发信人署名
+		$mail->Subject    = "关于武林盟主的选举";  			 //信的标题
+		$mail->MsgHTML("尊敬的用户：明天开会，会后，我请客");  				 //发信内容
+		$mail->AddAttachment("15.jpg");	     //附件
+		/*发送邮件*/
+		$mail->AddAddress("1973001898@qq.com");  			 //收件人地址
+        //使用send函数进行发送
+		if($mail->Send()) {
+		  	echo 'ok2';
+		} else {
+            echo $mail->ErrorInfo;
+		}
+?>
+
+封装成一个邮件发送类。
+
+具体的代码：
+<?php
+require dirname(__FILE__).'/PHPMailer/class.phpmailer.php';
+class Mail{
+    static function send($address,$title,$content,$fromuser='user'){
+        $mail             = new PHPMailer();
+		/*服务器相关信息*/
+		$mail->IsSMTP();                        //设置使用SMTP服务器发送
+		$mail->SMTPAuth   = true;               //开启SMTP认证
+		$mail->Host       = 'smtp.163.com';   	    //设置 SMTP 服务器,自己注册邮箱服务器地址
+		$mail->Username   = 'phpdaxia001';  		//发信人的邮箱名称
+		$mail->Password   = 'php1234';          //发信人的邮箱密码
+		/*内容信息*/
+		$mail->IsHTML(true); 			         //指定邮件格式为：html
+		$mail->CharSet    ="UTF-8";			     //编码
+		$mail->From       = 'phpdaxia001@163.com';	 		 //发件人完整的邮箱名称
+		$mail->FromName   = $fromuser;			 //发信人署名
+		$mail->Subject    = $title;  			 //信的标题
+		$mail->MsgHTML($content);  				 //发信内容
+		$mail->AddAttachment("15.jpg");	     //附件
+		/*发送邮件*/
+		$mail->AddAddress($address);  			 //收件人地址
+        //使用send函数进行发送
+		if($mail->Send()) {
+		    return true;
+		} else {
+            return  false;//$mail->ErrorInfo;
+		}
+    }
+    
+}
+?>

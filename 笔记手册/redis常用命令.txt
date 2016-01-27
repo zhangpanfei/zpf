@@ -1,0 +1,69 @@
+1.string(字符串)
+
+增/改
+set key val
+删
+del key
+查
+get key
+
+2.list(链表)
+
+长度(php)
+lsize('key')
+
+增
+rpush key1 val1
+rpush key1 val2
+rpush key1 val3 ......
+
+删(php中)
+$redis->lrem("id",$id);
+
+改
+lset key val new_val
+
+查
+lrange key 0(头) -1(尾)
+
+3.set(集合)
+
+增
+sadd key1 val1
+sadd key1 val2
+sadd key1 val3 ......
+
+删
+srem key val
+
+改
+
+查
+smembers key 
+
+4.hash(哈希)
+
+增
+(单个下标)
+hset key index1 val
+hset key index2 val
+hset key index3 val ......
+(所有下标)
+hmset key index1 val index2 val index3 val ......
+
+删
+del key
+
+改
+hset key index val
+
+查
+(单个下标)
+hget key index
+(所有下标)
+hgetall key
+
+系统
+auth 密码
+flushdb 清空数据
+incr key   自增长

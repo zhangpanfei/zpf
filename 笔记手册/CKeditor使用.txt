@@ -1,0 +1,120 @@
+1.安装
+下载(www.ckeditor.com)-》解压-》将ckeditor和ckfinder文件夹放到项目
+
+2.引入
+(1)简单方式
+<script language='javascript' src='./ckeditor/ckeditor.js'></script>
+<textarea class='ckeditor' id='suibian'></textarea>
+ !!!textarea元素必须有 class='ckeditor' 和 name/id属性
+(2)标准方式
+<script language='javascript' src='./ckeditor/ckeditor.js'></script>
+<script language='javascript'>
+window.onload=function(){
+	 //调用CKEDITOR类的replace方法
+	 CKEDITOR.replace('myck'); //参数是元素ID名
+}
+</script>
+<textarea  id='myck'></textarea>
+(3)高级方式
+<script language='javascript' src='./jquery.js'></script>
+<script language='javascript' src='./ckeditor/ckeditor.js'></script>
+<script language='javascript' src='./ckeditor/adapters/jquery.js'></script>
+<script language='javascript'>
+window.onload=function(){
+	 $('#Myck').ckeditor();
+}
+</script>
+<textarea  id='Myck'></textarea>
+
+3.配置
+(1)修改系统提供的配置文件config.js
+//自定义配置
+//config.配置项 = 值
+config.width = 500;
+config.height = 300;
+
+(2)自定义配置文件，形式与系统配置文件config.js一致
+//新建一个用户配置文件，配置文件的格式与config.js格式完全一致
+config.width='300';
+config.height='300';
+config.uiColor='#654321';
+//在标准方式的replace方法第二个参数json类型中引用自定义的配置文件
+CKEDITOR.replace('myck',{customConfig:'config_my.js'});
+
+(3)页内配置
+//在标准方式的replace方法第二个参数json类型中写入配置
+CKEDITOR.replace('ck1',{width:300,height:200,uiColor:'#123456'});
+
+4.使用Ckfinder
+//要在Ckeditor的配置项中加载ckfinder的使用，加载几个静态页，用户文件的管理
+
+//文件的上传管理：加载CKfinder
+config.filebrowserBrowseUrl =	'./ckfinder/ckfinder.html';	
+config.filebrowserImageBrowseUrl = './ckfinder/ckfinder.html?Type=Images';	
+config.filebrowserFlashBrowseUrl = './ckfinder/ckfinder.html?Type=Flash';	
+config.filebrowserUploadUrl = './ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';	
+config.filebrowserImageUploadUrl = './ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images';	
+config.filebrowserFlashUploadUrl = './ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';
+
+但是，因为Ckfinder默认的是不允许用户上传文件，所有没有权限进行文件上传
+
+5.修改配置文件
+  权限开放
+  找到config.php文件来开放权限
+
+function CheckAuthentication()
+{
+	//return false;
+	//开放权限
+	return true;
+}
+
+6.修改文件上传路径
+config.php中找到路径并进行修改
+//修改路径为当前目录的uploads文件夹，只能相对网站的根目录来控制
+$baseUrl = '/ckeditor/uploads/';
+
+$config['ResourceType'][] = Array(
+		'name' => 'Images',
+		//修改子文件夹目录，按照年月日的目录方式
+		'url' => $baseUrl . 'images' . date('/Y/m/d') , 
+		'directory' => $baseDir . 'images' . date('/Y/m/d') ,
+		'maxSize' => 0,
+		'allowedExtensions' => 'bmp,gif,jpeg,jpg,png',
+		'deniedExtensions' => '');
+
+7.文件重命名
+修改文件 ckfinder\core\connector\php\php5\CommandHandler\FileUpload.php
+文件后面加上函数
+function getRandomName(){
+	$filename=time().mt_rand(100,999);
+	return $filename;
+}
+
+//修改上传文件的名字
+$sExtension = CKFinder_Connector_Utils_FileSystem::getExtension($sFileName);//得到文件后缀名
+$sFileName = getRandomName() . '.' . $sExtension;	//拼凑完整文件名
+
+8.修改查看服务器选项(用户权限)
+$config['AccessControl'][] = Array(
+		'role' => '*',
+		'resourceType' => '*',
+		'folder' => '/',
+
+		'folderView' => true,
+		'folderCreate' => FALSE,
+		'folderRename' => FALSE,
+		'folderDelete' => FALSE,
+
+		'fileView' => true,
+		'fileUpload' => true,
+		'fileRename' => FALSE,
+		'fileDelete' => FALSE);
+
+9.提交数据
+将textarea标签放到form表单要有name属性用于接收
+
+入库时要防注入
+addslashes()
+获取数据反转义
+stripslashes()

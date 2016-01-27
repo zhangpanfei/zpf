@@ -1,0 +1,213 @@
+XML作用
+1.可以作为程序间通讯的标准
+2.可以作为配置文件
+3.可以当小型数据库（有些数据放在数据库代价高，可以考虑直接放入文件中）
+
+元素组成
+1.声明：version版本，encoding字符编码，standalone文档定义是否独立使用(standalone="yes/no"默认no)
+  <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+2.必须有且只有一个根元素(包含其他元素的元素(相当于body))
+3.元素（标签）里没内容:<标签></标签>可写成<标签/>
+4.标签不允许交叉嵌套
+5.XML文件中出现的空格和换行，解析程序都会(可能)当做标签内容处理
+
+标签(元素)命名规范
+1.标签区分大小写
+2.不能以数字//或"_"开头
+//3.不能以xml开头
+4.不能包含空格
+5.名称中间不能含冒号
+
+xml属性
+<标签 属性名="属性值" 属性名="属性值" 属性名="属性值"......>
+1.属性值要用双引号或单引号分隔(属性名不能以数字开头)
+2.如果属性值中有单引号和双引号，用实体引用(&apos;单引   &quot;双引)
+3.xml标签中包含特殊字符，用<标签><![CDATA[..........]]></标签>(可以用来保存图片)
+
+（了解）xml的PI处理指令（可以用CSS来修饰）
+引入:<?xml-stylesheet type="text/css" href="...css"?>
+	
+
+DTD
+dtd的主要作用是约束xml文件，也可以约束xhtml、html......
+常用的约束技术有 DTD  Schema
+
+本地引入：外部引入<!DOCTYPE 根元素名 SYSTEM "dtd的路径">
+	  内部引入<!DOCTYPE [....内容....]>
+公开DTD:<!DOCTYPE 文档根节点 PUBLIC"DTD名称" "DTD文件的url">
+
+DTD元素
+<!ELEMENT 元素名 内容>
+内容1.EMPTY-该元素不能包含子元素和文本，但可以有属性(空元素)
+    2.ANY-该元素可以包含任何在DTD中定义的元素内容
+    3.(#PCDATA)-可以包含任何字符数据，但不能在其中包含任何子元素其他类型（组合）
+
+
+默认情况下，浏览器不去检测，需要自己写代码测试
+//1.创建xml文档解析器对象
+  var xmldoc=new ActiveXObject("Microsoft.XMLDOM");
+//2.开启xml校验
+  xmldoc.validateOnParse=true;
+//3.装载xml文档
+  xmldoc.load("book.xml");
+//4.获取错误信息
+  document.write("错误信息="+xmldoc.parseError.reason+"<br>");
+  document.write("错误行号="+xmldoc.parseError.line+"<br>");
+
+DTD元素修饰符(默认必须仅有一个)
+  + 1到多
+  * 0到多
+  ? 0到1
+  | 2选一
+ () 分组
+
+
+DTD元素属性列表
+<!ATTLIST 元素名称
+属性名称  类型  属性特点
+......
+>
+1.属性类型
+   CDATA  属性值可以是数字或字符
+   ID    属性值是唯一的，以字母开头
+   IDREF/IDREFS  ID引用(参考)
+   Enumerated  枚举类型
+   ENTITY/ENTITIES 实体
+2.属性特点
+   #REQUIRED   属性值是必需有
+   #IMPLIED    属性不是必需的（可有可无）
+   #FIXED value   属性值是固定的
+   DEFAULT value 默认值 
+   
+DTD实体定义
+ 1.引用实体
+   DTD中定义<!ENTITY 实体名 "内容">
+   XML中用 &实体名;
+ 2.参数实体
+   <!ENTITY % 实体名 "内容">
+   在DTD中用:  %实体名;
+
+
+
+DOM说明
+dom(domcument object model)把一个xml文件，看成一个对象模型，然后通过对象的方式来
+操作xml文件
+
+PHP DOM编程步骤
+1.创建一个DOMDomcument对象
+	$xmldoc=new DOMDocument();
+2.加载xml(指定要对那个xml文件解析)（会形成DOM树）
+	$xmldoc->load("文件名");
+3.获取第一个学生的名称
+	$stus=$xmldoc->getElementsByTagName("stu");
+ (1)选中第一个学生
+	$stu1=$stus->item(0);
+ (2)取出名字(属性用getAttribute("属性名"))
+	$stu1_names=$stu1->getElementsByTagName("name");
+	$stu1_names->item(0)->nodeValue;
+
+
+PHP DOM增加
+1,2步同上
+3.增加学生
+ (1)取出根节点
+  $root=$xmldoc->getElementsByTagName("根节点")->item(0);(根节点只有一个)
+ (2)创建stu节点
+  $stu_node=$xmldoc->createElement("stu");
+  //添加属性节点
+  //$stu_node->setAttribute("age","16");
+ (3)创建name节点
+  $stu_node_name=$xmldoc->createElement("name");
+  $stu_node_name->nodeValue="温蒂";
+  把name挂载到stu节点下
+  $stu_node->appendChild($stu_node_name);
+ (4)创建sex节点
+  $stu_node_sex=$xmldoc->createElement("sex");
+  $stu_node_sex->nodeValue="女";
+  挂载 $stu_node->appendChild($stu_node_sex);
+ (5)创建介绍节点
+  $stu_node_jie=$xmldoc->createElement("介绍");
+  $stu_node_jie->nodeValue="天龙魔法师"; 
+  挂载 $stu_node->appendChild($stu_node_jie);
+ (6)把stu节点挂载到根节点下
+  $root->appendChild($stu_node);
+ (7)保存
+  $xmldoc->save("dom.xml");
+
+删除
+1,2步同上
+3.增加学生
+ (1)取出根节点
+  $root=$xmldoc->getElementsByTagName("根节点")->item(0);(根节点只有一个)
+ (2)找到要删除的stu
+  $stu_delete=$xmldoc->getElementsByTagName("stu")->item(3);
+ (3)删除(属性用removeArrtibute("属性名"))
+  //$root->removeChild($stu);
+  $stu_delete->parentNode->removeChild($stu_delete);
+ (4)保存
+  $xmldoc->save("dom1.xml");
+
+改
+1,2步同上
+3.找到改的stu
+  $stu_updata=$xmldoc->getElementsByTagName("stu")->item(4);
+4.找到改的节点
+  $stu_updata_node=$stu_updata->getElementsByTagName("name")->item(0);
+5.改值(属性用setAttribute("属性名","属性值"))
+  $stu_updata_node_value=$stu_updata_node->nodeValue="艾露莎";
+6.保存
+  $xmldom->save("dom1.xml");
+
+
+XPATH
+可以跨层取节点并且保证层次关系（描述XML元素的位置）
+xpath的核心思想：迅速简捷的定位希望查找的节点
+步骤
+1.创建DOMDocument对象
+ $doc=new DOMDocument();
+2.加载xml
+ $doc->load("....xml");
+3.转成DOMXpath
+ $domxpath=new DOMXpath($doc);
+4.使用xpath技术来查找节点
+ $domxpath->query("/class");
+
+(1)/AAA 选择AAA根元素
+(2)/AAA/BBB 选择AAA的所有CCC子元素
+(3)/AAA/DDD/BBB 选择AAA的子元素DDD的所有BBB子元素
+(4)//BBB 所有BBB元素
+(5)//DDD/BBB 所有父元素是DDD的BBB的元素
+(6)/AAA/CCC/DDD/* 路径/AAA/CCC/DDD下的所有元素
+(7)/*/*/*/BBB 所有的有3个祖先元素的BBB元素
+(8)//* 所有元素
+
+
+simpleXML
+以面向对象的方式来操作XML文件
+1.php5的simpleXML可以将XML文件的元素都转换成对象，相同子元素转换成对象数组，
+  在PHP程序直接使用foreach语句取得指定元素名称,内容,属性值
+2.在取得指定元素后，元素属性是一个数组，属性名称为键值
+
+1.装载xml文件
+ $class=simplexml_load_file("...xml");
+2.取出stu
+ $stu=$class->stu;
+ $stu1=$stu[0];
+2.取出name;
+ $stu1_name=$stu1->name;
+ //属性
+   $stu1_name["属性名"];
+
+simpleXML可以和Xpath结合使用,返回数组
+$class->xpath("//stu")
+
+了解
+装载DOM对象
+$dom=new DOMDocument();
+$dom->load("...xml");
+$s = simplexml_import_dom($dom);
+
+
+装载字符串
+$string=<<<XML  xml文件    XML;
+$xml=simplexml_load_string($string);

@@ -1,0 +1,789 @@
+选择器
+获取页面元素对象的方式
+
+
+$()得到的是jquery对象，只能用jquery方法,不能用js方法
+
+
+1.基本
+#id       通过id获取元素(getElementById)
+Element   通过元素名获取元素(getElementsByTagName)
+selector1,selector2  获取列表中符合所有selector(选择器)的所有元素
+.class     通过class样式获取所有元素(getElementsByClassName)
+
+//匹配id为res的元素
+$('#res').html('测试');
+//匹配所有标签名div的元素
+$('div').html('test');
+//匹配所有标签名为div和span元素
+$('div,p').html('测试');
+//匹配所有标签名为span和id为ok元素
+$('#ok,span').html('测试');
+//匹配所有class值为sty1的元素
+$('.sty1').html('测试');
+
+2.层级
+
+ancetor descendant  匹配祖先(当前)元素下的后代元素
+parent>child        匹配父(当前)元素下的子元素
+prev+next           匹配上一个(当前)元素的后面元素(紧挨着)
+prev~siblings       匹配前一个(当前)元素的(后面的)所有兄弟元素
+
+//匹配id为div1下的所有后代标签名为p的元素
+$('#div1 p')
+//匹配div1下的子元素p
+$('#div1>p')
+//匹配div1后面挨着的元素p
+$('#div1+p')
+//匹配#div1兄弟元素(后面)p
+$('#div1~p')
+
+3.简单
+:first    匹配第一个元素
+:last     匹配最后一个元素
+:even     索引为偶数的
+:odd      索引为奇数
+:eq(index) 索引指定的元素
+:gt(index) 索引大于指定值的元素
+:lt(index) 索引小于指定值的元素
+:not(selector) 匹配除了指定选择器(元素)之外的所有元素
+
+//匹配第一个td元素
+$('td:first')
+//匹配最后一个td元素
+$('td:last')
+//所有索引为偶数的td元素
+$('td:even')
+//所有索引为奇数的td元素
+$('td:odd')
+//索引为4的td元素
+$('td:eq(4)')
+//索引大于4的td元素
+$('td:gt(4)')
+//索引小于4的td元素
+$('td:lt(4)')
+//匹配索引除了4的td元素
+$('td:not(td:eq(4))')
+
+4.内容
+:contains(text) 匹配内容中包含text内容的元素
+:empty          匹配内容为空的元素
+:has(selector)  匹配内容中包含指定选择器的元素
+:parent         匹配内容不为空的元素
+
+//匹配所有li元素内容包含‘国’的
+$("li:contains('国')")
+//匹配内容为空的li元素
+$('li:empty');
+//所有内容包含a选择器(标签)的li元素
+$('li:has(a)')
+//匹配所有内容不为空的所有li元素
+$('li:parent')
+
+5.可见性
+:hidden   匹配隐藏元素  
+:visible   匹配显示元素
+
+//匹配所有隐藏的div
+$('div:hidden').show();
+//匹配所有显示的div
+$('div:hvisible').hide();
+
+属性
+[attribute]  匹配具有指定属性的元素
+[attribute=value] 匹配属性等于value的元素
+[attribute!=value] 匹配属性不等于value的元素
+[attribute^=value] 匹配属性值以指定value开始的元素
+[attribute$=value] 匹配属性值以指定value结束的元素
+[attribute*=value] 匹配属性值中包含指定value的元素
+[selector1][selector2][selector...] 同时满足所有条件的元素
+
+//匹配具有color属性的font元素
+$('font[color]')
+//匹配color属性值为red的font元素
+$('font[color=red]')
+//匹配color属性值以#6开始的font元素
+$('font[color^=#6]')
+//匹配color属性值中包含6的font元素
+$('font[color*=6]')
+
+
+7.子元素
+:nth-child(index|even|odd) 匹配指定索引的子元素(index从一算起)
+:first-child        匹配第一个子元素
+:last-child         匹配最后一个子元素
+:only-child         如果子元素是父元素的唯一子元素,则匹配
+
+8.表单
+:input      匹配所有表单元素(包括select和textarea)
+:text
+:password
+:radio
+:checkbox
+:submit
+:reset
+:image
+:button
+:file
+:hidden
+
+9.表单对象属性
+:enabled   匹配状态可用的表单元素
+:disabled  匹配状态不可用的表单元素
+:checked   匹配被选中的元素 radio|checkbox
+:selected  匹配被选中的元素 option
+
+
+jqurey对象与dom对象
+
+jquery对象本身就是一个数组
+长度就是匹配回来的元素个数
+每个jquery对象下的某个元素都是一个dom对象
+
+1.dom对象与jquery对象互相转换
+
+jquery[0]或者jquery.get(0)
+
+2.dom转jquery对象
+
+$(dom)
+
+属性操作
+
+1.基本属性
+
+attr(name)  获取指定属性的值
+attr(key,value)  设置指定属性的值
+attr(json)   一次设置多个属性的值
+attr(key,function())  设置属性的值(函数的返回值)
+removeAttr(name) 删除指定的属性
+
+2.css属性
+
+addClass(class)     添加样式
+removeClass(class)  移除样式
+toggleClass(class)  切换样式
+hasClass(class)     判断是否使用了某个样式
+
+3.html/文本/值
+
+//没有参数表示取值,有参数表示赋值
+html()
+html(val)
+text()
+text(val)
+val()
+val(val)
+
+4.css属性设置
+
+css(name)      获取样式的值  
+css(name,value) 设置样式的值
+css(json)        设置多个样式的值
+
+位置设置
+
+offset()   获取元素的位置,返回json对象，包含left和top属性
+offset(json) 设置元素的位置,参数json必须包含left和top
+
+var json={left:100,top:100,position:'absolute'};
+$('.b').offset(json);
+
+尺寸
+
+width()
+width(val)
+height()
+height(val)
+
+5.事件编程
+
+页面载入
+
+ready(fn)
+
+$(document).ready(function(){
+  //函数代码
+})
+
+$(document|window)建议用document(默认document)
+
+window.onload是页面载入后开始执行,必须等到所有网络资源加载完毕后执行
+$().ready    页面载入后开始执行,只要元素标签本身加载完毕后就可以执行
+
+$().ready()比window.onload要快一些
+
+
+基本事件
+
+blur(fn)     失去焦点
+change(fn)   内容改变
+click(fn)     点击
+dblclick(fn)  双击
+focus(fn)     获得焦点
+keydown(fn)   键盘按下
+keyup(fn)      键盘抬起
+keypress(fn)   键盘按住
+load(fn)     页面载入
+unload(fn)   页面关闭
+mousedown(fn)  鼠标按下
+mouseup(fn)    鼠标抬起
+mousemove(fn)  鼠标移动
+mouseover(fn)  鼠标经过
+mouseout(fn)   鼠标离开
+resize(fn)     尺寸改变
+scroll(fn)     滚动轴滚动
+select(fn)     选择内容
+submit(fn)     提交按钮
+
+jquery使用事件监听机制(同一个对象的同一个事件可以绑定不同的方法)
+jquery处理程序中的this统一指向当前dom对象(apply)
+
+事件切换
+
+hover(over,out)  鼠标经过和离开的函数绑定
+toggle(fn1,fn2....)    当鼠标点击时事件绑定(点击一次fn1,两次fn2...(类似cycle))
+
+事件处理
+
+bind(type,[data],fn)  绑定事件 type事件名(无on前缀),data参数,fn事件处理函数
+bind({type:fn,type:fn....}) 绑定多个事件
+one(type,[date],fn) 绑定只触发一次的时间
+unbind([type]) 移除事件绑定(不写参数表示移除该对象的所有事件绑定)
+
+事件冒泡
+事件会按照dom层次结构向水泡一样上升至最顶端
+
+取消事件冒泡
+function display(event)
+{
+	event.stopPropagation();
+}
+
+在js原生代码中，取消事件冒泡有两种方式：window.event.cancelBubble=true
+和event.stopPropagation()，可以看出,jQuery对以上两种形式调整了兼容性
+
+默认行为
+有些html元素会有自己的行为,如：点击按钮时提交表单
+
+取消默认行为
+w3c: event.preventDefault();
+ie:  window.event.returnValue=false
+
+function(event)
+{
+	event.preventDefault();
+}
+
+6.效果
+ 
+基本
+show()   显示元素
+show(speed,[callback]) 以动画效果显示 speed动画持续时间(毫秒) callback动画执行完所调用的函数
+hide()   隐藏元素
+hide(speed,[callback]) 以动画效果隐藏
+toggle()  切换
+toggle(val) 切换 参数是true或false
+toggle(speed,[callback])
+以上函数speed可以是slow normal fast
+
+滑动
+slideDown(speed,[callback])  向下滑动(显示)
+slideUp(speed,[callback])    向上滑动(隐藏)
+slideToggle(speed,[callback]) 切换
+
+淡入淡出
+
+fadeIn(speed,[callback])   淡入(显示)
+fadeOut(speed,[callback])  淡出(隐藏)
+fadeTo(speed,opacity,[callback]) 淡入淡出到指定值  opacity透明度（0-1）
+
+
+一组图片的淡入淡出
+$('img').hover(
+function()
+{$(this).fadeTo(0,1)},
+function()
+{$(this).fadeTo(0,0.6)}
+	)
+<script language='javascript'>
+for(var i=1;i<6;i++)
+{
+	document.write('<img src=../image/'+i+'.jpg>');
+}
+</script>
+
+菜单
+<div id='caidan'>
+<div id='c1' class='d'>菜单1</div>
+<div>子菜单1<br>子菜单2<br>子菜单3</div>
+<div id='c2' class='d'>菜单2</div>
+<div>子菜单1<br>子菜单2<br>子菜单3</div>
+<div id='c3' class='d'>菜单3</div>
+<div>子菜单1<br>子菜单2<br>子菜单3</div>
+<div id='c4' class='d'>菜单4</div>
+<div>子菜单1<br>子菜单2<br>子菜单3</div>
+</div>
+
+$().ready(function(){
+$('#caidan>div:not([class=d])').hide();
+$('#caidan>div:eq(1)').show();
+$('#caidan>div:not([class!=d])').bind('click',function()
+	{
+		var id=$(this).attr('id');
+		$('.d+div').hide();
+		$('#'+id+'+div').toggle();
+		//$('.d+div:not(#'+id+'+div)').hide();
+	}
+	);
+})
+
+
+7.文档处理
+jquery中的文档处理就是dom操作
+
+插入
+
+内部插入(标签内)
+append(selector/content)     在元素内部最后插入元素/数据
+appendTo(selector/content)   将匹配到的元素插入到指定元素的内容后面
+prepend(selector/content)    在元素内部前面插入数据
+prependTo(selector/content)  将匹配到的元素插入到指定元素的内容前面
+
+外部插入(标签外)
+after(selector/content)  在元素的后面
+before(selector/content) 在元素的前面
+insertAfter(selector)  将匹配到的元素插入到指定元素的后面
+insertBefore(selector)  将匹配到的元素插入到指定元素的前面
+
+删除
+
+empty()  清空元素内容(保留元素)
+remove() 删除元素
+
+复制
+
+clone()
+clone(true)  复制匹配的元素,同时也复制它的事件
+
+替换(修改)
+
+replaceWith   将匹配到的元素替换成指定的内容
+
+$('#div2').replaceWith('<a href=#>a1</a>');
+
+var $a=$('<a></a>');
+$a.attr('href','#');
+$a.html('连接');
+$('#div2').replaceWith($a);
+
+!!!!$('<标签></标签>') 是创建了一个jquery对象
+
+包裹
+选中的元素用双标签包起来
+
+wrap(tag)  对匹配的所有元素使用指定的内容包裹  //<b>$(Tag1)</b><b>$(Tag2)</b>
+wrapAll(tag) 对匹配的所有元素使用指定的内容包裹(只包裹一次)<b>$(Tag1)$(Tag2)</b>
+wrapInner(tag) 内部包裹
+
+$('#res').wrap('<b></b>');
+
+查找
+
+eq(index)	：匹配指定索引的元素
+$(‘div’).eq(3)	：匹配索引为3的div
+	
+filter(expr)	：匹配过滤的元素
+$(‘div’).filter(‘.cls1’)	：匹配使用了cls1样式的所有div
+	
+not(expr)	：匹配除了指定元素之外的所有元素
+$(‘div’).not(‘.cls1’)	：匹配除了使用cls1样式的所有div
+	
+children([expr])	：匹配所有子元素
+$(‘product’).children(‘name’).text();   
+	
+find(expr)		：查找指定的元素
+$(xml).find(‘product’)
+	
+next([expr])
+$(“#div1”).next()	：匹配div1相邻的下一个平辈节点
+nextAll([expr])
+$(“#div1”).nextAll()	：匹配div1相邻的后面所有平辈节点
+	
+prev([expr])		
+$(‘#div1’).prev()		：匹配div1相邻的上一个平辈节点
+prevAll([expr])		
+$(‘#div1’).prevAll()		：匹配div1相邻的前面所有平辈节点
+	
+parent([expr])
+$(“#div1”).parent()	：匹配div1元素的父节点
+
+
+8.插件机制
+
+jQuery.fn.extend(json_object)
+
+语法
+jQuery.fn.extend(
+{fn1:fun,fn2:fun,...}
+)
+
+通过jQuery.fn.extend方法对jQuery功能进行扩展，这个方法要求参数是一个json对象
+对象的属性名是扩展方法名，属性值就是函数体。
+
+定义
+jQuery.fn.extend({
+	fn1:function(color){this.css('color',color)},
+	fn2:function(size){this.css('fontSize',size)}
+})
+
+调用
+$('#res').fn1('red');
+$('#res').fn2('50px');
+
+全选/取消/反选 插件
+jQuery.fn.extend(
+{
+	quanxuan:function(){
+	 this.attr('checked',true);
+	},
+	quxiao:function(){
+	this.attr('checked',false);
+	},
+	fanxuan:function()
+	{
+		for(var i=0;i<this.length;i++)
+		{
+			if($(this[i]).attr('checked')=='checked')
+			{
+				$(this[i]).attr('checked',false);
+			}else
+			{
+				$(this[i]).attr('checked',true);
+			}
+		}
+	}
+}
+)
+
+案例
+<meta charset='utf-8'>
+<script language='javascript' src='../js/jquery.js'></script>
+<script language='javascript' src='../js/cx.js'></script>
+<script language='javascript'>
+$().ready(function(){
+	$('#bt1').bind('click',function(){
+	 $(':checkbox').quanxuan();
+	});
+	$('#bt2').bind('click',function(){
+	 $(':checkbox').quxiao();
+	});
+	$('#bt3').bind('click',function(){
+	 $(':checkbox').fanxuan();
+	});
+})
+</script>
+<?php
+$mysqli=new mysqli('localhost:3306','root','admin','ajax');
+$res=$mysqli->query('select * from shop1');
+?>
+<form action='chajian.php' method='post'>
+<table border=1 cellspacing=0>
+<tr><th>ID</th><th>商品</th><th>类型</th><th><a href='#' id='bt1'>全选</a><a href='#' id='bt2'>取消</a><a href='#' id='bt3'>反选</a></th></tr>
+<?php
+while($row=$res->fetch_assoc())
+{
+?>
+<tr><td><?echo $row['id']?></td><td><?echo $row['shop']?></td><td><?echo $row['type']?></td><td><input type='checkbox' name='id[]' value=<?echo $row['id']?>></td></tr>
+<?php
+}
+?>
+</table>
+<input type='submit' value='提交' name='ok'>
+</form>
+<?php
+if(isset($_POST['ok']))
+{
+	$id=@$_POST['id'];
+	$str=implode(',',$id);
+	if(isset($id)){
+	$mysqli->query('delete from shop1 where id in('.$str.')');
+	}
+	$res->free();
+	$mysqli->close();
+	header('location: chajian.php');
+}
+?>
+
+
+9.each语句
+
+each(callback)   each方法只有一个参数,必须是一个函数
+
+function callback(i,item){
+}
+
+each方法用于遍历jQuery对象
+jQuery对象有几个元素，那么each方法中指定的函数就会自动执行多少次
+每次遍历时，将当前元素的下标放在参数i中
+每次遍历时，将当前元素本身(dom对象)放在参数item中
+
+$('#ok').click(function(){
+		$('div').each(
+			function(a,item)
+			{
+				$(item).text(a+1+'div');
+				//item.innerHTML=a+'div';
+			}
+		);
+	})
+
+
+10.jquery中的Ajax应用
+
+jQuery.ajax(options)
+jQuery.get(url,[data],[callback],[type]) 
+jQuery.post(url,[data],[callback],[type])
+
+window.jQuery=window.$=jQuery;
+$<=>jQuery
+
+$.ajax(options)
+$.get(url,[data],[callback],[type]) 
+$.post(url,[data],[callback],[type])
+
+jQuery.ajax(options)          jQuery中底层ajax实现
+jQuery.get(url,[data],[callback])	jQuery中高级ajax实现
+jQuery.post(url,[data],[callback])  jQuery中高级ajax实现
+
+jQuery中底层的ajax实现
+
+jQuery.ajax(options);
+要求参数必须是一个json对象，json对象下的属性如下
+
+	async 	：是否异步		true：异步（默认）		false：同步
+	cache 	：是否缓存
+	complete 	：当ajax对象的状态码为4时执行的函数
+	contentType ：请求头
+	data 		：传递的参数，要求是一个字符串
+	dataType 	：期望得到的数据类型
+	success 	：ajax对象状态码为4并且http响应状态码为200时所执行的函数
+	type		：请求类型		get   post
+	url		：请求地址
+
+
+$('#btn1').click(function(){
+		$.ajax({
+			type:'get',
+			url:'ajax.php',
+			data:"a=a&b=1",
+			cache:false,
+			success:function(msg)
+			{
+				alert(msg);
+			}
+		});
+	});
+
+
+$.get(url,[data],[callback],[type]) 
+$.post(url,[data],[callback],[type])
+[data]是参数列表(类型是json) data可以不写
+type可以不写 默认是text
+缓存自己解决可以data={_:new Date().getTime()}
+
+
+解析XML
+1.dom解析
+$('#btnOk').click(function(){
+		$.get('ajax.php',{id:5,_:new Date().getTime()},function(xml){
+			var res=xml.getElementsByTagName('row');
+			for(var i=0;i<res.length;i++)
+			{
+				/*var id=res[i].childNodes[0].childNodes[0].nodeValue;
+				var shop=res[i].childNodes[1].childNodes[0].nodeValue;
+				var type=res[i].childNodes[2].childNodes[0].nodeValue;*/
+				var id=res[i].getElementsByTagName('id')[0].childNodes[0].nodeValue;
+				var shop=res[i].getElementsByTagName('shop')[0].childNodes[0].nodeValue;
+				var type=res[i].getElementsByTagName('type')[0].childNodes[0].nodeValue;
+				$('#res').append(id+shop+type+'<br>');
+			}
+		},'xml');
+	});
+
+
+2.jquery解析
+$('#btnOk').click(function(){
+		$.get('ajax.php',{id:5,_:new Date().getTime()},function(xml){
+			var $res=$(xml).find('row');
+			for(var i=0;i<$res.length;i++)
+			{
+				var id=$($res[i]).children('id').text();
+				var type=$($res[i]).children('type').text();
+				var shop=$($res[i]).children('shop').text();
+				$('#res').append(id+shop+type+'<br>');
+			}
+		},'xml');
+	});
+
+3.jquery+each解析
+$('#btnOk').click(function(){
+		$.get('ajax.php',{id:5,_:new Date().getTime()},function(xml){
+			var $res=$(xml).find('row');
+			$res.each(function(i,item){
+				var id=$(item).find('id').text();
+				var shop=$(item).find('shop').text();
+				var type=$(item).find('type').text();
+				$('#res').append(id+' '+shop+' '+type+'<br>');
+			});
+		},'xml');
+	});
+
+
+解析json
+$('#btnOk').click(function(){
+		$.get('ajax.php',{id:5,_:new Date().getTime()},function(json){
+			$(json).each(function(i,item){
+				var id=item.id;
+				var shop=item.shop;
+				var type=item.type;
+				$('#res').append(id+' '+shop+' '+type+'<br>');
+			});
+		},'json');
+	});
+
+
+11.跨域请求
+访问的是第一个域,ajax对象只能请求这个域的资源
+
+Ajax技术由于受到浏览器的限制，该方法不允许跨域通信。
+
+同源策略阻止从一个域上加载的脚本获取或操作另一个域上的文档属性。
+也就是说，受到请求的 URL 的域必须与当前 Web 页面的域相同。
+这意味着浏览器隔离来自不同源的内容，以防止它们之间的操作。
+
+JSONP是一个非官方的协议，它允许在服务器端集成script tags返回至客户端，
+通过javascript callback的形式实现跨域访问。
+
+<script src=‘url?callback=callback’></script>
+
+jsonp=document.createElement("script");     
+jsonp.src=" url?callback=callback ";
+
+
+入门案例
+<html>
+<head>
+<meta charset='utf-8'>
+<script language='javascript'>
+window.onload=function(){
+	document.getElementById('ok').onclick=function(){
+		var script=document.createElement('script');
+		script.src='http://netbook.com/test.php?fn=jsonP';
+		var head=document.getElementsByTagName('head')[0];
+		head.appendChild(script);
+	};
+}
+function jsonP(json)
+{
+	alert(json.a+' '+json.b+' '+json.c);
+}
+</script>
+</head>
+<input type='button' value='ok' id='ok'>
+</html>
+
+get请求http://netbook.com/test.php?fn=jsonP的test.php
+<?php
+$fn=$_GET['fn'];
+$arr=array('a'=>'zhangsan','b'=>'lisi','c'=>'wangwu');
+$json=json_encode($arr);
+echo $fn.'('.$json.')';
+?>
+
+
+jquery解决跨域问题
+
+$.ajax()  get
+$.get()
+$.getJSON()
+
+1.$.ajax()
+
+$('#ok').click(function(){
+		$.ajax({
+			url:'http://netbook.com/test.php',
+			type:'get',
+			jsonp:'fn',
+			dataType:'jsonp',
+			success:function(json){
+				alert(json.a+'|'+json.b+'|'+json.c);
+			}
+		});
+	});
+
+2.$.get()
+
+$('#ok').click(function(){
+		$.get('http://netbook.com/test.php?fn=?',function(jsonp){
+			alert(jsonp.a+'|'+jsonp.b+'|'+jsonp.c);
+		},'jsonp');
+	});
+
+3.$.getJSON()
+
+$('#ok').click(function(){
+		$.getJSON('http://netbook.com/test.php?fn=?',function(jsonp){
+			alert(jsonp.a+'|'+jsonp.b+'|'+jsonp.c);
+		});
+	});
+
+
+天气预报部分代码
+show5();
+$('#tq').change(show6);
+
+function show5()
+{
+	$.get('test7.php',{flag:'tq'},function(json){
+		$(json).each(function(i,item){
+			var  $op=$('<option></option>');
+			$op.val(item.code);
+			$op.text(item.city);
+			$('#tq').append($op);
+		});
+	},'json');
+}
+function show6()
+{ 
+	$.get('test7.php',{flag:'tq1',code:$(this).val(),_:new Date().getTime()},function(json){
+		var json=json.weatherinfo;
+		var data='城市：'+json.city+'<br>';
+		data+='时间：'+json.date_y+'<br>';
+		data+='温度：'+json.temp1+'<br>';
+		data+='天气：'+json.weather1+'<br>'+'穿衣指数：'+json.index_d;
+		$('#tq1').html(data);
+	},'json');
+}
+
+php代码
+if($flag=='tq')
+{
+	$mysqli=new mysqli('localhost:3306','root','admin','ajax');
+	$res=$mysqli->query('select code,city from tq limit 20');
+	while($row=$res->fetch_assoc())
+	{
+		$arr[]=$row;
+	}
+	$res->free();
+	$mysqli->close();
+	echo json_encode($arr);
+
+}
+if($flag=='tq1')
+{
+	$code=$_GET['code'];
+	$url='http://m.weather.com.cn/atad/'.$code.'.html';
+	$json=file_get_contents($url);
+	echo $json;
+}

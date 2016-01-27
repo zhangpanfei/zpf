@@ -1,0 +1,120 @@
+dede特点
+1.简单，使用，开源
+2.专门用于个人，中小型门户网站，企业也可以支持
+3.架构php+mysql
+4.前台是静态页面（速度快）-》页面静态化技术
+
+
+1.做栏目
+后台->网站栏目管理
+!!!当我们增加一个栏目时，实际上在dede数据库中有一张表dede_arctype中增加了一个记录
+!!!前台静态化  后台->生成->更新周页面html->首页模式
+2.增加文章
+后台->核心->普通文章->添加文章
+!!!当添加文章时在表dede_archives表中添加记录，同时在dede_addonarticle表中增加记录(文章内容)，（垂直分割设计）  还生成了静态页面并挂上超链接
+!!!如果希望在主页面看到更新，则 后台->生成->更新主页html
+3.生成栏目静态页面
+后台->生成->更新栏目html
+
+!!!dede_channeltype频道表（模型表）
+
+暂时不需要栏目，更改->隐藏
+
+如果需要商品模型，先看dede有没有提供,没有就自定义
+核心->频道模型->
+
+模型字段不足的解决的办法
+核心->内容模型管理->商品修改->字段管理->添加新字段
+!!！当添加新字段后,会在对应的附加表中增加一个对应字段
+
+
+主要的的4类表
+频道模型放在dede_channeltype频道表（模型表）
+栏目(类别)是保存在dede_arctype中
+文章,商品等分别放在两张表,主表(dede_archives)和附加表(dede_addonXXX)
+
+
+在dede中增加内容的基本步骤
+1.找模型,如果有就用,没有就自己增加
+  核心->频道模型->内容和模型管理->增加新模型
+2.添加一个栏目然后刷新
+3.增加内容
+
+dede目录结构
+dedecms下的目录
+/a目录 存放静态页面
+/data 存放缓存文件和临时文件
+/images 存放dede自己的图片
+/include 核心类库(标签库，操作图像的类，操作数据库的类)
+/install 安装信息
+/uploads 上传的文件
+/manage 存放后台程序
+/member 存放会员管理程序
+/plus 存放插件程序，和将来自己开发的程序模块
+/templets 存放前台所有模板文件
+
+
+去掉广告
+dede创建静态页面的机制，通过模板文件，去创建对应的
+静态页面，因此修改这个对应的模板文件  去掉myad标签
+
+dede的标签问题
+1.如何去查阅标签手册
+后台->模板->默认模板管理->随便点一个修改
+2.dede标签使用
+单标签
+{dede:标签名 参数名="值"/}
+{dede:include filename="head.htm"/}
+双标签
+{dede:标签名 属性="val"....}内容{/dede:标签名}
+字段标签(写在{dede:}中)
+[field:id/]  [field:typename/]
+（对取出的字段值使用php函数）[field:name function='md5(@me)']（@me代表自己的值）
+
+怎样把取出的值进行php运行
+[field:字段名 runphp="yes"]
+这里可以写一些简单的php码(如果复杂则可以写一个自定义函数)
+[/field:字段名]
+	[field:id runphp="yes"]
+	@me=(@me=="")?'空的':@me;
+	[/field:id]
+
+自定义函数
+/include/extend.func.php里自定义函数
+
+!!!dede的标签不能嵌套使用
+
+dede标签调用全局变量值
+用法是：
+{dede:global.全局变量名/}
+/include/common.inc.php文件中有很多全局值
+{dede:global.cfg_soft_lang/}
+
+因为dede标签是不可以嵌套,所以你要在dede标签中,取出全局变量,则
+[field:global.全局变量名/]
+
+
+1.取出栏目
+{dede:channel type="top" row="8"}
+            <li   ><b><a href="[field:typeurl/]" title="电影">[field:typename/]</a></b><i></i>
+             	 </li>
+{/dede:channel}
+
+2.取出dede_archives的字段
+{dede:arclist  flag='h' typeid='' row='' col='' titlelen='' infolen='' 
+imgwidth='' imgheight='' listtype='' orderby='' keyword='' limit='0,1'}
+<a href='[field:arcurl/]'>[field:title/]</a>
+{/dede:arclist}
+flag表示自定义属性(是否头条) 内容管理->更该文档
+typeid表示要取出那个栏目的内容
+
+如果想取出对应附加表的信息,用属性:channelid(频道模型id) addfields="字段名,...."
+dede自增长全局标签[field:global.autoindex/]
+
+灵活的sql标签
+{dede:sql sql='完整的sql语句'}
+[field:title/]
+{/dede:sql}
+
+3.取出内容
+{dede:field.字段名/} 可以是主表字段,也可以是附加表字段

@@ -1,0 +1,4 @@
+1.or 
+select * from user where name='123 or 1';
+2.union
+select * from user where name='123' union slect * from user/*where password='123';

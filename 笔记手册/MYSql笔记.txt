@@ -1,0 +1,847 @@
+数据库系统
+DataBaseSystem=数据库管理系统(DBMS, DataBaseManagementSystem)+数据库(DataBase)+管理员
+
+Mysql是关系型数据库
+
+关系型数据库典型概念
+1.数据库：数据的仓库
+2.表table：数据是保存在表内的，保存在一个表内的数据，应具有相同的数据格式
+3.行&列：行记录数据，列规定数据格式（记录:行内的数据  字段:数据的列）
+4.SQL(Structured Query Language)：数据库管理系统，用来管理数据的语言（结构化查询语言）
+
+windows命令行启动所有服务 services.msc
+Net start 服务名
+Net stop 服务名
+启动本地mysql  d:php\mysql\bin\mysql -hlocalhost -P3306 -uroot -p
+
+分类
+针对操作对象的不同，分成不同的语言：
+1.数据操作（管理）语言DML
+2.数据定义语言（对保存数据的格式、属性定义）DDL
+3.数据库控制语言（对数据库服务软件操作）DCL
+
+库操作DDL
+限定符(反引号):用于特殊字符、数字、关键字等标示符；
+设置编码：set names gbk;
+1.创建数据库 Create database db_name[数据库选项];
+2.显示所有数据库 show databases;
+3.查看数据库创建语句 show create batabase db_name;
+4.数据库删除 drop database db_name;
+5.修改数据库 alter database db_name [指令](character set gbk);
+
+表操作
+1.创建表 create table 库名.tbl_name(列结构)[表选项];
+  列定义：列名 数据类型[列的属性(约束)],
+  字符串类型：varchar(最大长度)
+  date类型：date
+2.指定当前默认数据库 use db_name;
+3.查看表 show tables[like 'pattern%'];(like 'pattern%'表示获得pattern规则表名的表)
+  %通配符：表示任意字符的任意组合；（like 'XXX%',like '%xxx'）
+4.查看表创建信息 show create table tbl_name;
+tip:用 \G 结束换方式显示
+5.查看(描述)表结构(仅表) describe tbl_name;(或者desc tbl_name;)
+6.删除表 drop table [if exists]tbl_name;
+7.修改表名(仅表)：rename table old_tbl_name to new_tbl_name;
+  rename table old_tbl_name to new_tbl_name,table1 to new_table,....;(可以同时修改多个表名)
+  跨数据库重命名(把当前数据库的表以重命名的方式移动到别的数据库中) rename table old_tbl_name to da_name.new_tbl_name;
+ tip 可以利用跨数据库重命名把旧的数据库中的表以重命名方式移动到新数据库中，然后删除旧的数据库。
+
+
+修改列定义
+1.增加一个列 alter table tbl_name add 列定义(XXX varchar(10));
+2.删除一个列 alter table tbl_name drop 字段名;
+3.修改一个列 alter table tbl_name modify 列定义;
+4.修改列名   alter table tbl_name change old_name 列定义;
+5.修改表选项 alter table tbl_name 新的表选项(character set utf8);
+
+
+数据操作
+创建数据(插入数据)
+insert into 表名 (字段列表) values ('值列表');
+如果要为所有字段设置值，可以省略字段列表，值的顺序应与字段顺序一致
+
+获得数据(查询数据)
+select 字段列表(*) from 表名 [查询条件](where 1);
+条件：where 字段名><=值;
+
+删除数据
+delete from 表名 条件;(逻辑上严格给条件,语法上可以没有条件，删除所有用 where 1);
+
+修改数据
+update 表名 set 字段=新值,字段1=新值1......条件;
+(逻辑上严格给条件,语法上可以没有条件，修改所有用 where 1);
+
+查看变量
+show variables like 'character_set%';
+
+校对规则
+在当前编码下字符之间的比较顺序
+1.区分大小写ci
+2.不区分大小写cs
+3.二进制比较(字节)_bin
+show collation [like];
+字符集_地区名_比较规则(ci,cs,bin)
+
+在设置字符集的时候，可以设置当前所采用的校对规则，不设置，则默认。
+（create table tab3(name varchar(10))character set gak collate gbk_chinese_ci;）
+
+排序
+order by 将数据按照某个字段排序
+
+
+整型
+tinyint 1个字节(-128--127)
+
+定义是否有符号
+使用unsigned(无符号)
+
+定义显示宽度
+int(3) zerofill  3表示显示的最小宽度
+需要使用前导零填充  zerofill(一旦使用0填充则不能插入负数)
+
+浮点型
+1.单精度 float  4个字节   默认精度位数6位左右
+2.双精度 double  8个字节   默认精度位数16位左右
+
+支持控制数值范围
+type(M,D)
+M表示所有的数值位数(不包括小数点，和符号)
+D表示允许的小数位数
+支持科学计数法（1.23E2）
+
+定点数
+decimal(M,D)（有范围）
+M总位数(默认为10)
+D小数位数(默认为0)
+
+小数支持zerofill
+小数支持unsigned
+
+
+日期时间类型(支持0值)
+年月日时分秒
+datetime
+'yyyy-mm-dd GG:ii:ss'（任意分隔符）
+
+时间戳
+timestamp
+（有范围）
+检索时 列+0 显示时间戳
+
+日期(同datetime)
+date
+
+time
+表示具体时间
+表示时间间隔
+格式 D(天) HH:MM:SS 
+
+year
+
+
+字符串类型
+M表示允许的字符串长度
+char(M) 固定长度 
+varchar(M) 可变长度(范围)
+
+字段的最大长度，除了类型本身限制之外，记录的总长度也有限制
+
+
+真实的varchar长度
+总长度65535
+varchar特点，当类型数据超过255个字符时，用2个字节表示长度（65535-2=65533）
+
+整条记录，需要一个额外的字节,用于表示当前记录的null值。
+除非所有的字段都不是null(not null)，这个字节才能省略(用65533创建成功)
+一个记录，不论有多少个字段存在null,都是用统一的一个字节来表示，而
+不是每一个字段一个字节。
+
+TEXT（tinytext longtext...）
+与当前版本varchar相似，总长度为4294967295(所有字符集)
+区别:可以全部用来保存数据
+      定义时，通常不用指定长度，可以自己计算
+
+(单选)ENUM枚举类型(每个字段的值以整形存储)
+字段名 enum('1','a','C');
+
+(多选)set集合类型（位运算存储）（1,10,100,1000,.....）
+字段名 set('a','b','c','d');
+
+列属性
+是否为空 not null
+默认值 default val(没给定值时使用默认值，常见一个字段不能为空，使用默认值)
+
+主键：PK(primary key):可以唯一标识，某条记录的字段或者是字段的集合
+主键可以是真实的实体的属性，但常用一个与实体信息不想管的属性作为唯一标识，与业务逻辑没关系，只是用来做标记
+设置主键：primary key(主键不能为空，不能冲突)
+1.子段上设置 id int primary key,
+2.最后设置(primary key(子段1，子段2...))(组合主键：一个主键包含多个子段)
+（通常每个表都应存在一个唯一标识的主键）
+
+唯一
+unique(该字段的值不重复)
+
+
+自动增长(可以不插入值，或者插入null/0)
+为每条记录提供一个唯一的标识
+每次插入记录时,将每个子段的值自动增加1
+使用 auto_increment 标识
+需要整型，还需要索引
+
+自动增长的初始值可以设置，默认为1
+通过表选项：auto_increment val;
+如果val小于当前标识，则使用最大的val;
+可以手动插入val值，如果是主键，不能重复
+val值可以更新，是主键不能重复
+
+
+表间关系
+1对1
+两个实体表内，存在相同的主键字段
+如果记录的主键值等于另一个关系表内记录的主键值，则两条记录对应
+
+1对多
+在多的那个表内增加一个字段用于指向该实体所属另外实体的标识
+
+多对多（两个1对多）
+利用一个中间表，表示实体之间的对应关系
+中间表的每个记录表示一个关系
+
+外键FK（foreign key）
+如果一个实体的某个字段，指向(引用)另个实体的主键，就称这个实体的那个(指向另个实体的)字段为外键
+被指向的实体称之为(主表)主实体(父实体)(父表)
+负责指向的实体，称之为从实体(从表)(子实体)(字表)
+
+作用
+用于约束处于关系没的实体
+增加字表记录时，是否有与之对相应的父表记录
+在删除或者更新主表记录时，从表应该如何处理相关的记录
+
+定义外键
+在从表上建立一个外键指向主表的主键
+foreign key(子表外键字段) references 父表名 (父表外键字段)
+
+注释comment 'val'
+
+设置级联操作:在主表数据发生改变时，与之对相应的从表应该如何处理
+主表更新：on update
+主表删除: on delete
+1.cascade 关联操作，如果主表被更新或删除，子表也会执行相应的操作
+2.set null 表示从表不指向任何主表记录
+3.restrct 拒绝主表的相关操作
+修改外键：先删除，再新建
+alter table tb_name drop foreign key 外键名;
+删除外键需要通过指定外键名称达到目的，可以在创建时指定名称，或者使用mysql默认生成的名称
+
+alter table tb_name add froeign 外键定义 级联操作;
+
+存储引擎
+在创建表，或者编辑表时，可以指定表的存储引擎
+engine 引擎类型
+
+
+order by
+order by 字段 升序|降序(asc|desc)
+
+多字段排序
+先按照第一个字段排序，如果不能区分
+才使用的二个字段，一次类推
+order by 字段 升序|降序(asc|desc),字段2 升序|降序(asc|desc)
+
+
+limit
+限制获得的记录数量
+limit val;
+limit offset,row_count;
+offset 偏移量，默认从0开始
+row_count 总记录数
+
+distinct
+去除重复记录(要查找的记录完全重复的)
+select distinct * from....
+
+
+union
+联合查询
+将多条select语句的结果，合并在一起
+使用union关键字
+（第一条查询语句）union（第二条查询语句）;
+如果union 结果有重复的数据，默认值显示一个，可以通过union all 显示所有
+子语句的括号不是必须的（为了便于读程序加括号）
+子语句的排序
+1.将子语句包裹在括号内
+2.子语句的order by 配合limit才生效
+对所有语句排序
+（）union（）order by
+规定多个select语句检索的字段必须一致
+列顺序必须一致(默认可以显示成功)
+
+子查询
+select * from tb_name where 字段名=(select max(字段名) from tb_name);
+
+子查询分类
+1.返回值
+单一值（标量子查询）
+一列（列子查询）
+多列(行子查询)
+表（表子查询）
+
+2.出现位置
+where型
+from型
+exists型
+
+使用
+1.标量
+子查询获得一个值后，使用关系运算符
+= > <  >=  <= !=
+2.列子查询
+子查询获得一列值后（同一类型数据的集合）
+select * from tb_name where 字段名1 in|not in (select 字段名1 from tb_name where 条件);
+等于集合中的任何一个=any(集合)  =some(集合) 
+不等于集合中的所有元素!=all(集合)
+
+3.行子查询
+子查询返回一行（多个字段）
+select * from tb_name where (字段1，字段2...)=(select 字段1，字段2 from tb_name where...limit 1)；
+
+4.表子查询
+子查询返回一个表
+select * from (子查询语句)as 表别名 wehere...;
+
+5.exixts子查询
+select * from tb_name1 where exists (select * from tb_name2 where tb_name1.字段名=字段名);
+
+
+连接查询join
+将所有的数据，按照某种条件，连接起来，在进行处理
+
+1.内连接
+连接的多个数据都必须存在(默认inner 可以省略)
+tbl_left inner join tbl_right on 连接条件(条件可以省略/cross join，称为交叉连接/笛卡尔积)
+select * from tb_1 inner join  tb_2 on tb_1.id=tb_2.id;
+on可以写成where(外连接不能使用),    using(字段名)(字段名称一样)
+on连接时过滤
+where连接后过滤
+
+2.外连接（outer 可以省略）
+如果负责连接的一个或多个数据不真实存在是外连接
+tbl_left left outer join tbl_right on 连接条件
+select * from tb_1 left outer join  tb_2 on tb_1.id=tb_2.id;
+左外连接  左边表数据被保留 右边如果没有数据用null代替
+右外连接
+全外连接（mysql 暂不支持） 左外连接 uion 右外连接
+
+as 别名（列别名，表别名）
+select t.id as tid ,c.id as cid ,t.t_name as name from teac as t inner
+join t_c as c on t.id=c.t_id;
+
+3.自然连接
+mysql自己判断相同字段进行连接，不用指定连接条件
+内自然连接 select * from tb_1 natural join tb_2;
+左外 natural left join;
+右外 natural right join;
+
+将检索到的数据保存在文件内
+select * into outfile "文件地址" from...;
+
+
+insert
+插入部分字段可以：insert into tb_name set 字段名=val,字段名2=val...;
+当主键冲突时默认插入不成功，可变成update: on duplicate key update (除主键外)字段2=val,字段3=val...
+
+使用select语句查询到的数据作为插入的数据源(蠕虫复制)
+insert into tb_name (字段1，字段2...) select 字段1，字段2... from tb_name;
+
+替换 replace into () values ();主键冲突则替换
+
+数据导入(导出select *(主键null)into outfile 'path' from tb_name;)
+load data infile '文件路径' into table tb_name;
+
+
+delete
+可使用where order by limit 限制删除
+
+多表删除
+delete from tb_1,tb_2 using tb_1 join tb_2 on tb_1.id=tb_2.id where...;
+
+清空表(先删除表，在新建表)
+清空表内所有数据（包括自动增长）
+truncate tb_name;
+
+
+update
+(where order by limit)
+多表更新 update tb_1 join tb_2 on tb_1.id=tb_2.id set tb_1.字段=val,tb2.字段1=val... where ....;
+
+
+备份还原
+用mysqldump.exe
+
+备份整个库
+备份：mysqldump -uroot -p 数据库名 > 路径/XXX.sql
+还原(命令行)：source 路径/xxx.sql;
+
+备份某个表
+备份：mysqldump -uroot -p 数据库名 表名1 表名2 表名3... > 路径/XXX.sql
+还原(命令行)：source 路径/xxx.sql;
+
+
+视图（虚拟表，控制真表那些字段被隐藏）
+创建 create view 视图名 as select 字段名 from tb_name;
+删除 drop view 视图名
+修改 alter view v_name [(新字段名)] as select 字段名 from tb_name;
+隐藏复杂的业务逻辑
+
+
+事务(innodb)(先将结果记录在事务日志里，结束后向数据库提交)
+一组sql语句完成一个业务
+如果有任何一条语句失败，则都失败，应该回到操作前的初始状态
+1.关闭自动提交功能 常用start transaction;   不常用set autocommit=1/0(开/关);
+2.所有语句成功后提交 commit;
+3.失败 rollback;
+
+事物的特点（acid）
+1.原子性（整体不可分割）
+2.一致性（事务结束前不会被其他的程序改变）
+3.隔离性（两个事务不会互相影响）
+4.持久性（事务结束后数据修改永久生效）
+
+
+触发器
+create trigger 名字 after update on 表名1 for each row update 表名2 set 字段=字段+？？;
+创建触发器 creater trigger 名字 事件 执行代码
+事件：insert delete update
+事件的时机：执行之前和之后 after before
+由时机和事件在一起形成 6种事件
+after insert  before insert.......
+
+可执行的代码：
+sql语句 
+
+1.触发器不能同名
+2.目前mysql只支持一类事件设置一个触发器
+
+管理触发器
+删除：drop trigger trigger_name
+查看：show create trigger trigger_name
+
+在触发器内，获得触发该触发程序时的数据
+利用触发程序内的new和old来完成
+old:旧的记录(insert不能使用)
+new:新的记录(delete不能使用)
+
+如果一个触发器，由多条sql语句组成
+1.语句组成语句块(begin end)用来标识语句块
+2.语句块的语句需要独立的;结束符
+命令行修改语句结束符 delimiter
+
+
+
+PHP编码对数据库操作
+1.连接和认证
+mysql_connect(连接目标，用户名，密码);
+连接目标：服务器地址+端口号
+2.执行响应的sql语句
+mysql_query();//发送一条sql语句
+3.处理结果
+决定于执行结果
+a.返回布尔值，直接根据布尔值给出提示
+b.返回结果集，在结果集内提取需要的数据fetch
+  mysql_fetch_assoc();  mysql_fetch_row(); mysql_feach_array();
+  assoc关联数组，下标是字段名（字符串）
+  row索引数组，下标是字段位置（0,1,2）
+  array混合数组，下标2部分，字段名和索引位置
+4.将连接释放
+  mysql_close();
+
+错误处理
+mysql_error();错误信息
+mysql_errno();错误编号
+
+获得执行结果额外的信息
+1.获得结果集内的数据数量
+mysql_num_rows(结果集);
+2.操作后受影响的行数
+mysql_affected_rows();
+3.获得最新的自动增长的字段值
+mysql_insert_id();
+4.释放资源
+mysql_free_result(结果集);
+
+
+
+sql编程
+自定义变量 set @变量名=变量值   select 字段列表 into @变量列表
+           select @变量名:=val
+格式化：format(val,val);
+时间戳：unix_timestamp();from_unixtime(unix_timestamp());
+5到10之间的随机数：select floor(5+(rand()*5));
+字节长度：length(val); 字符长度：char_length(val);
+截取字符串：substring('字符串','开始位置','长度');
+lpad('字符串','位数','填充');
+加密函数 md5(); password(); sha1();
+
+自定义函数
+create function 函数名 (参数列表) 返回值类型  函数体
+create function say() returns varchar(10) begin .... end
+
+流程控制
+分支
+if 条件1 then
+        1语句
+else 条件2 then
+         2语句
+.......
+eles
+    语句
+ end if;
+
+循环
+while 条件 do
+循环体
+end while;
+
+循环的提前终止
+leave 标签名 终止循环
+iterate 标签名 跳出本次循环
+
+定义局部变量
+declare i int default 0;
+
+
+create function fun2() returns int
+begin
+set @i=0;
+set @sum=0;
+tag:while @i<10 do
+set @i=@i+1;
+set @sum=@sum+@i;
+end while tag;
+return @sum;
+end
+$$
+
+create function say(name varchar(10)) returns varchar(10)
+begin
+return concat('hello',name);
+end
+$$
+
+
+存储过程
+delimiter $  --定界符(工具中不需要)
+
+1.创建存储过程
+	create procedure proc_name(in name varchar(10))
+	begin
+	select concat('hello ',name);
+	end
+	$
+	
+	参数类型有 in out inout 默认为in  
+	in表示传递进参数值 过程内部处理对过程外部参数无影响  (只传递值)
+	out 表示返回什么参数 过程内部处理对过程外部参数有影响 (只传递地址)
+	inout 传递进参数值和地址 在内部处理后对外部该参数有影响 (传递值和地址)
+
+2.删除存储过程
+	drop procedure proc_name
+
+3.修改存储过程
+	alter procedure proc_name
+
+4.查询procedure
+	show procedure status [where db='dbname']
+	或者
+	select name from mysql.proc [where db='dbname']
+	详细查看
+	show create procedure dbname.proc_name
+
+5.调用procedure
+	call proc_name(param)
+
+
+
+
+预处理
+
+准备：prepare 预处理名 from 'sql语句';
+执行：execute 预处理名;
+
+prepare pre_query from 'select * from shop where id=?';
+set @id=6;
+execute pre_query using @id;
+
+
+查看mysql的用户
+select user,host,password from mysql.user;
+select * from mysql.user;
+
+创建用户
+grant 权限名称 on *.* to '用户名称'@'登陆的主机' identified by '密码';
+*.* 表示所有库和所有表
+grant all on *.* to 'zpf'@'127.0.0.1' identified by'123';
+grant all on *.* to 'zpf'@'%' identified by'123';(%表示所有)
+
+删除用户
+drop user '用户名称'@'主机名';
+
+修改密码（重启服务后生效）
+update mysql.user set password=password('密码') where user='root';
+
+root密码丢失,找回
+1.关闭mysql服务
+2.进入到mysql的bin目录，mysqld.exe --skip-grant-tables（无分号）
+3.进入另一窗口进入mysql无需密码
+4.重新设置root密码
+  update mysql.user set password=password('密码') where user='root';
+5.加载设置权限
+  flush privileges;
+
+
+读写分离
+
+bin-log日志
+在配置文件中添加
+bin-log=log 日志的文件名(该文件默认存储在数据库文件夹里)
+指定存储位置 bin-log='d://mysql/log'
+
+查看日志mysql/bin/mysqlbinlog.exe
+mysqlbinlog.exe --no-defaults log-bin日志的完整路径
+mysqlbinlog --no-defaults d://php/sqldata/binlog/binlog.000001
+在查看该日志时，重点要记住记录的sql语句和pos（存储sql语句的位置）点。
+
+在mysql中关于bin-log日志的命令
+查看最新的bin-log日志
+show master status;
+生成最新的bin-log日志
+flush logs;
+清空log日志
+reset master;
+
+恢复数据
+
+1.在修改数据之前先新建一个新的bin-log日志flush logs;
+误操作之后用最新日志之前旧的日志恢复
+mysqlbinlog.exe --no-defaults 日志的完完整路径 |mysql -uroot -padmin
+
+2.使用bin-log的pos点恢复
+先查看bin-log日志找到pos点
+恢复（pos点用双引号）
+mysqlbinlog --no-defaults --start-position="开始pos点" --stop-position="结束pos点" d://php/slqdata/binlog/binlog.000001 | mysql -uroot -padmin
+
+
+读写分离的配置
+
+1、主服务器的配置：
+（1）主服务器和从服务器都开启bin-log日志，
+（2）要给主从服务器设置一个唯一的server_id的值。并重启服务器。
+（3）给从服务器设置授权用户 
+grant all  on *.* to user1@192.168.10.10 identified by ‘456’;
+或 
+grant replication slave on *.* to user@192.168.10.10 identified by ‘456’
+或 
+grant replication slave on *.* to user@’%’identified by ‘456’ 
+ 
+
+（4）查看主服务器的最后一个log-bin日志 的名字和pos点
+show  master status;
+ 
+要注意：此时要停止对主服务器的任何操作。因为对主服务器有读写操作则postion会跟着改变。
+2、从服务器的配置：
+（1）先关闭从服务器（每次重新配置时需要先关闭） 
+stop slave
+
+（2）开始配置： 
+change master to master_host=‘主服务器的ip地址’,master_user=‘主服务器上用于同步数据的账号’,master_password=‘同步账号的密码’,master_log_file=‘bin日志的文件名’,master_log_pos=bin日志中的position值。
+ 
+
+（3）开启重服务器：
+start slave
+（4）查看有没有成功： 
+show slave status \G 
+ 
+
+Slave_IO_Running:Yes 
+此进程负责从服务器从主服务器上读取binlog 日志，并写入从服务器上的中继日志。 
+Slave_SQL_Running:Yes 
+此进程负责读取并且执行中继日志中的binlog日志， 
+注：以上两个都为yes则表明成功，只要其中一个进程的状态是no，则表示复制进程停止，错误原因可以从”last_error”字段的值中看到。
+
+
+
+
+条件语句
+where 必须是数据表中存在的字段
+having 必须是结果集中存在的字段
+
+1.都能使用
+select id,name,age from user where id>5;
+select id,name,age from user having id>5;
+2.只能用where
+select name,age from user where id>5;
+3.只能用having
+select id as sn,name,age from user having sn>5;
+
+
+
+匹配查找
+in(单个常量)
+select * from tab_name where id in('1','2','3');
+find_in_set(id,字符串列表) //逗号间隔的字符串('1,2,3,15,22')
+select * from tab_name where find_in_set(id,'1,2,3');
+
+
+索引
+没索引之前,一条条检索(即使找到符合条件的记录,也不会停止检索,不能确定还有没有符合条件的其他记录,直到全部检索数据)
+有索引后,索引记录到文件里,通过二叉树算法(BTREE)检索(每个二叉树节点保存了磁盘的物理位置,因此拷贝数据库文件后磁盘位置丢失,索引失效)
+
+1.主键索引
+2.唯一索引
+3.全文索引
+4.普通索引
+
+
+
+1.添加
+
+1.1主键索引
+当一张表,把某个列设为主键，则该列就是主键索引 
+建表后添加主键索引 alter table tab_name add primary key(列名);
+
+1.2普通索引
+一般来说,普通索引是先创建表，然后创建普通索引
+create index 索引名 on 表名(列名);
+
+1.3全文索引(仅能用于myisam引擎)
+全文索引主要针对文字(文本)检索
+fulltext(列名)
+
+create table suoyin(
+	id int primary key auto_increment,
+	title varchar(100),
+	body text,
+	fulltext(title,body)
+)engine myisam charset utf8;
+
+建表后 create fulltext index 索引名 on 表名(字段)
+用法：select * from tab_name where match(字段1,字段2) against('字符串');
+查看匹配度(概率):select match(字段1,字段2) against('字符串') from tab_name;
+注意：只对myisam引擎生效
+      针对英文生效(中文配合sphinx)
+      停止词:因为在文本中，创建索引是无穷大的，对一些常用的字符，不会创建索引
+
+1.4唯一索引
+有unique约束，就会创建唯一索引(值可以为null,而且可以多个)
+表创建后:create unique index 索引名 on 表名(列名)
+
+
+2.查询索引
+
+desc 表名
+show index from 表名
+show keys  from 表名
+
+查询索引是否启用 explain select * from ....
+
+
+3.删除索引(有自增长的不能删除,要先去掉(modify)自增长)
+alter table tab_name drop index 索引名;
+删除主键索引
+alter table tab_name drop primary key;
+
+4.修改索引
+先删除,在创建索引
+
+索引的副作用
+1.磁盘占用
+2.对dml语句的效率有影响(增删改的同时还要对索引文件进行修改)
+
+什么字段应该建索引？
+较频繁的作为查询条件的字段
+但是：唯一性太差的字段不适合创建索引(性别||值太少)，更新非常频繁的字段不适合键索引(在线状态)
+      不会出现在where子句中的字段不该建索引
+
+总结索引的使用场合
+1.肯定在where条件里经常使用
+2.该字段的内容有许多不同的值
+3.字段值不频繁变化
+
+索引使用注意
+1.多列(复合)：对于创建的多列索引,只要查询条件使用了最左边的列,索引一般就会被使用
+2.like匹配： 正确 like 'abc%' (错误'%abc'或'%abc%')(前面有%还要使用索引可以用全文索引)
+
+explain结果说明
+
+id:1                  #查询序列号
+select_type:SIMPLE    #查询类型
+table:tab_name      #查询表名
+type:ALL           #扫描方式 ALL表示全表扫描
+possible_keys:NULL #可能使用到的索引
+key:NULL	   #实际使用的索引
+key_len:NULL
+ref:NULL
+rows:10            #扫描多少行,可能得到多少记录数
+Extra:Using where  #额外信息
+
+
+事务的隔离级别
+1.read uncommitted	读取未提交的数据(脏读，幻读，不可重复读)
+2.read committed	读取已提交数据(幻读，不可重复读)
+3.repeatable read(默认)	重复读(幻读)（mysql中用间隙锁解决了幻读）
+4.serializable		可串行化(只允许读)
+
+脏读:事务A读取到事务B未提交的数据(如果事务B因某些原因回滚了数据，那么事务A读取的数据就是不正确的)
+不可重复读:(不以制读)事务A先读取某条数据的字段值，然后事务B更改了此条数据的字段值，当事务A在读取此条数据的字段值时就会和之前的不一样
+幻读:事务A先读取表中记录x条，然后事务B又在此表中增加了(删除)y条记录，当事务A再次读取相同条件的数据时就会发现多了(少了)y条数据
+
+不可重复读 和 幻读 的主要区别在于 不重复读更新数据某条记录的字段值 幻读是更新数据的记录数
+
+设置隔离级别
+set		transaction isolation level read committed;  #接下来的一个事务
+set session	transaction isolation level read committed;  #当前连接的所有事务
+set global	transaction isolation level read committed;  #当前时间点以后的所有事务
+
+set tx_isolation='read-committed';
+set session.tx_isolation='read-committed';
+set global.tx_isolation='read-committed';
+
+查看隔离级别
+select @@tx_isolation;
+select @@session.tx_isolation;
+select @@global.tx_isolation;
+
+
+mysql中的锁
+
+锁的种类
+1.共享锁(读锁)
+2.排它锁(写锁)
+3.意向锁(mysql自动的锁)
+
+锁的级别
+1.表级锁(myisam innodb)
+2.页级锁(BDB)
+3.行级锁(innodb)
+
+表锁
+lock table tab_name (read | write);  共享锁锁定后其他链接可以读但不可写，排它锁锁定后其他链接读取不到数据(发生阻塞)
+lock table tab_name1 (read | write),tab_name2 (read | write)...  多张表加锁
+解除表锁
+unlock tables;
+
+Tip:1.使用表锁后，只能对锁定的表进行操作
+    2.共享锁所有进程只能进行读操作
+    3.排它锁当前进程可以进行读写操作，其他进程会阻塞
+
+行锁(用在事务中)
+
+1.共享锁
+select * from tab_name where id=1 lock in share mode;
+//行级共享锁在其他事务中可以多次锁定 修改记录时容易发生死锁(mysql会自动使其中一个事务失败,避免死锁)
+
+2.排它锁
+select * from tab_name where id=1 for update;
+//同一记录只能获得一个排它锁，其他链接(进程)再进行锁定会发生阻塞
+
+Tip: 排它锁和共享锁不允许出现在同一条记录上(互斥 阻塞)

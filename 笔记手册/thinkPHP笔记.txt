@@ -1,0 +1,1355 @@
+项目入口文件index.php
+
+<?php
+ //tp目录
+ define('THINK_PATH','./ThinkPHP/');
+ //项目目录
+ define('APP_PATH','./');
+ //项目名称
+ define('APP_NAME','thinkphp');
+ //框架入口文件
+ require_once ('./ThinkPHP/ThinkPHP.php');
+?>
+
+	创建出来的项目目录
+
+
+	Common	项目公共文件目录
+	Conf		项目配置目录
+	Lang		项目语言包目录
+	Lib		项目类库目录
+	Tpl		项目模板目录
+	Runtime	项目运行时目录
+包含常用信息的定义、常用函数的定义、数据文件的缓存
+
+	~runtime.php	：常用函数和常量的定义
+
+参见tp框架入口文件脚本
+可以看出，如果是第一次执行，或者开启了调试模式，
+程序会自动加载框架内的runtime文件，否则，会加载项目的runtime文件
+
+//调试模式
+ define('APP_DEBUG',true);
+
+ 如果开启调试模式，不会产生项目的runtime文件
+ runtime.php文件保存了项目中的一些常量定义、常用函数的定义，但是一个项目在开发的过程中，数据表结构、路径有可能会经常变量，如果有runtime.php，那么可能不能即时看到最新变化。
+
+所以，我们建议：
+
+开发时，开启调试模式
+布署时，关闭调试模式
+
+二、	控制器
+
+1、	什么是控制器
+
+控制器接受用户的输入并调用模型和视图去完成用户的需求。 
+
+2、	定义控制器
+
+Lib/Action
+
+class UserAction extends Action{
+	public function add(){
+		$this->display();
+	}
+}
+
+
+//调用控制器最优先执行的方法(验证登陆)
+ public function _initialize(){}
+
+
+
+3、	URL调度模式
+
+url调度模式就是指在tp中访问页面url的方式
+
+在tp中，调度模式共有四种，可以通过配置选项：URL_MDOEL来设置
+
+ 在框架/conf/convention.php目录下查询配置
+
+ 'URL_MODEL'  => 0
+
+0：普通模式
+1：pathinfo模式
+2：rewrite模式
+3：兼容模式
+
+TP中的U(g,m,a)方法可以快速创建URL
+TP中的C('name')方法可以获得配置变量的信息
+
+1）	普通模式
+'URL_MODEL'  => 0
+
+ 语法：
+
+http://项目/入口文件?g=分组名&m=模块名&a=动作名
+
+g：分组名
+m：模块名
+a：动作名
+
+
+2）	pathinfo模式
+
+'URL_MODEL'  => 1
+
+这种也是tp推荐使用的模式，也是默认的
+
+语法：
+
+http://项目/入口文件/分组名/模块名/动作名
+
+
+3）	rewrite模式(重写)
+
+'URL_MODEL'  => 2
+
+语法：
+
+http://项目/分组名/模块名/动作名 
+
+1.httpd.conf配置文件中加载了mod_rewrite.so模块
+2.AllowOverride None 将None改为 All
+<VirtualHost *:80>
+    DocumentRoot "D:/php/apache/htdocs/zend/tp/"
+    ServerName tp.cn
+    #这里配置欢迎首页面
+    DirectoryIndex index.html index.htm index.php
+    <Directory 'D:/php/apache/htdocs/zend/tp/'>
+    #许可别人修改我们的页面
+    AllowOverride All
+    </Directory>
+</VirtualHost>
+3.确保URL_MODEL设置为2
+4.把下面的内容保存为.htaccess文件放到入口文件的同级目录下
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+</IfModule>
+
+
+4）	兼容模式
+
+'URL_MODEL'  => 3
+
+有些web服务器可能不支持pathinfo模式，但我们还想使用，可以考虑使用这个模式
+
+语法：
+
+http://项目/入口文件?s=/分组名/模块名/动作名
+
+
+
+
+
+在访问的url中，我们可以自己指定分隔符
+
+'URL_PATHINFO_DEPR' => ',' 
+
+http://www.sohu.com/index.php/Admin,Goods,add
+
+
+
+4、	空操作
+
+空操作是指系统在找不到指定的操作方法的时候，会定位到空操作（_empty）方法来执行，利用这个机制，我们可以实现错误页面和一些URL的优化。
+
+语法：
+
+	_empty($name)
+
+
+
+class GoodsAction extends  Action{
+	public function add()
+	{
+		$this->display('add');
+	}
+	//空操作处理方法
+	public function _empty($name)
+	{
+		echo '<font color=red>'.$name.'</font><meta charset=utf-8><b>方法不存在！</b>';		
+	}
+}
+
+
+
+实现url的优化
+
+public function  _empty($id)
+	{
+		echo 'select * from shop where id='.$id;
+	}
+
+http://tp.cn/index.php/Goods/5
+
+
+
+5、	空模块
+
+空模块的概念是指当系统找不到指定的模块名称的时候，系统会尝试定位空模块(EmptyAction)，
+利用这个机制我们可以用来定制错误页面和进行URL的优化。
+
+语法：
+
+class  EmptyAction   extends Action{}
+	MODULE_NAME
+
+订制错误页面：
+
+EmptyAction.class.php
+
+class EmptyAction extends Action{
+	public function _empty($name)
+	{
+			echo $name.'頁面不存在';		
+	}
+}
+
+url优化
+<?php
+class EmptyAction extends Action{
+	public function _empty($name)
+	{
+			//echo MODULE_NAME.'頁面不存在';	
+			echo 'select * from shop where id='.MODULE_NAME;	
+	}
+}
+
+MODULE_NAME表示模块名
+
+http://tp.cn/index.php/10
+
+
+6、	项目分组
+
+前台
+后台
+博客
+会员
+
+商品模块
+	前台商品模块
+		商品信息的浏览
+	后台商品模块
+		商品信息的维护
+在项目，如果需要分组，修改config.php配置文件，添加以下两个选项即可：
+
+config.php
+
+	APP_GROUP_LIST	：分组列表
+	DEFAULT_GROUP	：默认分组
+
+
+'APP_GROUP_LIST'=>'Home,Admin',
+'DEFAULT_GROUP'=>'Admin'
+
+
+//在conf目录中配置自己的配置文件(返回数组,数组的键名就是参数名)
+return array('参数名'=>配置的数组)
+
+//配置自动加载自己的配置文件
+'LOAD_EXT_CONFIG'=>'文件名(无后缀,可以多个,逗号隔开)'
+
+//取出自己设置的配置文件中的数组
+$arr=C('参数名');
+
+
+配置完分组信息后：要对控制器目录与模板目录进行分组
+
+控制器分组：
+
+模板分组：
+
+
+
+7、	URL大小写
+
+如果想访问时，url不区分大小写，可以修改配置文件：
+
+config.php
+
+‘URL_CASE_INSENSITIVE’=>true
+
+
+
+
+8、	页面跳转
+
+	success 	：作成功后调用的方法
+	error 		：操作失败后调用的方法
+
+class LoginAction extends Action
+{
+	/**
+	 * 加載模板
+	 */	
+	public function login()
+	{
+		$this->display('login');
+	} 
+	public function check()
+	{
+		$user=$_POST['user'];
+		$pass=$_POST['pass'];
+		if($user=='a'&&$pass==123)
+		{
+			$this->success('成功！','tiaozhuan');
+	    }else {
+	    	$this->error('失败','tiaozhuan');
+	    }
+	}
+	public  function  tiaozhuan()
+	{
+		echo '成功頁面';
+	}
+}
+
+在配置文件中，有两个选项用于控制以上两个方法所使用的模板
+
+config.php
+
+	TMPL_ACTION_SUCCESS
+	TMPL_ACTION_ERROR
+
+
+
+
+9、	页面重定向
+
+	redirect
+	
+$this->redirect(	“goods/show”, array(‘id’=>2), 5,	“页面跳转中”);
+
+参数1：要跳转的url
+参数2：传递的参数
+参数3：停留秒数
+参数4：提示信息
+
+
+三、	视图
+
+1、	什么是视图
+
+视图就是用户看到的并与之交互的界面
+
+在tp中，视图包含两部分：
+
+1）	视图类
+2）	模板
+
+2、	定义模板
+
+默认的模板文件定义规则：
+	
+模板目录/[分组名/]模块名/操作名+模板后缀 
+
+在配置文件中，下面这个选项用户有设置模板后缀
+
+TMPL_TEMPLATE_SUFFIX 
+
+
+3、	分隔符
+
+	'TMPL_L_DELIM'=>'<{',
+	'TMPL_R_DELIM'=>'}>',
+
+4、	模板赋值
+
+assign($name,$value);
+
+$name：模板变量名
+$value：要赋值的模板变量的值
+
+在tp视图中，有这样一个功能，可以向模板直接分配一个数组变量，
+然后数组中的元素名就是模板变量名，元素的值就是模板变量的值
+
+
+5、	模板输出
+
+$this->display();
+	
+	display();
+		$this->display();	调用与当前操作同名的模板
+display(‘操作名') 
+	$this->display(‘add’);	调用当前模块下的add.html模板
+	display(‘模块名:操作名') 
+		$this->display(“Category:show”);	调用Category模块下的show.html模板
+	display(‘show’,‘utf-8', ‘text/xml'); 
+		参数1：模板
+		参数2：编码
+		参数3：输出的内容类型			Content-Type:text/xml
+
+
+6、	模板替换
+
+在TP的模板中，有一些模板字符串常量，当执行时，会自动被解析成为一些路径：
+
+	__PUBLIC__：当前网站的公共目录
+	__APP__： 当前项目的URL地址
+	__GROUP__：当前分组的URL地址
+	__URL__： 当前模块的URL地址
+	__ACTION__：当前操作的URL地址 
+
+<link rel='stylesheet' href='__PUBLIC__/css/index.css' type='text/css'>
+
+自定义(模板定义字符串)
+
+'TMPL_PARSE_STRING'=>array(
+		'__CSS__'=>'/Public/css',
+		'__JS__'=>'/Public/js'
+)
+
+<link rel='stylesheet' href='__CSS__/index.css' type='text/css'>
+
+
+7、	获取内容
+
+	$this->fetch(); 
+
+fetch
+	读取		替换		返回
+display
+	读取		替换		输出
+
+
+
+
+8、	模板注释
+
+语法：
+
+	{/* 注释内容 */ } 		多行注释
+	{// 注释内容 } 		单行注释
+
+ 
+
+html注释会通过http响应给客户端
+thinkphp注释不会响应给客户端（它是服务器端解释）
+
+
+
+9、	变量输出
+
+语法：
+
+{$name}
+
+在tp可，向模板中赋值变量共有三种：
+
+普通变量
+	{$name}
+数组变量
+	{$product[‘name’]}、{$product.name}
+对象变量
+	{$obj:name}、{$obj:say()}
+
+
+10、	系统变量
+
+在tp的模板中，有以下内置的系统变量
+
+	$Think.server 	：$_SERVER
+	$Think.get		：$_GET
+	$Think.post	：$_POST
+	$Think.request	：$_REQUEST
+	$Think.cookie	：$_COOKIE
+	$Think.session	：$_SESSION
+	$Think.config	：获取tp配置文件中的信息
+
+
+11、	使用函数(相当于smarty调节器)
+
+语法：
+	
+{$name|fn1|fn2=arg1,arg2,### }
+
+fn是php函数
+
+12、	默认值
+
+当一个变量的值为空时，会执行默认值
+
+语法：
+	
+{$变量|default="默认值"}
+
+13、	运算符
+
+	+			{$a+$b}
+	-			{$a-b}
+	*			{$a*$b}
+	/			{$a/$b}
+	%		{$a%$b}
+	++		{$a++} 或  {++$a}
+	--		{$a--}  或 {--$a}
+在tp中的模板里，可以直接使用运算符对变量进行数学运算
+
+14、	内置标签
+
+{$name}
+
+标签语法：
+
+<tag></tag>
+<tag />
+
+tp中的内置标签共分两种：
+
+开放标签 <tag></tag>
+闭合标签 <tag />
+
+15、	包含文件
+
+语法：
+
+<include file="模板文件名" />
+
+<include file='./Tpl/Home/Public/header.html'/>
+
+在include标签中，可以使用这种语法：
+
+<include file=’模块名:操作名’ />
+
+
+<include file=’Public:header’ />
+
+
+include标签在引用模板时，也可以传递参数过去：
+
+<include file='Public:header' name='val'/>
+
+参数接收[name]
+
+
+16、	导入文件
+
+导入文件是指对资源文件的导入，指css、js文件
+
+语法：
+
+<import type=‘type’ file=‘file’ />
+	
+file（必须）：资源文件
+	type（可选）：资源文件类型，取值：js和css  默认为js
+	
+起始路径是网站的Public目录 
+采用命名空间方式
+<import type='css' file='Home.Css.test' />
+<import type='js' file='Home.Js.test' />
+
+
+17、	volist
+
+volist标签用于解析数组
+
+语法：
+
+<volist name="list" id="vo">
+	{$vo.id}
+	{$vo.name}
+</volist>
+
+name：要解析的数组变量名
+id：将解析到的变量放在指定的变量中
+offset：	要输出数据的offset(偏移量)
+length：	输出数据的长度,需要指定offset
+key：	循环索引	默认值：i	从1开始(序号)
+
+
+18、	foreach
+
+foreach语句用于遍历数组
+
+语法：
+
+<foreach name="list" item="vo" >
+		{$vo.id}
+		{$vo.name}
+</foreach>
+
+name：要遍历的数组名
+item：每次遍历到的数组元素
+foreach与volist相比，没有其余的属性
+
+
+19、	if、elseif、else
+
+对于简单的逻辑判断语句，建议使用if标签
+语法：
+<if condition="$name eq 1"> 
+		value1
+<elseif condition="$name eq 2"/>
+		value2
+<else /> 
+		value3
+</if>
+	eq或者 equal：等于
+	neq 或者notequal：不等于
+	gt：大于
+	egt：大于等于
+	lt：小于
+	elt：小于等于
+	heq：恒等于
+	nheq：不恒等于
+
+
+20、	使用php代码
+
+在tp的模板中，可以使用以下标记编写php代码：
+
+1）<php>echo “hello”;</php>
+2）<?php echo “think”;	?>
+
+在配置文件中，有一个选项，模板中是否可以使用php
+
+TMPL_DENY_PHP ：
+在配置文件中，将以上选项设置为true，表示可以禁上上面的第二种写法，但是第一种写法还是支持的。
+
+
+
+四、	模型
+
+1、	什么是模型
+
+模型表示企业数据和业务规则
+
+2、	定义模型
+
+模型文件：
+
+Lib/Model
+
+表名(首字母大写)+Model.class.php
+
+class 表名(首字母大写)Model extends Model{
+
+} 
+
+数据库有哪些数据表，就有哪些模型，每个数据表都会对应一个模型
+
+在tp中，实例化模型对象之前，必须要配置数据库相关信息，也就是说，创建模型对时，tp会自动创建与数据库服务器的连接
+
+3、	配置数据库信息
+
+打开tp框架的配置文件，将其中的数据库配置信息复制到我们的项目配置文件中：
+
+ 
+
+	DB_TYPE	：数据库类型
+	DB_HOST	：服务器地址
+	DB_USER	：用户名
+	DB_PWD	：密码
+	DB_NAME	：数据库名称
+	DB_PREFIX	：表前缀
+	DB_PORT	：端口
+	DB_CHARSET	：数据编码
+
+
+4、	实例化
+
+在tp中，模型共分两种：
+
+自定义模型
+	实例化自定义模型
+	快速实例化自定义模型(D函数)
+基础模型（Model）
+	实例化基础模型
+	快速实例化基础模型(M函数)
+
+
+5、	CURD操作
+
+增
+$admin=new AdminModel();
+	$row=array(
+		‘name’=>‘zhangsan’,
+		‘age’=>30	);
+	$admin->add($row);
+
+查
+$admin=new AdminModel();
+	$admin->select($id);//二维数组(多条)    //$admin->find($id)一条一维数组
+
+改
+$admin=new AdminModel();	
+	$data=array();
+	$admin->save($data);
+删
+$admin=new AdminModel();	
+	$admin->delete($id);
+
+
+6、	定义字段
+
+1）在tp里，一共有四种实例化方式，不管是哪种实例化形式，当实例化对象时，这时,tp会自动创建与数据库的联接，并解析模型对应的数据表
+
+ 可以看出，无论是子类模型还是基础模型都会自动实现对表结构的解析
+
+2）字段缓存
+
+	字段缓存保存在Runtime/Data/_fields/ 目录下面
+ 
+	只要是不开启调试模式都会生成字段缓存（字段缓存可以单独设置关闭）。 
+ 
+	可以通过设置DB_FIELDS_CACHE 参数来关闭字段自动缓存
+开发时，由于数据表结构可能不确定，建议关闭字段缓存功能
+ 运行时，可以看出，每次都对对应的数据表结构进行解析 
+	可以在模型类里面手动定义数据表字段的名称，可以避免IO加载的效率开销，在模型类里面添加fields属性即可 
+
+3）	定义字段的语法
+
+	protected $fields=array(
+				‘id’,
+				‘username’,
+				‘password’,
+				‘_pk’=>‘id’,
+				‘_autoinc’=>true
+	);
+可以看出，定义字段列表后，对象创建时，不会解析表结构，而直接使用我们定义的字段列表
+
+注意：字段列表的定义是在用户自定义类中，所以当我们实例化基础模型类时，是不会使用定义的列表，而是再次解析表结构。
+
+
+7、	创建数据
+
+ThinkPHP可以帮助你快速地创建数据对象，最典型的应用就是自动根据表单数据创建数据对象，这个优势在一个数据表的字段非常之多的情况下尤其明显。 
+
+语法：
+
+$model->create();
+
+
+$category->create();
+$res=$category->add();
+
+create方法的参数data是默认参数
+首先判断data参数是否为空，如果为空，将$_POST超全局变量数组中的数据赋值给参数data
+然后，再将$data的值进行其它设置，再将数据赋值给$vo，最后将vo变量的值赋值给当前模型对象的data属性中，其中，data属性是一个数组
+
+
+add方法的参数是默认参数，我们调用完create方法后，直接调用add方法并没有传参数，所以参数data为空
+下面继续判断，如果当前对象的data属性数组不为空，所以会将当前对象的data属性数组中的值赋值给参数data,便于下面代码的录入
+
+通过以上代码分析：
+
+create方法的本质就是从一个数组中创建数据
+
+假如表单以get形式提交数据，我们还想使用自动创建功能，怎么写？
+
+$model->create($_GET);
+
+
+问题：
+
+我们创建的表单中的元素名称必须要与数据表字段相同，但会在客户端源文件显露数据表结构。如果不同，这个字段的值就会丢失，如何解决这个问题？ 
+
+
+8、	字段映射
+
+ThinkPHP的字段映射功能可以让你在表单中隐藏真正的数据表字段，而不用担心放弃自动创建表单对象的功能 
+
+语法：
+
+protected $_map = array(
+		‘name'   => ‘username', 
+		‘pwd’ => ‘userpwd’
+);
+
+定义数组，数组元素是假名，数组的值是真名
+
+经过分析Model中的parseFieldsMap()方法，可以看出，type参数的取值为：0或1
+
+如果是0：会将数组中的假名元素全部移除，保留真名元素
+如果是1：会将数组中的真名元素全部移除，保留假名元素
+
+
+9、	表名操作
+
+1）在一个数据库中，如果部署了多个项目，那么我们可以使用表前缀解决问题
+‘DB_PREFIX' =>‘think_’
+
+2）在ThinkPHP的模型里面，有两个关于数据表名称的属性定义：
+protected $tableName='';   //不包含前缀的真实表名(改名后与模型名不同);
+protected $trueTableName=''  //包含前缀的真实表名(不遵循表前缀命名规范);
+
+
+当你的表表前缀符合要求，但表名与模型类名不一致，这时使用tableName
+当你的表表前缀不符合要求，或没有表前缀(或者连表名也与模型类名不同)，这时使用trueTableName
+
+
+10、	事务处理
+
+语法：
+
+	$User->startTrans();	//开启事务 
+	$User->commit() ;	//提交事务
+	$User->rollback() ;	//回滚事务
+
+
+11、	AR模式
+
+AR：ActiveRecord  
+
+将数据表映射到类
+将数据表字段映射到属性  
+将数据映射到对象
+
+
+1）	AR模式
+
+ 
+
+我们写程序，强调封装性，将公有属性修改为私有成员属性：
+
+ 
+
+改为私有之后，之前程序不能使用，不能在类外直接使用私有成员属性。
+
+但这样一来，属性很多的情况下，需要定义很多方法，过于麻烦：
+
+__set($name,$value)
+
+__get($name)
+
+当对一个不存在或不可访问的属性进行操作时，会自动执行__set或__get
+
+2）	TP中的AR模式
+
+$cate=new CategoryModel();
+
+//增加
+$cate->shop='苹果六手机';
+$cate->content='有钱人用的';
+$cate->type=2;
+$cate->add();
+
+//修改
+$cate->id=27;
+$cate->content='质量可以';
+$cate->save();
+
+//查询
+$row=$cate->getById(27);
+$row2=$cate->getByShop('苹果六手机');
+var_dump($row);
+var_dump($row2);
+
+//删除
+$cate->id=27;
+$cate->delete();
+
+
+我们使用的对象直接调用了如：id、name、content、cid这些属性，
+但子类模型与父类模型并没有定义这样的属性，如何理解？
+
+3）	分析：
+
+ public function __set($name,$value) {
+        // 设置数据对象属性
+        $this->data[$name]  =   $value;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据对象的值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $name 名称
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function __get($name) {
+        return isset($this->data[$name])?$this->data[$name]:null;
+    }
+
+    
+
+分析以上源码： 
+
+当我们用AR模式为模型对象赋值或取值时，其实是因为子类模型继承父类Model，父类中定义魔术方法__set 与__get
+
+__set在工作时，其实是向当前对象的data属性数组中添加一个新的元素，元素名以属性名命名
+__get在工作时，其实是从当前对象的data属性数组中获取同名的元素
+
+public function add($data='',$options=array(),$replace=false) {
+        if(empty($data)) {
+            // 没有传递数据，获取当前数据对象的值
+            if(!empty($this->data)) {
+                $data    =   $this->data;
+                // 重置数据
+                $this->data = array();
+            }else{
+                $this->error = L('_DATA_TYPE_INVALID_');
+                return false;
+            }
+
+
+add方法首先判断参数data是否为空，如果为空，继续判断当前对象的data属性数组是否不为空，
+然后将当前对象的data属性赋值给data参数变量  $data=$this->data
+
+下面在增删改查时直接到data变量中取值即可。
+
+
+12、	联贯操作
+
+1）	语法：
+
+$model->方法1()->方法2()->方法n()->select();
+
+支持联贯操作的方法主要有：
+
+	where		：指定查询条件
+	order		：排序
+	limit		：查询指定的条数
+	field		：指定查询的字段名称
+	group		：分组查询
+
+以上方法的最后必须连接select()查询方法，前面的方法顺序没有要求
+
+2）	案例
+
+/ $data=$cate->where('id=6')->select();
+//$data=$cate->order('id desc,type asc')->select();
+// $data=$cate->limit('5,3')->select();
+//$data=$cate->field('shop,content')->select();
+// $data=$cate->group('type')->select();
+
+//$data=$cate->field('id,shop,type')->where('id>5 and type=1')->order('id desc')->limit('2,3')->select();
+echo '<pre>';
+var_dump($data);
+ 
+
+13、	统计查询
+
+1）语法：
+
+$model->统计查询方法();
+
+	count		：统计行数
+	max		：最大数
+	min		：最小数
+	avg		：平均数
+	sum		：求和
+2）	代码示例
+
+$data=$cate->count();
+$data =$cate ->where('id>5')->count();
+$data=$cate->max('id');
+$data=$cate->where('id>5')->sum('id');
+$data=$cate->min('id');
+$data=$cate->where('id>5')->avg('id');
+
+
+五、	实用项
+
+1、	设置trace信息
+
+在配置文件中，添加以下选项：
+
+‘SHOW_PAGE_TRACE’=>true
+
+true：开启trace功能
+
+2、	session
+
+使用session之前，必须开启session机制
+
+在tp中，session机制默认是开启的
+
+在config.php文件中：
+ 
+ 'SESSION_AUTO_START'=>true
+
+tp中的session相关方法：
+
+	session('name','value');  		创建session并赋值
+	$value = session('name');		获取session的值
+	session('name',null); 		清空指定的session的值
+	session(null); 				清空所有session的值
+	session('?name');			判断指定的session是否设置	
+
+3、	cookie
+
+	cookie('name','value'); 		创建cookie
+	cookie('name','value',3600); 	创建cookie并设置它的有效时间
+	$value = cookie('name');		获取指定的cookie的值
+	cookie('name',null);			删除指定的cookie
+	//cookie(null); 				删除所有的cookie
+
+
+
+
+4、	文件载入
+
+1）	载入函数文件
+
+（1）Common/common.php
+	在项目的Common目录创建，创建common.php文件
+
+必须创建的文件名：common.php，如果是其它，不会自动加载，只有文件名为：common.php时，tp才会自动加载
+common.php文件中创建的函数会被编译到~runtime.php文件中，下次执行时直接执行runtime.php文件中的函数，所以如果函数发生改变，不会直接看到最新效果。
+			
+（2）config.php			
+		LOAD_EXT_FILE=“文件名”
+在Common目录下创建php文件，保存自己的函数，文件名任意指定
+ 
+但这个文件不会被自动加载，所以需要在配置文件config.php中，加入选项：LOAD_EXT_FILE=“fileName”
+ 
+可以看出，这样引用的文件的函数不会被编译到runtime.php文件中，如果修改函数内容，可以即时看到最新效果。
+
+（3）Common/user.php
+以上两种做法，都是tp对文件实行自动加载，但是在很多时候，某一个页面是用不到这么多的方法，比较浪费资源，我们需要让程序在需要的时候再去加载函数文件。
+在Common下创建user.php
+ 
+在控制器方法内，使用load函数对用户自定义的函数文件进行动态加载
+load(‘@.user’);	
+ 
+观察runtime.php文件，发现test2方法没有写入进去，说明每次执行时都会在源文件中去执行
+
+
+2）	载入类文件
+
+如：验证码类、分页类、画图类
+
+（1）	import(‘ORG.Util.User’);
+
+ 将类文件放在ThinkPHP/Extend/Library/ORG/Util下：
+ 
+
+ 在控制器中，如果想使用这个类，可以使用import方法导入这个类文件
+ 
+ import是tp提供的方法，默认要对于thinkphp框架中的extend/Library文件夹，引用文件时采用命名空间方式：
+	文件夹.文件夹.文件
+	
+
+
+（2）import(‘@.Common.User’);				Lib/Common/User.class.php
+以上做法将文件放在了TP框架内，如果只想将文件放在项目中：
+
+在Lib目录下，创建Common文件夹，将用户自定义类文件放在其中：
+ 
+
+在控制器中，需要引用这个文件时：
+import(‘@.Common.User’);  //@.表示 /Lib
+
+
+5、	验证码
+
+（1）	生成数字、英文验证码
+
+	import(‘ORG.Util.Image’);
+	Image::buildImageVerify();
+
+buildImageVerify($length=4, $mode=1, $type='png', $width=48, $height=22, $verifyName='verify'); 
+
+$length  位数
+$mode  类型   0字母 1数字 2大写字母 3小写字母 5混合
+$type 图像格式
+$width  宽度
+$height  高度
+
+
+在模板中，创建图像标签引入这个动作：
+<img src='__URL__/createCode' id='code' onclick='check()'>
+
+注意：验证码类会对验证进行md5加密。
+
+
+（2）	生成中文验证码
+
+	import(‘ORG.Util.Image’);
+	Image::GBVerify();
+ 
+GBVerify($length=4, $type='png', $width=180, $height=50, $fontface='simhei.ttf', $verifyName='verify')
+在控制器中创建方法用于生成中文验证码：
+
+ 
+将字体库文件放在与Image.class.php文件平级目录下
+
+
+6、	数据分页
+
+1）在ThinkPHP/extends/Library/ORG/Util/Page.class.php文件，可以实现分页功能
+
+
+import(‘ORG.Util.Page’);
+
+	$User = M(“User”);
+	$count = $User->count(); 	//查询数据总数
+	$Page = new Page($count,25); //实例化page类对象
+	$show = $Page->show();		//用于返回数据分页的页脚信息
+//查询当前页所有数据
+	$list = $User->limit($Page->firstRow.’,’.$Page->listRows)->select();
+	$this->assign('list',$list); 		//将当前页数据分配给模板
+	$this->assign('page',$show);	//将页脚信息分配给模板
+	$this->display(); 			//显示模板
+
+
+数据分页的相关设置
+
+	setConfig
+
+	header
+	prev
+	next
+	first
+	last
+
+
+import('ORG.Util.Page');
+$page=new Page(D('category')->count(),1);
+$page->setConfig('first', '首页');
+$page->setConfig('last','末页');
+$show=$page->show();
+$this->assign('show',$show);
+$data=D('category')->limit($page->firstRow.','.$page->listRows)->select();
+$this->assign('data',$data);
+$this->display('admin');
+
+
+7、	文件上传
+
+1）	实现代码
+
+	import ( 'ORG.Net.UploadFile' );			引用类文件
+	$upload = new UploadFile ();				实例化上传类对象
+	$upload->savePath = './Public/Uploads/';	设置文件保存路径
+	if (! $upload->upload ()) {					上传文件并判断上传结果
+	echo $upload->getErrorMsg ();				输出错误信息
+	} else {								上传成功
+	$info = $upload->getUploadFileInfo ();		
+	}
+
+2）	上传类的相关属性
+
+	saveRule	：文件名的保存规则
+	autoSub	：是否开启子目录保存文件   true：开启
+	subtype	：子目录类型
+	dateFormat	：目录使用的时间格式
+	allowExts		：允许的文件扩展名数组   jpg  bmp  png
+	allowTypes		：允许的文件类型数组	image/pjpeg
+
+
+上传基本代码
+import('ORG.Net.UploadFile');
+$upload=new UploadFile();
+$upload->savePath='./Public/Upload/';
+$upload->autoSub=true;
+$upload->subType='date';
+$upload->saveRule='time';
+if(!$upload->upload()){
+	$this->error($upload->getErrorMsg(),'add/flag/index');
+}
+$info=$upload->getUploadFileInfo();
+$_POST['photo']=$info[0]['savename'];
+
+
+8、	多表连接
+
+查询结果如果不在一个表中，需要使用多表连接
+
+1）	sql语句
+
+（1）	select table1.*,table2.* from tabel1,table2 where table1.id=table.cid;
+
+（2）select table1.*,table2.* from table1 left(right) join table2 on table1.id=table2.cid;
+ 
+
+2）	tp中的多表连接
+
+（1）	table
+
+语法：
+
+$model->table(‘table1 t1,table t2’)
+		   ->where(‘t1.id=t2.sid’)
+		   ->select();
+
+
+$data=$goods->table('think_category as t2,think_goods as t1')->field('t1.*,t2.shop')->where('t1.type=t2.id')
+->limit($page->firstRow.','.$page->listRows)->select(); 
+
+（2）	join
+
+语法：
+
+$model->join(‘left(right) join t2 on t1.sid=t2.id’)
+		   ->select();
+ 
+
+$data=$goods->join(' as t1 left join think_category as t2 on t1.type=t2.id')->field('t1.*,t2.shop')
+->limit($page->firstRow.','.$page->listRows)->select();
+
+注意：left(right) join 前面可以使用表名，也可以不使用表名
+如果加上表名：表示当前模型对应的表的别名
+
+9、	Ajax应用
+
+	Action类提供了ajaxReturn方法用于AJAX调用后返回数据给客户端 
+	通过配置DEFAULT_AJAX_RETURN进行设置，默认配置采用JSON格式返回数据 
+
+关于ajaxReturn方法：
+
+	$this->ajaxReturn($result,“ok！",1); 
+
+data 返回数据
+info 提示信息
+status 操作状态
+
+
+
+
+10、	关联模型
+
+1）	模型种类
+
+用户自定义模型
+基础模型
+关联模型
+
+2）	表与表之间的关系
+
+一对一
+一对多
+多对多
+
+HAS_ONE  			一对一
+	用户表		用户资料表
+HAS_MANY			一对多
+	分类表		商品表
+MANY_TO_MANY		多对多
+	用户表		权限表
+BELONGS_TO			当前数据的父对象在另一个表中
+	商品表		分类表
+	文章表		用户表
+
+3）	定义关联模型语法
+
+如果想使用关联模型，那么用户自定义模型必须继承RelationModel
+
+class UserModel extends RelationModel{
+protected $_link = array(
+	'关联1'  =>  array(
+		'关联属性1' =>'定义',
+		'关联属性N' =>'定义',
+ 	 ),
+   	 ...
+);
+}
+
+
+
+
+
+
+
+4）	支持的关联属性
+
+	mapping_type	：表关系
+	mapping_name	：关联映射名称（这里写什么，将就从哪个数组中去取数据）
+	mapping_fields	：关联的字段名称
+	class_name	：要关联的模型名称（如果不写，默认与关联名称表示模型连接）
+	foreign_key	：关联外键字段名称
+	parent_key		：关联外键字段名称（只适应用于自连接）
+	condition		：关联条件
+
+GoodsModel.class.php
+
+ 
+
+5）	使用关联模型
+
+	relation(true)
+
+$model->relation(true)->select();
+
+6）	关联查询
+
+class GoodsModel extends RelationModel {
+	protected $fields = array (
+			'id',
+			'name',
+			'type',
+			'price',
+			'info',
+			'photo',
+			'_pk' => 'id',
+			'_autoinc' => true 
+	);
+	protected $_link=array(
+			'Category'=>array(
+					'mapping_type'=>BELONGS_TO,
+					'mapping_name'=>'goods_cate',
+					'mapping_fields'=>'shop',
+					'class_name'=>'category',
+					'foreign_key'=>'type'
+			)
+	);
+}
+
+
+$goods=new GoodsModel();
+$data=$goods->relation('goods_cate')->select();
+
+{$vo.goods_cate.shop}
+
+
+
+7）	关联删除
+
+希望在删除分类时，删除对应的商品
+
+在分类模型添加关联商品的定义
+protected $_link=array(
+			'goods'=>array(
+					'mapping_type'=>HAS_MANY,
+					'mapping_name'=>'cate_goods',
+					'class_name'=>'goods',
+					'foreign_key'=>'type'
+	),
+			'category'=>array(
+					'mapping_type'=>BELONGS_TO,
+					'mapping_name'=>'self',
+					'class_name'=>'category',
+					'mapping_fields'=>'shop',
+					'parent_key'=>'type'
+	)
+	);
+
+
+
+public function shan() {
+		$id=$_POST['id'];
+		$cate=new CategoryModel();
+		foreach($id as $val){
+		$res=$cate->relation('cate_goods')->delete($val);
+		if($res){
+			$this->success('删除成功','admin');
+		}else{
+			$this->error('删除失败','admin');
+		}
+		}
+	}
+
+
+
+
+U() 制作url地址的快捷函数
+
+C(名称) 获得配置变量(convertion.php  config.php)信息
+C(名称，值)  设置配置变量信息
+
+L()  获得语言变量信息
+E()  给页面输出错误信息
+
+A("项目://模块/控制器")  实例化控制器对象
+A("Home/User")    实例化User控制器对象
+A("book://Home/User")    实例化book项目的Home模块的User控制器对象

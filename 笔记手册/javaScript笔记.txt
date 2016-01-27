@@ -1,0 +1,703 @@
+js在用户的浏览器上执行
+js是脚本语言/解释性语言
+js的位置可以向php一样出现在html代码任意地方(标签外)
+js必须用<script language="javascript"></script>包起来
+js可以出现多对script片段,浏览器按照先后顺序依次执行
+
+定义变量(区分大小写)
+var(所有类型)(也可以不写)
+
+js的数据类型
+1.基本数据类型
+  数值   字符串   布尔
+  查看类型typeof
+  window.alert(typeof val);
+
+2.复合类型
+  数组   对象
+3.特殊数据类型
+  null  undefine
+
+NaN不是一个数 (isNaN()检查是不是数,数false)
+Infinity 无穷大
+
+字符串中有引号用 \"
+
+b=a++ <=> b=a   a=a+1
+b=++a <=> a=a+1 b=a
+
+输入：var val=window.prompt("请输入");
+打印：document.writeln("输入是"+val);
+
+var val2=window.prompt("第一个数");
+var val1=window.prompt("第二个数");
+document.writeln("和是："+(parseFloat(val1)+parseFloat(val2)));
+
+js中 0  ""  false null undefined NaN都表示false
+js中||逻辑运算符的返回值
+返回第一个为真的值(也可以是对象)，如果全为假，则返回最后一个值
+
+js函数
+function 函数名(参数列表)
+{
+	//代码
+	//返回值
+}
+
+定义：（参数名不要带var）
+function jiSuan(num1,num2,oper)
+{
+	switch(oper)
+	{
+		case "+": res=num1+num2;break;
+		case "-": res=num1-num2;break;
+		case "*": res=num1*num2;break;
+		case "/": res=num1/num2;break;
+		default:window.alert("运算符不合法");break;
+	}
+	return res;
+}
+调用：
+(1)res=jiSuan(num1,num2,oper);
+(2)var ji_suan=jiSuan;
+   res=ji_suan(num1,num2,oper);
+
+.js文件的引入
+<script language="javascript" src="functions.js"></script>
+
+将字符串作为脚本执行
+var str="window.alert('OK')";
+eval(str);
+
+js函数天然支持可变参数
+
+js中arguments可以访问所有的函数传入值
+arguments.length 参数个数
+
+//传入任意个数参数，求和
+function add()//也可以有参数
+{
+	var res=0;
+	for(var i=0;i<arguments.length;i++)
+	{
+		res+=arguments[i];
+	}
+	return res;
+}
+
+!!!!js中函数只关心函数名，不在乎参数多少
+
+匿名函数
+定义：var a=function(s) { alert(s*s*s); }
+调用：a(2);
+
+
+数组(引用类型/复杂类型/复合类型)
+用于存放一组数据
+js的数组中的元素不区分类型
+引用(地址)传递
+动态增长
+
+数组大小：数组名.length
+将字符串拆分成一个数组：arr=str.split("拆分字符","个数");
+
+//定义
+var arr=[1,2,3,4,5,6,"哈哈",6.9];
+//遍历1
+for(var i=0;i<arr.length;i++)
+{
+	document.writeln(arr[i]);
+}
+//遍历2
+for(key in arr)
+{
+	document.writeln(key+"="+arr[key]);
+}
+
+//四舍五入的方式保留num小数点后2位
+num.toFixed(2);
+
+//设置字符串键名
+var b=[];
+b["哈哈"]=10;
+document.write("<br>"+b["哈哈"]);
+
+//删除数组的某个元素
+delete arr[key];
+
+二维数组
+var arr=[[1,2,3,4,5],["a","b","c"],["a",1,"a","5"]];
+//遍历1
+for(i=0;i<arr.length;i++)
+{
+	for(j=0;j<arr[i].length;j++)
+	{
+		document.writeln(arr[i][j]);
+	}
+	document.write("<br>");
+}
+//遍历2
+for(row in arr)
+{
+	for(key in arr[row])
+	{
+		document.writeln(arr[row][key]);
+	}
+	document.write("<br>");
+}
+
+!!!任何地方省略 var 关键字定义的变量都是全局变量
+
+js面向(基于)对象
+js中的类叫做原型对象
+js对象的属性可以动态的添加
+
+function Cat()
+{
+
+}
+var cat1=new Cat();
+
+function 类名/原型对象名(){
+}
+//打印对象的构造函数
+window.alert(cat1.constructor);
+//打印类型
+window.alert(typeof cat1);
+
+!!!js中一切都是对象
+
+//判断一个对象是不是Cat类型
+if(cat1 instanceof Cat)
+if(cat1.constructor==Cat)
+
+//访问对象的属性
+1.对象名.属性名
+2.对象名["属性名"]
+
+//删除对象属性(主动释放对象内存)
+delete 对象名.属性名;
+
+
+function Cat()
+{
+    this.name;//公开属性
+    var color;//私有属性
+    this.show=function(){}//公开方法
+    function show1(){} //私有方法
+}
+//使用prototype绑定一个共享方法(不能调用类的私有的属性和方法)
+Cat.prototype.cry=function(){ window.alert("喵喵")}
+
+当==的两边都对象/对象函数,则比较地址是否相等
+
+
+Object类(所有类的基类)
+var cat=new Object();//通过Object直接创建对象
+
+//给类添加方法
+var arr=[0,1,2,3,4,5,6,7];
+Array.prototype.find=function(val)
+{
+	for(key in this)
+	{
+		if(this[key]==val)
+		{
+			return key;
+		}
+	}
+	return -1;
+}
+window.alert(arr.find(7));
+
+js有多个同名函数只认最后一个
+
+js获取元素
+document.getElementById("ID");返回一个元素对象
+tag=document.getElementsByTagName("Tag");返回多个元素对象tag[*]
+class=document.getElementsByClassName("Calss");返回多个元素对象calss[*]
+
+获取属性
+元素节点.getAttribute("属性名");
+元素节点.属性名;(!DOM)
+
+
+设置节点属性
+元素节点.setAttribute("属性名","属性值");
+元素节点.属性名="属性值";(!DOM)
+
+获取元素对象子节点
+node_obj.childNodes[*];
+node_obj.firstChild;
+node_obj.lastChild;
+
+获取元素对象子节点值
+node_obj.childNodes[*].nodeValue;
+node_obj.firstChild.nodeValue;
+node_obj.lastChild.nodeValue;
+
+
+
+构造方法
+再给一个对象初始化属性值的时候,也可以指定函数属型
+function Cat(name,age,fun)
+{
+	this.name=name;
+	this.age=age;
+	this.fun=fun;
+}
+function say(lan)
+{
+	window.alert(lan);
+}
+var cat=new Cat("小白","2",say);
+cat.fun("hello");
+
+创建对象的另一种形式(简单的对象)
+var cat={ name:"咪咪",age:2,fun:function(){alert("hello")}}
+alert(cat.age);
+cat.fun();
+
+//将函数中的this关键字换成对象  函数名.call(对象名)
+function fun1(){alert(this.name+"hello2");}
+fun1.call(cat);<=>cat.fun1();
+
+
+循环遍历对象中所有的属型和方法
+for(var key in obj)
+{
+    document.writeln(obj[key]);
+}
+//遍历window对象
+for(var key1 in window)
+{
+	document.write(key1+":"+window[key1]+"<br>");
+}
+
+
+封装
+function Person(name,age,sal)
+{
+	this.name=name;//公开属性
+	var age=age;//私有属性
+	var sal=sal;
+	this.show=function(){show2();}//公开方法
+	function show2()//私有方法
+	{
+		alert(sal);
+	}
+}
+!!!类中访问私有属性直接写属性名，不要写this关键字,方法也一样
+   类中访问公开的属性需要写this关键字,方法也一样
+
+继承(代码复用)
+function A(a,b)
+{
+   this.a=a;
+   this.b=b;
+   this.c=function(){ alert(this.a);}
+}
+//js中实际是通过对象冒充,来实现继承的(可以多重继承)
+function B(a,b)
+{
+   this.d=A;    //将A类传递给d
+   this.d(a,b); //执行d让A类的代码出现在B类中
+}
+
+多态
+1.重载
+js不支持重载(不可以通过参数个数,决定调用哪个同名方法)
+js可以认为天然支持重载(参数可变)
+    if(argument.length==?)
+    {}else if(argument.length==??)
+    {}
+
+2.覆盖/重写
+子类覆盖父类的同名方法(不考虑参数个数)
+
+
+闭包(closure)
+1.闭包和gc是相关联的
+2.闭包实际上在涉及到一个对象的属性何时被gc处理的问题
+
+阻止gc立刻回收变量
+function A()
+{
+	var i=10;
+	function b()
+	{
+		alert(++i);
+	}
+	return b;
+}
+A();//调用函数A 执行完后 gc回收变量i
+var c=A();//将返回的b保存在c中（阻止gc回收i）
+c(); //11
+c(); //12
+c(); //13
+
+js中的内部类
+ 分类(从使用的方式看)
+1.静态类
+ 类名.属性(方法)
+ Math.abs(-12);
+2.动态类
+ var 对象=new 动态类
+ 对象.属性(方法)
+ var now=new Date();
+ alert(now.toLocaleString());
+
+Math类
+1.abs(X)绝对值
+2.ceil(X)向上取整
+3.floor(X)向下取整
+4.max(x,y)求x,y中最大数
+5.min(x,y)求最小数
+6.round(x)对x四舍五入取整
+7.random()0-1的16位随机数  15~60之间的随机数Math.round(Math.random()*(61-15)+15)  Math.round(Math.random()*(max-min)+min)
+8.sqrt() 求平方根
+
+Date
+1.Date() 返回当前日期和时间
+2.getDate() 返回一个月中的某一天
+3.getDay() 返回一周中的某一天
+4.getMonth() 返回月份(0~11)+1=当前月份
+5.getFullYear() 返回年份
+6.getHours() 返回小时数
+7.getMinutes() 返回分钟数
+8.getSeconds() 返回秒数
+//toLocaleString() 转成本地时间格式
+
+String
+1.indexOf(x)  返回某个字符串在该字符串中首次出现的位置
+2.split(" ") 把字符串分割为字符串数组
+3.substr(x,y) 提取从x下标开始的指定数目y的字符
+4.substring(x,y) 提取字符串中介于两个之指定下标之间的字串
+5.charAt(x) 返回指定位置的字符
+6.length str的长度
+7.toString() js中所有内部对象都有,将对象中的数据转成某个格式的字符串
+
+
+Array
+1.length
+2.pop() 出栈(栈顶)
+3.push(x) 入栈(栈顶)
+
+Boolean
+
+Number
+1.toString()
+2.toFixed(x) 将数字转为字符串并四舍五入保留x位小数
+
+
+js的系统函数
+1.decodeURI(x) 解码某个URI编码
+2.encodeURI(x) 编码URI
+3.eval(x)  将字符串作为js脚本执行
+4.isNaN(X) 半段是否能转为数字
+5.parseFloat(x) 将字符串转为浮点型
+6.parseInt(x) 将字符串转为整型
+
+
+js事件驱动机制
+js是采用事件驱动(event-driven)响应用户操作的
+通过鼠标或者按键在浏览器窗口或者网页元素（事件源）上执行的操作，称为事件
+由鼠标或热键引发的一连串程序的动作，称之为事件驱动
+对事件进行处理的程序或函数，称之为事件处理程序(evnet handler)
+
+事件(对象)分类
+1.鼠标事件
+2.键盘事件
+3.html事件
+4.其他事件
+
+对外部css进行事件修改
+1.获取外部第一个css中所有选择器
+var cssRules=document.styleSheets[0].cssRules/rules;
+2.取出第一个选择器
+var style_1=cssRules[0];
+ //1,2可合并为var cssRules=document.styleSheets[0].cssRules[0];
+3.修改
+style_1.style.width="???";
+
+一个事件可以调用多个函数
+oclick="fun1(),fun2()";
+
+将光标定位到id为text1的元素上
+document.getElementById("text1").onfocue();
+
+窗口事件
+onload         页面加载完成
+onbeforeunload  页面关闭之前
+onunload         页面关闭
+
+oncontextmenu  鼠标右键事件
+onselectstart="alert()"  选择事件
+
+oncontextmenu="return false" 结束某个事件
+
+键盘事件
+onkeydown=function(e)
+{
+	alert(e.keyCode);
+}
+
+
+DOM编程(Document Object Model)
+js把浏览器,网页文档和网页中的html元素都用响应的
+内置对象来表示
+
+BOM(Browser Object Model)
+BOM为纲,DOM为目
+DOM就是BOM的具体实现
+
+!!!元素间的文本通过  对象.innerText 来访问
+
+window对象
+confirm("是或否")  返回布尔值 
+ID=setInterval("code",s)  返回定时器句柄 在指定毫秒数后一直调用code
+clearInterval(定时器ID)   取消setInterval()
+ID=setTimeout("code",s)   在指定毫秒数后调用一次code
+clearTimeout(ID)  取消setTimeout()
+
+moveTo(x,y)  把窗口的左上角(以屏幕为原点)移动到x,y
+moveBy(x,y)  以当前的窗口坐标为原点移动
+resizeTo(x,y) 将当前窗口的像素改为x*y
+resizeBy(x,y) 将当前窗口的像素增加x*y
+var new_window=open("file","_self|_blank","channelmode=yes|no|1|0")  打开一个新窗口 window.open(URL,name,features,replace)
+opener(父窗口对象)  父窗口和子窗口通讯(opener.document.getElementById()获取父窗口元素对象)
+new_window是子窗口对象(new_window.document.getElementById()获取子窗口元素对象)
+  tip:document.getElementByid(id) 可以封装为 function $(id){return document.getElementByid(id);} 调用$(id)即可
+
+
+History对象
+back()<=>go(-1)  返回上一个历史页面
+forward()<=>go(1) 返回下一个历史页面
+go(number|URl) 返回上个指定的历史页面
+
+location对象
+href    当前页面的url
+reload()   刷新当前页面(重新加载)
+
+
+navigator
+appName  浏览器名称
+
+screen对象
+height   显示器高度(px)
+width    显示器宽度(px)
+avilHeight  浏览器高度(除去菜单栏)
+avliWidth   浏览器宽度
+
+event对象
+1.clientX  鼠标指针的横坐标(窗口)
+2.clientY  鼠标指针的纵坐标(窗口)
+3.screenX  鼠标点的横坐标(屏幕)
+4.screenY  鼠标点的纵坐标(屏幕)
+5.altKey    ALT键是否被按下
+6.shift     shift键是否被按下
+7.keyCode   键盘unicode字符码
+
+
+绑定事件
+1.<tagName onclick="fun()">
+2.document.getElementById("IDname").onclick=fun;
+3.onscroll=function(){}
+
+解除绑定
+
+
+判断输入的是不是数字
+html:<input type="text" onkeypress="return test2(event)">
+js:function test2(e)
+	{
+		if(e.keyCode>=49&&e.keyCode<=57)
+		{
+			return true;
+		}else
+		{
+			alert("NaN");
+			return false;
+		}
+	}
+
+
+
+Document对象
+代表整个html文档 可以访问到文档中的各个对象
+1.write()    打印
+2.writeln()  换行打印
+3.getElementById()  通过ID获取对象(ID相同取第一个)
+4.getElementsByName() 通过html控件name获取对象集合
+  length 长度  obj[length].checked(表示被选中)
+5.getElementsByTagName() 通过标签名返回对象集合
+6.alinkColor  当前文档超链接的颜色
+7.linkColor
+8.bgColor      当前文档背景色
+9.fgColor      文档前景色
+10.title       文档标题
+11.URL         文档的URL
+12.domain      当前文件访问的域名
+
+元素节点增删
+增加  var myEle=document.createElement("元素名");
+      父元素对象.appendChild(myEle);
+
+删除  父元素对象.removeChild(要删除的子元素对象)
+      或者 要删除的元素.parentNode.removeChild(要删除的元素);
+!!!类似于PHP的XMLDOM编程
+
+function zengjia()
+{
+	var root=document.getElementById("idName");
+	var myObj=document.createElement("div");
+	myObj.innerText="0";
+	myObj.id="a";
+	myObj.style.width="20px";
+	myObj.style.height="10px";
+	myObj.style.background="blue";
+	root.appendChild(myObj);
+}
+function shanchu()
+{
+	var deObj=document.getElementById("a");
+	deObj.parentNode.removeChild(deObj);
+}
+
+
+dom加强
+在dom编程中,一个html文档会被当做dom树对待，dom会把所有的html元素(包括换行符,注释等),映射成Node节点
+因此可以使用Node节点的属性和方法
+
+document.body对象(body加载之后)
+1.appendChild()  添加元素
+2.removeChild()  删除元素
+3.innerText      元素间的文本
+4.innerHTML      元素间的HTML代码
+5.clientWidth    body实际的宽度
+6.clientHeight   body实际的高度
+......
+
+body事件
+1.onload    body加载完成
+2.onunload  退出之后
+3.onbeforeunload  退出之前
+4.onselectstart  用户选中文档body的内容时
+5.onscroll    用户拖动滚动条时(广告跟着跑)
+  (document.body.scrollLeft和document.body.scrollTop  相对于滚动时左上角)
+
+obj.offsetWidth 返回当前对象的实际宽度
+obj.offsetHeight 实际高度
+
+
+!!!!自己的经验之谈
+为了兼容
+1.尽量使用innerHTML代替innerText
+2.要是需要在函数内部使用外部变量则应
+  var a;
+  var b;
+  function A()
+  {
+     if(a==null)
+     {
+        a=0;
+	b=0;
+     }
+  }
+
+
+Style对象
+backgroundPosition=100% -25%;
+
+forms对象images(集合)
+document.forms[0].name_val
+document.forms.item(0).name_val
+
+!!!获取第一个form元素里的第一个input控件里的值
+var form=document.getElementsByTagName("form")[0];
+var in1=form.getElementsByTagName("input")[0];
+alert(in1.value);
+
+验证表单的时候可以
+1.<form onsubmit="">
+2.<input type="submit" onclick="">
+
+img对象
+onerror事件  图片加载失败
+onload事件   图片加载成功
+
+document.all取出html的所有元素
+
+table对象
+rows[y]   y行
+cells[x]  x列
+deleteRow(x) 删除x行
+insertRow()  插入一行
+insertCell()  插入一列
+
+
+正则表达式(RegExp)
+描述或匹配一系列复合某个语法规范的字符串
+
+用某种模式去匹配一类字符串的一个公式
+
+创建正则表达式对象
+var regExp=/正则表达式/gi   隐式创建
+var regExp=new RegExp("正则表达式","gi")  显示创建
+
+g->全局(global)整个字串
+i->忽略大小写
+m->考虑换行
+
+exec() 检索字符串中指定的值。返回找到的值，并确定其位置  返回一个数组，其中存放匹配的结果[0]。如果未找到匹配，则返回值为 null。
+test() 检索字符串中指定的值。返回 true 或 false   果字符串 string 中含有与 RegExpObject 匹配的文本，则返回 true，否则返回 false
+
+与正则有关的string对象的方法
+search()  索字符串中指定的子字符串，或检索与正则表达式相匹配的子字符串  返回第一个与 regexp 相匹配的子串的起始位置
+match()  在字符串内检索指定的值，或找到一个或多个正则表达式的匹配    返回存放匹配结果的数组。该数组的内容依赖于 regexp 是否具有全局标志 g。
+replace() 方法用于在字符串中用一些字符替换另一些字符，或替换一个与正则表达式匹配的子串stringObject.replace(regexp,replacement)  返回替换后的字符串
+
+
+静态属性
+RegExp.index  本次匹配内容的开始位置
+RegExp.lastindex   本次匹配内容中最后一个字符的下一个位置
+RegExp.input  返回当前所作用的字符串
+RegExp.leftContext  当前匹配字符串左边的所有内容
+RegExp.rightContext   当前匹配字符串右边的所有内容
+
+
+var regExp=/(\d)(\d)\2\1/gi;  //1221,3663...
+解释
+(\d) 子表达式(js引擎在匹配的时候,会把各个子表达的内容捕获到内存暂存)
+\2   反向引用第二个子表达式的内容
+\1   反向引用第一个子表达式的内容
+
+
+元字符
+1.限定符:用于指定其前面的字符和组合项连续出现多少次  {5} 或者 {3,5}(3-5个)(贪婪匹配:尽量匹配5个)
+  +：1~多
+  *：0~多
+  ?：0~1
+2.字符匹配
+  [a-z]匹配a~z中任意一个
+  [^a-z]不是a~z中任意一个
+  [abcd]匹配abcd中任意一个
+  [^abcd]不是abcd中任意一个
+
+  \d=[0-9]  \D=[^0-9]  \w=[a-zA-Z0-9_] \W=[^a-zA-Z0-9_]
+  \s匹配任何空白字符(空格,制表符等)  \S匹配任何非空白(可见)字符
+  .匹配\n之外的所有字符(匹配.用\.)
+3.定位符(规定要匹配的字符串出现的位置)
+  ^开始位置 /^abc/ 以abc开头
+  $末尾     /abc$/ 以abc结尾
+
+ 需要用转译符的字符
+ .  *  + (   )  /  \  ?  [  ]  ^  {  }
+
+4.选择匹配符(或)
+ \(han|含|汉)\gi  
+
+
+设置和获取HTML对象的class值
+Obj.className='val';
+Obj.className;

@@ -1,0 +1,104 @@
+字体
+
+单位
+1.em相对大小
+2.px像素
+
+font-size:12px 大小
+color:blue; 颜色
+font-family:"宋体","Arial"; 字体 （常用"宋体","Arial"）
+line-height:150%/1.5em;  行高
+font-weight:bold; 粗细
+text-align:center  文字左右居中
+
+
+tip
+垂直居中(只能是一行)：将区块的行高设置成=区块的高度（height=100px; line-height=100px;）
+
+
+定位
+position:relative 相对定位：相对自己的位置进行定位移动（left top）,以前的位置仍保留
+position:absolute 绝对定位：相对最近的非标准流的元素定位移动（没有则以body定位），以前的位置消失
+!!!相对和绝对定位移动后的元素都会在(覆盖)其他元素上面
+position:fixed 固定定位: 相对于body定位的absolote定位
+
+
+//改变超链接块内hover背景
+a.hover li{
+ background-color:blue;
+ //background-position:100% -50px(背景图的高度的一半); //使背景图显示下半部分
+ text-decoration:underline;
+}
+li{
+ list-style:none;
+ width:100px;
+ height:40px;
+ background-color:pink;
+ //background:url("1.jpg");
+}
+a.link{
+ text-decoration:none;
+ color:black;
+}
+a.visited{
+ text-decoration:none;
+ color:black;
+}
+
+<a href="#"><li>连接</li></a>
+
+鼠标停留时变成手
+cursor:pointer;
+
+
+
+响应式CSS准备
+
+1.在head标签添加meta标签的view属性，实现设备自检
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+上面这行代码的意思是，面积的100%。网页宽度默认等于屏幕宽度（width=device-width），原始缩放比例（initial-scale=1）为1.0，即网页初始大小占屏幕
+
+2.媒体查询(media)
+<link rel="stylesheet" type="text/css“ media="screen and (max-width: 400px)“ href="tinyScreen.css" />
+上面的代码意思是，如果屏幕宽度小于400像素（max-width: 400px），就加载tinyScreen.css文件。
+<link rel="stylesheet" type="text/css“ media="screen and (min-width: 400px) and (max-width: 600px)" href="smallScreen.css" />
+如果屏幕宽度在400像素到600像素之间，则加载smallScreen.css文件。
+
+
+响应式css文件准备(注意,所有像素单位都要是相对单位 em  或 rem)
+
+*{
+	margin:0;
+	padding:0;
+}
+ul,li,p,h1,h2,h3,h4,h5,h6{
+	margin:0;
+	padding:0;
+
+}
+html{
+	color:#666;
+	font-size:62.5%;  /**   网页根元素字体为原来标准16px的62.5% 即10px        **/
+	width:100%;        /**宽度为检验出屏幕的100%**/
+}
+ul,li{
+	list-style:none;
+}
+a{
+	text-decoration:none;
+	color:#666;         
+}
+img,object,embed{
+	max-width:100%;   /**媒体文件的最大宽度为根元素的100%**/
+	height:auto9;      /*IE8自适应*/
+}
+
+html5
+手机打电话
+<a href='tel:123456'>
+发短信
+<a href='sms:123456'>
+html5判断浏览器版本使用不同的css
+<!--[if lt IE 9]>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<![endif]-->

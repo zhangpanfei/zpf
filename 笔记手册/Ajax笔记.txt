@@ -1,0 +1,629 @@
+创建Ajax对象
+IE: var xhr=new ActiveXObject('Microsoft.XMLHTTP');
+W3C和IE8以上: var xhr=new XMLHttpRequest();
+
+封装XMLHttpRequest对象(兼容)
+function createAjax(){
+if(window.navigator.userAgent.indexOf('MSIE')>0)
+{
+   var xhr=new ActiveXObject('Microsoft.XMLHTTP');
+   //alert("IE");
+}else
+{
+   var xhr=new XMLHttpRequest();
+   //alert("W3C");
+}
+ return xhr;
+}
+
+或者
+
+function createAjax()
+{
+	try{
+	 return new XMLHttpRequest();
+	}cetch(e)
+	{
+
+	}
+	try{
+	 return new ActiveXObject('Microsoft.XMLHTTP');
+	}catch(e)
+	{
+
+	}
+	alert("浏览器过时");
+}
+
+Ajax的方法
+
+open(method,url[,async]) 初始化ajax对象
+method=get||post  url=请求地址 async=是否异步请求(默认true)
+
+setRequestHeader(header,value) 设置请求头信息(一般post)
+header:请求头 value:请求头信息
+
+send(content) 发送请求
+content:写到HTTP请求空白处的参数  如果是GET请求写null
+
+Ajax属性
+
+readyState: 状态码(Ajax对象从创建到发送，它的状态码会发生变化)
+  0：对象已建立,但没有初始化
+  1：对象初始化,没发送
+  2：已经调用send
+  3: 正在接收数据
+  4：接收完成
+
+onreadystatechange 当ajax对象的状态码发生变化是所触发的回调函数
+
+status  http的响应状态码
+
+statusText http响应状态文本
+
+responseText   服务器端返回的数据(字符串)
+
+responseXML    服务器端返回的数据(XML形式)
+
+
+入门案例
+var Ajax=createAjax();
+Ajax.open('get','ajax.php');  
+Ajax.onreadystatechange=function()
+{
+	if(Ajax.readyState==4)
+	{
+		alert(Ajax.responseText); //返回php文件中echo的数据
+	}
+	//alert(Ajax.readyState);
+}
+Ajax.send(null);
+
+
+Ajax的get请求
+1.使用get计算两数之和
+
+php文件：
+<?php
+echo $_GET['num1']+$_GET['num2'];
+?>
+
+html文件：
+<script language='javascript' src='Ajax.js'></script>
+<script language='javascript'>
+onload=function()
+{
+	$('ok').onclick=function()
+	{
+		var num1=$('num1').value;
+		var num2=$('num2').value;
+		var ajax=createAjax();
+		ajax.open('get','jisuan.php?num1='+num1+'&num2='+num2);
+		ajax.onreadystatechange=function()
+		{
+			if(ajax.readyState==4)
+			{
+				$('res').innerHTML=ajax.responseText;
+			}
+		}
+		ajax.send(null);
+	}
+}
+</script>
+<input type='text' id='num1'><br>
+<input type='text' id='num2'><br>
+<input type='button' id='ok' value='OK'><br>
+<span id='res'></span>
+
+
+当请求的php页面不存在返回404信息(不希望)
+所以加一个条件 if(ajax.readyState==4&&ajax.status==200)
+
+在IE浏览器中第一次GET请求会缓存起来 如果下次URL相同,IE会从缓存中拿出来
+
+案例
+判断用户名是否可用
+<?php
+$user=$_GET['user'];
+$mysqli=new mysqli('localhost:3306','root','admin','ajax');
+$mysqli->query("select * from admin where user='$user'");
+$res=$mysqli->affected_rows;
+if($res==0)
+{
+	echo 2;
+}else
+{
+	echo 1;
+}
+$mysqli->close();
+?>
+
+<meta charset='utf-8'>
+<script language='javascript' src='Ajax.js'></script>
+<script language='javascript'>
+onload=function()
+{
+	//失去焦点时
+	$('user').onblur=function()
+	{
+		var user=$('user').value;
+		var ajax=createAjax();
+		ajax.open('get','check.php?user='+user);
+		ajax.onreadystatechange=function()
+		{
+			if(ajax.readyState==4&&ajax.status==200)
+			{
+				if(ajax.responseText==1)
+				{
+					//alert();
+					$('info').innerHTML='占用';
+				}else
+				{
+					$('info').innerHTML='可以';
+				}
+			}
+		}
+		ajax.send(null);
+	}
+}
+</script>
+<div align=center>
+<form>
+用户名：<input type='text' id='user'><span id='info'></span><br>
+密　码：<input type='text' id='pass1'><br>
+确　认：<input type='text' id='pass2'><br>
+<input type='button' value='注册' id='ok'>
+</form>
+</div>
+
+解决低版本IE缓存问题
+1.随机数
+var url='xxx.php?_='+Math.random();
+缺点：产生大量缓存，概率有重复
+
+2.时间戳
+var url='xxx.php?_='+new Date().getTime();//毫秒时间戳
+
+3.设置请求头
+setRequestHeader('if-Modified-Since','0');
+在客户端产生一个缓存文件
+
+4.禁用缓存
+header('Cache-Control:no-cache,numst-revalidate');
+header是在http响应头中写数据
+
+get只能传输字符串数据
+post可以传输字符串和二进制数据
+
+post请求
+ajax.setRequestHeader("content-type","application/x-www-form-urlencoded");
+post请求不会产生缓存问题
+
+var ajax=createAjax();
+ajax.open('post','post.php');
+ajax.setRequestHeader("content-type","application/x-www-form-urlencoded");
+ajax.onreadystatechange=function()
+{
+	$('res').innerHTML=ajax.responseText;
+}
+ajax.send('num1='+num1+'&num2='+num2);
+
+
+利用xml返回数据
+
+1.js解析dom
+var xml=ajax.responseXML;
+node=xml.getElementsByTagName('TagName');
+node[0].childNodes[0].nodeValue;
+
+2.服务器生成xml文件
+(1). $str='<num>';
+     $str.='<num1>'.$va1.'</numl>';
+     $str.='<num2>'.$va2.'</num2>';
+     $str.='<num3>'.$va3.'</num3>';
+     $str.='</num>';
+
+(2). $str=<<< str
+     <num>
+     <num1>$va1</num1>
+     <num2>$va2</num2>
+     <num3>$va3</num3>
+     </num>
+     str;
+响应xml文件 header('Content-Type:text/xml');
+返回xml格式 echo $str;
+
+3.得到数据
+用responseXML属性获取
+
+
+json
+
+1.在PHP中生成json数据
+echo json_encode($arr||$obj);
+
+2.在ajax中生成json对象(二维数组生成json数组)
+var json=eval('('+ajax.responseText+')');
+
+案例：
+<script language='javascript'>
+function $(id)
+{
+	return document.getElementById(id);
+}
+function createAjax()
+{
+	try{
+		return new XMLHttpRequest();
+	}catch(e){}
+	try{
+		return new ActiveXObject('Microsoft.XMLHTTP');
+	}catch(e){}
+	alert('old');
+}
+onload=function()
+{
+	$('ok').onclick=function()
+	{
+		$('res').innerHTML='';
+		var ajax=createAjax();
+		ajax.open('post','json.php');
+		ajax.setRequestHeader('content-type','application/x-www-from-urlencoded');
+		ajax.onreadystatechange=function()
+		{
+			if(ajax.readyState==4)
+			{
+				var json=ajax.responseText;
+				var json=eval('('+json+')');
+				for(var i=0;i<json.length;i++)
+				{
+					$('res').innerHTML+=json[i].user+'  '+json[i].pass+'<br>';
+				}
+			}
+		}
+		ajax.send('');
+	}
+}
+</script>
+<div>
+<input type='button' id='ok' value='ok'>
+<div id='res'>
+</div>
+</div>
+
+<?php
+$mysqli=new mysqli('localhost:3306','root','admin','ajax');
+$res=$mysqli->query('select * from admin');
+while($row=$res->fetch_assoc())
+{
+	$arr[]=$row;
+}
+$res->free();
+$mysqli->close();
+$json=json_encode($arr);
+echo $json;
+?>
+
+
+封装Ajax代码库
+
+1.自调用匿名函数
+(function(){})()
+避免函数名冲突
+2.增加全局变量$
+var $=function(id)
+{
+    return document.getElementById(id);
+}
+window.$=$; //闭包用法
+
+3.创建方法Ajax
+$.init=function()
+{
+	try{
+	return new XMLHttpRequest();
+	}catch(e){}
+	try{
+	return new ActiveXObject('Microsoft.XMLHTTP');
+	}catch(e){}
+}
+$.get=function(url,date)
+{
+	var ajax=$.init();
+	url=url+'?_='+new Date().getTime();
+	if(date!=null)
+	{
+	  url=url+'&'+date;
+	}
+	ajax.open('get',url,display);
+	ajax.onreadystatechange=function(){
+	   if(ajax.readyState==4&&ajax.status==200)
+	   {
+		display(ajax.responseText);
+	   }
+	}
+}
+$.post=function(url,date)
+{
+ var ajax=$.init();
+ ajax.open('post',url,display);
+ ajax.setRequestHeader('content-type','application/x-www-form-urlencoded');
+ ajax.onreadystatechange=function()
+ {
+   if(ajax.readyState==4&&ajax.status==200)
+   {
+	display(ajax.responseText);
+   }
+ }
+ ajax.send(data);
+}
+
+
+完整封装代码
+
+(function(){
+	var $=function(id)
+	{
+		return document.getElementById(id);
+	}
+	$.createAjax=function()
+	{
+		try{
+			return new XMLHttpRequest();
+		}catch(e){}
+		try{
+			return new ActiveXObject('Misrosoft.XMLHTTP');
+		}catch(e){}
+	}
+	$.get=function(url,date,type,display)
+	{
+		var ajax=$.createAjax();
+		url+='?_='+new Date().getTime();
+		if(date!=null)
+		{
+			url+='&'+date;
+		}
+		ajax.open('get',url);
+		ajax.onreadystatechange=function()
+		{
+			if(ajax.readyState==4&&ajax.status==200)
+			{
+				if(type==null||type=='text')
+				{
+					display(ajax.responseText);
+				}else if(type=='xml')
+				{
+					display(ajax.responseXML);
+				}else if(type=='json')
+				{
+					display(eval('('+ajax.responseText+')'));
+				}
+			}
+		}
+		ajax.send(null);
+	}
+	$.post=function(url,date,type,display)
+	{
+		var ajax=$.createAjax();
+		ajax.open('post',url);
+		ajax.setRequestHeader('content-type','application/x-www-form-urlencoded');
+		ajax.onreadystatechange=function()
+		{
+			if(ajax.readyState==4&&ajax.status==200)
+			{
+				if(type==null||type=='text')
+				{
+					display(ajax.responseText);
+				}else if(type=='xml')
+				{
+					display(ajax.responseXML);
+				}else if(type=='json')
+				{
+					display(eval('('+ajax.responseText+')'));
+				}
+			}
+		}
+		ajax.send(date);
+	}
+	window.$=$;
+})()
+
+
+分类联动
+
+<meta charset='utf-8'>
+<script language='javascript' src='ajax.js'></script>
+<script>
+window.onload=function()
+{
+	show1();
+	$('c1').onchange=show2;
+}
+function show1()
+{
+	$.post('liandong.php','type=0','json',
+	 function(json)
+	{
+		for(var i=0;i<json.length;i++)
+		{
+			var option=document.createElement('option');
+			option.value=json[i].id;
+			option.innerHTML=json[i].shop;
+			$('c1').appendChild(option);
+		}
+	}
+	)
+}
+function show2()
+{
+	$('c2').length=0;
+	var type=$('c1').value;
+	$.post('liandong.php','type='+type,'json',
+	 function(json)
+	{
+		for(var i=0;i<json.length;i++)
+		{
+			var option=document.createElement('option');
+			option.value=json[i].id;
+			option.innerHTML=json[i].shop;
+			$('c2').appendChild(option);
+		}
+	}
+	)
+}
+</script>
+<select id='c1'>
+<option value=-1>请选择</option>
+</select>
+<select id='c2'>
+</select>
+
+<?php
+ $type=$_POST['type'];
+ $mysqli=new mysqli('localhost:3306','root','admin','ajax');
+ $res=$mysqli->query('select * from shop where type='.$type);
+ while($row=$res->fetch_assoc())
+ {
+	 $arr[]=$row;
+ }
+ $res->free();
+ $mysqli->close();
+ echo json_encode($arr);
+?>
+
+无刷新分页
+
+<script language='javascript' src='ajax.js'></script>
+<script language='javascript'>
+window.onload=function()
+{
+	show(1);
+}
+function show(n)
+{
+	$.get('fenye.php','page='+n,'text',
+	function(text)
+	{
+		$('res').innerHTML=text;
+	}
+	)
+}
+</script>
+<div id='res'>
+</div>
+
+<?php
+require_once './libs/Smarty.class.php';
+$mysqli=new mysqli('localhost:3306','root','admin','ajax');
+$count_res=$mysqli->query('select count(*) from shop')or die($mysqli->error());
+$count_arr=$count_res->fetch_row();
+$count_rows=$count_arr[0];
+$page_now=$_GET['page'];
+$page_size=3;
+$page_count=ceil($count_rows/$page_size);
+if($page_now>$page_count)
+{
+	$page_now=$page_count;
+}
+if($page_now<1)
+{
+	$page_now=1;
+}
+$row_start=($page_now-1)*$page_size;
+$res=$mysqli->query('select * from shop limit '.$row_start.','.$page_size);
+while($row=$res->fetch_assoc())
+{
+	$arr[]=$row;
+}
+$res->free();
+$mysqli->close();
+$smarty=new Smarty();
+$smarty->assign('page_count',$page_count);
+$smarty->assign('page_now',$page_now);
+$smarty->assign_by_ref('res',$arr);
+echo $smarty->fetch('show.htm');
+?>
+
+<table cellspacing='0px' width='500px'>
+<tr><th>序号</th><th>名称</th><th>编号</th></tr>
+{foreach from=$res item=val}
+<tr align=center bgcolor={cycle values='gray,pink'}><td>{counter}</td><td>{$val.shop}</td><td>{$val.type}</td></tr>
+{/foreach}
+<tr><td colspan='3'>
+共{$page_count}页 
+当前{$page_now}页 
+<input type='button' value='首页' onclick='show(1)'> 
+<a href='#' onclick='show({$page_now-1})'>上一页</a> 
+<a href='#' onclick='show({$page_now+1})'>下一页</a> 
+<input type='button' value='末页' onclick='show({$page_count})'>
+</td></tr>
+</table>
+
+搜索功能
+<meta charset='utf-8'>
+<script language='javascript' src='ajax.js'></script>
+<script language='javascript'>
+onload=function()
+{
+	$('text').onkeyup=function()
+	{
+		$('res').innerHTML='';
+		if($('text').value=='')
+		{
+			return;
+		}
+		$.post('search.php','key='+$('text').value,'json',
+		function(json)
+		{
+			if(json.length!=0)
+			{
+				$('res').innerHTML='';
+				for(var i=0;i<json.length;i++)
+				{
+					var div=document.createElement('div');
+					div.onmouseover=function()
+						{
+							this.style.background='pink';
+						}
+					div.onmouseout=function()
+						{
+							this.style.background='gray';
+						}
+					div.innerHTML=json[i][0];
+					$('res').appendChild(div);
+				}
+			}
+		}
+		);
+	}
+	function show2(obj)
+	{
+		obj.style.background='pink';
+	}
+	function show3(obj)
+	{
+		obj.style.background='gray';
+	}
+}
+</script>
+<input type='text' id='text' width=100px>
+<div id='res' style="width:100px;border:1px solid">
+</div>
+
+<?php
+$shop=$_POST['key'];
+$link=mysql_connect('localhost:3306','root','admin');
+mysql_query('use ajax');
+$res=mysql_query("select shop from shop where shop like '$shop%'");
+$arr=array();
+while($row=mysql_fetch_row($res))
+{
+	$arr[]=$row;
+}
+mysql_free_result($res);
+mysql_close($link);
+echo json_encode($arr);
+?>
+
+
+

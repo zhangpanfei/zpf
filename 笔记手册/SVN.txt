@@ -1,0 +1,6 @@
+创建代码仓库
+svnadmin creat path
+
+启用代码仓库
+svnserve -d(后台运行) -r(监管目录)  path
+

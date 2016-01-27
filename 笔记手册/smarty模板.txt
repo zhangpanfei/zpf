@@ -1,0 +1,371 @@
+smarty模板/引擎
+1.编写一个模板文件 ???.tpl(这个文件通常放在templates目录里)
+2.给tpl文件分配要显示的结果集,或者是其他（首先引入smarty库）
+3.创建smarty对象（首先引入）
+  require_once "./libs/Smarty.class.php";
+  $smarty=new Smarty();
+  //把$res分配到smarty对象
+  $smarty->assign("val",$res);
+  //指定用哪个模板显示
+  $smarty->display("???.tpl");
+
+1.读取.tpl模板文件
+2.把.tpl模板文件替换成可以运行的php文件(替换占位符)
+
+mysmarty(原理)
+class mySmarty
+ {
+	 //模板路径
+	var $template_dir="./temp/";
+	//模板被替换后的文件
+	var $complie_dir="./temp_c";
+	//存放变量值
+	var $tpl_vals=array();
+	//分配变量值
+	function assign($tpl_val,$val=null)
+	{
+		if($tpl_val!="")
+		{
+			$this->tpl_vals[$tpl_val]=$val;
+		}
+	}
+	//指定模板
+	function display($tpl_file)
+	{
+		$tpl_file_path=$this->template_dir.$tpl_file;
+		$complie_file_path=$this->complie_dir."com_".$tpl_file.'.php';
+		file_exists($tpl_file_path) or die("file error");
+		if(!file_exists($complie_file_path)||filemtime($tpl_file_path)>filemtime($complie_file_path))
+		{		
+				$file_con=file_get_contents($tpl_file_path);
+				$regexp=array('/\{\s*\$([a-zA-Z_]\w*)\s*\}/i');
+				$repalce=array('<?php echo $this->tpl_vals["${1}"]?>');//${1}反向引用第一个表达式内容
+				//将用正则表达式匹配到的字符替换
+				$new_str=preg_replace($regexp,$repalce,$file_con);
+				//将替换好的字符串存到$complie_file_path中
+				file_put_contents($complie_file_path,$new_str);
+		}
+		include $complie_file_path;
+	}
+ }
+
+
+smarty模板配置
+1.解压,将libs文件夹放在网站第一级目录下
+2.创建文件夹templates(放模板)和templates_c(编译后的文件)
+
+注意事项
+替换变量的标识分隔符 一般使用<{}>
+  (1)直接修改源码
+  (2)$smarty=new Smarty(); $smarty->left_delimiter = '<{'; $smarty->right_delimiter = '}>';
+
+smarty基本配置
+require_once "./libs/Smarty.class.php";
+$smarty=new Smarty();
+$smarty->caching=false;  //是否启用缓存
+$smarty->template_dir="./templates"; //模板目录
+$smarty->compile_dir="./templates_c"; //编译目录
+$smarty->cache_dir="./smarty_cache"; //缓存文件夹
+$smarty->cache_lifetime=60; //缓存时间(单位:秒)
+$smarty->left_delimiter="{";     //左标示符
+$smarty->right_delimiter="}";    //右标示符
+
+smarty分配变量
+可以分配php支持的各种数据类型
+
+取出数组(一维数组)
+$arr=array(1,2,3,'aa',6,'a');
+$smarty->assign("val5",$arr);
+索引数组tpl:{$val5[0]} {$val5[1]}...
+关联数组tpl:{$arr.keyname1} {$arr.keyname2}.....
+
+二维数组(索引)
+$arr=array(array("a",'b','c'),array(1,2,3),array('d','e','f'));
+tpl:{$arr[0][0]} {$arr[0][1]}.....
+二维数组(关联)
+$arr=array(array('a'=>'a','b'=>'b','c'=>'c'),array('d'=>1,'e'=>2,'f'=>3));
+tpl:{$arr[0].a} {$arr[0].b}  {$arr[1].e}...
+$arr=array('id1'=>array('a'=>'a','b'=>'b','c'=>'c'),'id2'=>array('d'=>1,'e'=>2,'f'=>3));
+tpl:tpl:{$arr.id1.a} {$arr.id1.b}  {$arr.id2.e}...
+
+取出对象
+$cat=new Cat("小白",2);
+$smarty->assign('obj',$cat);
+tpl:{$obj->name} {$obj->age}...
+
+取出对象的数组类型属性($obj->arr是一个二维数组)
+tpl:{$obj->arr.key.key}...
+取出对象的对象类型属性($obj->obj1是一个对象)
+tpl:{$obj->obj1->name}...
+
+读取配置文件
+{config_load file="../conf/my.conf"}
+获取配置信息
+{#key_name#}
+
+获取常量
+{$smarty.const.常量名}
+
+
+获取页面get,post,server,session数据
+{$smarty.get.name}
+{$smarty.post.name}
+{$smarty.server.SERVER_ADDR}
+{$smarty.session.id}
+
+smarty的内建函数
+1.foreach
+foreach循环取出数组中的值
+一维
+{foreach from=$arr item=temp key=key}  {*从$arr数组中每取出一个元素存到item=temp中 key=key代表键名*}
+<tr><th>{$key}{$temp1}</th></tr>
+{/foreach}
+二维
+{foreach from=$arr item=temp}
+{foreach from=$temp item=temp1 key=key}
+<tr><th>{$key}{$temp1}</th></tr>
+{/foreach}
+{/foreach}
+
+2.if elseif else函数
+
+<{foreach from=$arr1 item=temp}>
+
+<{if $temp.age>18}>
+<tr><th>你的年龄大于18是<{$temp.age}></th></tr>
+<{elseif $temp.age==18}>
+<tr><th>你的年龄是<{$temp.age}>岁</th></tr>
+<{else}>
+<tr><th>你的年龄小于18是<{$temp.age}>岁</th></tr>
+<{/if}>
+
+<{/foreach}>
+
+自定义函数
+function test($flag)
+ {
+	 $str='';
+	 for($i=0;$i<$flag['times'];$i++)
+	 {
+		 $str.="<font color=".$flag['color']." size=".$flag['size'].">".$flag['con']."</font><br>";
+	 }
+	 return $str;
+ }
+$smarty->register_function("zpf","test");  {*注册函数register_function("标签名","函数名")*}
+tpl:<{zpf con='哈哈哈' color='green' size='5' times='5'}>
+
+块函数注册
+function test2($flag,$con)
+ {
+	$str='';
+	 for($i=0;$i<$flag['times'];$i++)
+	 {
+		 $str.="<font color=".$flag['color']." size=".$flag['size'].">".$con."</font><br>";
+	 }
+	 return $str;
+ }
+ $smarty->register_block("myfun",'test2');
+ tpl:   <{myfun  color='green' size='5' times='10'}>
+	你好
+	<{/myfun}>
+
+
+插件形式增加自定义函数(无需注册)
+1.找到plugsin文件夹
+2.按照规范编写函数(普通函数)
+  文件名的格式:function.自定义函数名.php
+  函数的规范：function smarty_function_自定义函数名($arr,&$smarty){}
+3.按照规范编写函数(块函数)
+  文件名的格式:block.自定义函数.php
+  函数的规范：function smarty_block_自定义函数名($arr, $content, &$smarty){}
+
+tip:替换外部有标签的js文件(其他文件)
+    引入用{include file="path"}(外部的js内容要用<script>标签包起来)
+
+运算（不能带括号改变运算顺序）
+$smarty->assign("a",2);
+ $smarty->assign("b",3);
+tpl:{$a+$b}
+
+
+调节器
+{$str|capitalize:参数1:参数2} 变量首字母大写
+count_characters  统计字符数
+cat   连接字符串
+{$smarty.now|date_format:'%Y-%m-%d %H:%M:%S'} 时间格式
+default  默认值
+escape   转码(html编码转成文本(字符实体))
+nl2br  文本里的换行符\r\n替换成网页替换符<br>
+regex_replace  正则替换
+replace  普通文本替换
+spacify  插空(默认空格)
+strip    去除多余的空格(也可指定用什么替换空格)
+(处理中文用truncateutf8)truncate:'?':'...':true(真的截取到指定个数)  显示字符串前面的？(包括...的字符数)个字符，其他的地方用...(默认)表示
+<a href='#' title={$str}>{$str|truncate:'8':'...':'true'}</a>
+wordwrap:50:'<br>'  行宽约束(每50个字符换行)
+
+
+自定义变量调节器
+文件名：modifier.xxx.php
+函数  ：function smarty_modifier_xxx($str,参数){}
+
+组合调节器（修改器）
+{$str|capitalize:参数1:参数2|调节器2:参数1：参数2|调节器3...}
+
+内建函数（不可修改）
+
+capture 捕获
+{capture name='foo'}
+hello! =>foo="hello!"
+{/capture}
+
+{$smarty.capture.too}=>hello!
+
+foreachelse 变量为空如何处理
+<{foreach from=$arr item=temp}>
+<{$temp}><br>
+<{foreachelse}>
+数组为空！
+<{/foreach}>
+
+include 引入文件(同时替换该文件里的smarty标签)
+{include file="xxx.tpl" 属性1="???"}
+可以将属性传到引入的xxx.tpl文件中{$属性1}
+
+literal 将smarty标签当成文本
+{literal}
+{$val}
+{/literal}
+
+{php}
+php脚本
+{/php}
+
+section,sectionelse相当于foreach,foreachelse
+<{section name=temp loop=$arr}>
+<{$arr[temp]}>
+<{/section}>
+
+自定义函数（可修改）
+
+{assign var='name' value='val' }=>$name=val;
+
+{counter start=0 skip=1 print=true assign='mycount'} 计数器start初始值  skip步长 print是否输出 assign分配变量
+{counter}{$mycount} 1
+{counter}{$mycount} 2
+{counter}{$mycount} 3.....（{counter}用来计数  {$mycount}用来打印）
+
+<{counter start=0 skip=1 assign='mycount' print=true}><br>
+<table>
+<{foreach from=$arr item=temp}>
+<{counter}>
+<{if $mycount%2!=0}>
+<tr bgcolor='blue'><td><{$temp.0}></td><td><{$temp.1}></td><td><{$temp.2}></td></tr>
+<{elseif $mycount%2==0}>
+<tr bgcolor='green'><td><{$temp.0}></td><td><{$temp.1}></td><td><{$temp.2}></td></tr>
+<{/if}>
+<{/foreach}>
+
+cycle 循环使用一些值
+{cycle values="red,green,blue..."}
+
+<table>
+<{foreach from=$arr item=temp}>
+<tr bgcolor='<{cycle values="red,green"}>'><td><{$temp.0}></td><td><{$temp.1}></td><td><{$temp.2}></td></tr>
+<{/foreach}>
+<{fetch file="test.txt"}>
+</table>
+
+<{fetch file="test.txt"}> 抓取文件=》include
+
+复选框已选项控制 <{html_checkboxes name='mycheck' options=$arr selected=$arr_key}> name复选框名称  options选项  selected已选择的值
+
+下拉框的选项 <html_options>
+<select name='aihao1' multiple>
+<{html_options options=$arr4 selected=$arr5}>
+</select>
+
+
+单选
+{html_radio}
+<{html_radios options=$arr4 checked='lq'}>
+
+日期选择
+<{html_select_date prefix='我是前缀' start_year='1990' end_year='2025'}>
+<{html_select_time  use_24_hours='true/false'}>
+!!!!查看实际代码在网页上用查看源代码
+
+
+弹出邮箱
+<{mailto address='xx@xx.xx' text='提示'}>
+
+嵌套的变量
+<{assign var=intro values=$arr.1}>
+<{popup text=$intro}>
+只认$val 不认$val.?
+
+{textformat warp=单行超过多少字符自动换行}
+{/textformat}
+
+启用smarty调试功能
+$smarty->debugging=true;
+
+smarty缓存
+
+配置
+$smarty->cache_dir='/caches/';
+$smarty->caching=true;
+$smarty->cache_lifetime=60;
+
+局部缓存
+insert(希望实时更新的函数)
+
+function  insert_mytime()
+ {
+	 return date('Y-m-d H:i:s');
+ }
+{insert name=mytime}
+
+{blockname}
+{实时更新的数据}
+{/blockname}
+
+可根据$id的不同产生不同的缓存(可用来区分不同的用户)
+$smarty->display('???.tpl',$id);
+
+清除缓存
+清除所有：$smarty->clear_all_cache([多少秒之后]);
+清除指定模板的缓存：$smarty->clear_cache('模板文件');
+清除指定ID的缓存:   $smarty->clear_cache('模板文件',缓存ID);
+
+启用php脚本
+$smarty->php_handing=值;
+
+动态添加数组元素
+$smarty->append("数组名",'元素1')
+$smarty->append("数组名",'元素2')
+$smarty->append("数组名",'元素3')
+...
+相当于$smarty->assign('数组名',array('元素1','元素2','元素3'));
+
+引用传递
+$smarty->append_by_ref('数组名',$arr);
+
+引用方式赋值到模板
+$smarty->assign_by_ref('变量名',val);
+
+指定清除assign
+clear_assign('变量名');
+清空assign
+clear_all_assign()
+
+清除配置变量
+clear_config()
+
+判断模板是否存在
+templateExists(模板)
+
+过滤器
+预过滤(生成静态页面之前) register_prefilter('函数名');
+后过滤(生成静态页面之后) register_postfilter('函数名');
+输出滤镜(输出的瞬间) register_outputfilter('函数名');
