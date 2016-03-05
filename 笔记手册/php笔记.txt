@@ -2486,3 +2486,24 @@ echo 类名X::$name; //非限定名称访问
 
 
 
+命令行(cli)的输入输出
+	
+print_r($argv);                   //打印出命令行的参数数组 索引0始终是执行的文件名	
+fwrite(STDOUT,'you name?'."\n");  //标准输出提示信息  STDOUT标准输出
+$name=trim(fgets(STDIN));		  //标准输入信息	  STDIN 标准输入
+echo $name.'你好';
+
+
+Phar的php程序打包
+!!!需是单一入口程序  php.ini 中的 phar.readonly 设为 Off
+
+$phar=new phar('app.phar');             //参数为要打包成的文件名
+$phar->buildFromDirectory(__DIR__.'/','/\.php$/');  //从哪个文件夹打包 参数1为程序根目录(最好用__DIR__等魔术常量)  参数2是正则表达式(选填)表示要打包文件的后缀
+$phar->compressFiles(phar::GZ);		//压缩方式
+$phar->stopBuffering();			//停止缓冲
+$a=$phar->createDefaultStub('./a.php'); //程序入口文件
+$phar->setStub($a);
+
+phar包可以像普通php文件一样被include 或 require
+include_once 'app.phar';  //全部引入
+include_once 'phar://app.phar/conf.php'; //引入单个文件
