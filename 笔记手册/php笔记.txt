@@ -2495,7 +2495,10 @@ echo $name.'你好';
 
 
 Phar的php程序打包
-!!!需是单一入口程序  php.ini 中的 phar.readonly 设为 Off
+!!!需是单一入口程序  
+!!!php.ini 中的 phar.readonly 设为 Off
+!!!程序里include引入php文件时 尽量用 __DIR__."path" 引入
+!!!静态资源不会被打包(js,css,jpg.....)
 
 $phar=new phar('app.phar');             //参数为要打包成的文件名
 $phar->buildFromDirectory(__DIR__.'/','/\.php$/');  //从哪个文件夹打包 参数1为程序根目录(最好用__DIR__等魔术常量)  参数2是正则表达式(选填)表示要打包文件的后缀
