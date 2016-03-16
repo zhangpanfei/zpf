@@ -1,0 +1,22 @@
+配置虚拟主机的步骤如下:
+1.      启用  httpd-vhosts.conf
+在 httpd.conf 文件中
+# Virtual hosts ,虚拟主机
+Include conf/extra/httpd-vhosts.conf
+2.      在httpd-vhosts.conf文件中做配置
+#配置我们自己的虚拟主机
+<VirtualHost 127.0.0.1:80>
+    DocumentRoot "d:/myblog"
+    ServerName  mynet.com
+    #这里配置欢迎首页面
+    DirectoryIndex index.html index.htm index.php
+    <Directory />
+    Options FollowSymLinks
+    #不许可别人修改我们的页面
+    AllowOverride None
+    #设置访问权限
+    Order allow,deny
+    Allow from all
+    </Directory>
+</VirtualHost>
+3.      修改hosts 文件 ->新的知识点

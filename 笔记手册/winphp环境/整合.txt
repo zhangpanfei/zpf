@@ -1,0 +1,45 @@
+①在apache 的conf目录下 的 httpd.conf加入如下代码:
+
+#让apache载入php处理模块
+LoadModule php5_module D:/php/php-5.5.12/php5apache2_2.dll
+#PHPIniDir 指定php的ini文件，该文件是对php的一些配置
+PHPIniDir "D:/php/php-5.5.12"
+#这个配置表示，当有一个资源是*.php的时候就由php来处理
+AddType application/x-httpd-php .php .phtml
+
+
+
+说明，我们只要包红色的部分，改成实际php 安装的路径即可
+
+
+②把 php.ini-development 文件 改成  php.ini 为什么改，因为我们的php的设置有需要在php.ini修改
+
+
+
+①    在php.ini中可以指定对应的功能模块
+
+
+;这里我们要指定php的扩展库路径
+
+extension_dir = "C:/myenv/php-5.3.5/ext"
+
+
+测试看看apache和php是否整合成功
+
+
+写这样一段代码
+
+
+<?php
+
+       phpinfo();
+
+
+?>
+
+
+重新启动 http://localhost/test.php
+
+
+
+

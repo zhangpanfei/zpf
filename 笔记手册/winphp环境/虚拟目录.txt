@@ -1,0 +1,20 @@
+1.      添加虚拟目录的节点
+#配置虚拟目录
+<IfModule dir_module>
+    #direcotory相当于是欢迎页面
+    DirectoryIndex index.html index.htm index.php
+    #你的站点别名
+    Alias /myblog "D:/myblog"
+   <Directory d:/myblog>
+   #这是访问权限设置
+   Order allow,deny
+   Allow from all
+   </Directory>
+</IfModule>
+2.      注销documentroot路径
+#DocumentRoot "C:/Program Files/Apache Software Foundation/Apache2.2/htdocs"
+3.      测试
+http://localhost/myblog/news.html
+4.      如何设置欢迎页面
+http://localhost/myblog/
+DirectoryIndex news.html index.html index.htm index.php

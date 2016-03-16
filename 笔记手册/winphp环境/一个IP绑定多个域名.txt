@@ -1,0 +1,81 @@
+一.通过端口区分：
+1.放好网站 D:/文件夹
+2.配置httpd.conf文件(建议DocumentRoot "D:/php/apache/htdocs"加#注销)
+ 启用虚拟主机Virtual hosts下面的Include conf/extra/...
+  Listen80和81端口
+3.在conf/extra/httpd-vhosts.conf最后添加
+  <VirtualHost 127.0.0.1:80>
+    #（站点）
+    DocumentRoot "D:/asd/ad"
+    #这里配置欢迎首页面
+    DirectoryIndex youku1.html index.php index.html index.htm 
+    <Directory />
+    Options FollowSymLinks
+    #不许可别人修改我们的页面
+    AllowOverride None
+    #设置访问权限
+    Order allow,deny
+    Allow from all
+    </Directory>
+</VirtualHost>
+
+<VirtualHost 127.0.0.1:81>
+    DocumentRoot "D:/asd/Discuz"
+    #这里配置欢迎首页面
+    DirectoryIndex index.php index.html index.htm 
+    <Directory />
+    Options FollowSymLinks
+    #不许可别人修改我们的页面
+    AllowOverride None
+    #设置访问权限
+    Order allow,deny
+    Allow from all
+    </Directory>
+</VirtualHost>
+4.在C:\Windows\System32\drivers\etc\hosts下添加域名
+   127.0.0.1      www.sohu.cn
+   127.0.0.1      www.baidu.com 
+ 最后访问为www.sohu.cn：81
+
+
+二.通过域名(ServerName)区分
+ 1和2步同上（不用添加监听端口）
+ 3改为
+   #IP改为*
+  <VirtualHost *:80>
+    #（站点）
+    DocumentRoot "D:/asd/ad"
+  #这里指定域名
+  ServerName www.sohu.cn  
+    #这里配置欢迎首页面
+    DirectoryIndex youku1.html index.php index.html index.htm 
+    <Directory />
+    Options FollowSymLinks
+    #不许可别人修改我们的页面
+    AllowOverride None
+    #设置访问权限
+    Order allow,deny
+    Allow from all
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    DocumentRoot "D:/asd/Discuz"
+    #这里配置欢迎首页面
+#这里指定域名
+  ServerName www.baidu.com 
+    DirectoryIndex index.php index.html index.htm 
+    <Directory />
+    Options FollowSymLinks
+    #不许可别人修改我们的页面
+    AllowOverride None
+    #设置访问权限
+    Order allow,deny
+    Allow from all
+    </Directory>
+</VirtualHost>
+
+4.在C:\Windows\System32\drivers\etc\hosts下添加域名
+   127.0.0.1      www.sohu.cn
+   127.0.0.1      www.baidu.com 
+ 最后访问为www.sohu.cn
