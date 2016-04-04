@@ -1,0 +1,222 @@
+memcached是一种缓存技术 它可以把数据放入内存，从而通过内存访问提速
+在memcached中维护了一张大的hashtable表
+
+目前数据的获取有3种方式
+1.查询数据库
+2.使用真静态(文件)
+3.直接从内存获取
+
+memcached服务维护了一张内存表(hashtable)
+key value
+
+key一般是字符串，且不能重复
+value 可以是(字符串，数值，数组，对象，布尔，二进制数据，null)
+（其实序列化后的字符串）
+
+安装
+1.下载memcached.exe
+2.命令行下memcached.exe -d install
+
+启动
+1.服务里启动
+2.命令行 memcached.exe -d start
+使用netstat -an 看到1121端口在监听,说明成功
+3.特殊启动 memcached.exe -p 11211(端口号(0-65535)是用2个字节表示，一般1024之前都被使用（有名端口）)
+
+停止
+memcached.exe -d stop
+
+netstat -anb 可以看到那个程序在那个端口监听(还可以看到是哪个IP在连接)
+
+安装失败的原因
+1.没有权限
+2.安装路径有中文空白等特殊字符
+
+
+操作memcached
+
+1.php程序
+memcache扩展操作
+memcached扩展操作
+直接使用socket(套接字)编程操作
+
+2.telnet工具
+
+
+
+telnet连接(crud)
+
+1.登陆到telnet连接到memcached服务
+telnet 127.0.0.1 11211
+
+2.增加
+add key(名字) 0(压缩还是不压缩) 30(存放时间秒) 5(数据大小 )
+add key1 0 30 5
+
+3.获取
+get key
+
+4.修改
+set key 0 30 5 (key不存在增加,存在则修改)
+replace key 0 30 5
+
+5.删除
+delete key
+
+append key 0 30 5 追加
+prepend key 0 30 5 前面追加
+
+flush_all 删除所有数据
+
+stats 查看memcached使用情况
+
+
+php的memcache扩展操作
+1.安装扩展，修改配置文件
+
+2.具体案例
+<?php
+	header('content-type:text/html;charset=utf-8');
+	//创建mem对象
+	$mem=new Memcache();
+	//连接
+	$mem->connect('127.0.0.1','11211') or die('connect error');
+	
+	//增加**********************
+
+	//增加字符串
+	$mem->add('name','xiaobai','0','60') or die('add str error');
+	//获取字符串
+	$res=$mem->get('name');
+	echo $res;
+	
+	//增加数组
+	$arr=array(1,2,3,4);
+	$mem->add('list',$arr,'0','60') or die('add array error');
+	//获取数组
+	$res=$mem->get('list');
+	echo '<pre>';
+	var_dump($res);
+
+	//增加对象
+	class Cat{
+		public $name;
+		public $age;
+		public function __construct($name,$age=1){
+			$this->name=$name;
+			$this->age=$age;
+		}
+	}
+	$cat=new Cat('小白');
+	$mem->add('cat',$cat,0,60) or die('add obj error');
+	//获取对象
+	$res=$mem->get('cat');
+	var_dump($res);
+
+	//添加bool值
+	$mem->add('bool',false,0,60) or die('add bool error');
+	//获取bool值
+	$res=$mem->get('bool');
+	var_dump($res);
+
+	//修改************************************
+	$mem->replace('name','小黑',0,60) or die('update str error');
+	$res=$mem->get('name');
+	var_dump($res);
+
+	//删除*************************************
+	$mem->delete('name') or die('delete str error');
+	//$mem->get('name') or die('name is not fund');
+
+	//设置保存时间超过30天的方法   
+	$mem->add('name','小紫',0,strtotime('+ 31 days')) or die('31 days expire error');
+	$res=$mem->get('name') or die('name is not fund in expire');
+	var_dump($res);
+	
+	//关闭连接
+	$mem->close();
+?>
+
+
+
+php源码操作memcached服务(没有memcache扩展的情况下)
+1.网上找到源码，复制，粘贴，使用
+
+
+memcached机制了解
+1.c/s架构
+2.基于libevent的事件处理,用libevent机制处理并发(mysql是多线程,apache是mpm)
+   libevent是一套跨平台事件处理接口的封装
+3.内存存储方式(内容达到最大值后，用LRU算法删除很久没有访问过的数据)
+4.基于客户端分布式
+
+分布式存储+取值
+
+<?php
+	$mem=new Memcache();
+	//分布式存储
+	$mem->addServer('127.0.0.1',11210) or die('connect1 error');
+	$mem->addServer('127.0.0.1',11211) or die('connect2 error');
+	//把name经过自身的算法(散列值算法)随机放到一个memcache里
+	$mem->set('name1','hello1',0,300) or die('add str error');
+	$mem->set('name2','hello2',0,300) or die('add str error');
+	$mem->set('name3','hello3',0,300) or die('add str error');
+?>
+
+<?php
+	$mem=new Memcache();
+	//分布式取值
+	$mem->addServer('127.0.0.1',11210) or die('connect1 error');
+	$mem->addServer('127.0.0.1',11211) or die('connect2 error');
+	echo $mem->get('name1');
+	echo $mem->get('name2');
+	echo $mem->get('name3');
+?>
+
+
+注意
+1.memcached服务的数据不同步，数据是分布存放的
+2.把什么数据放入到哪个memcached是由客户端memcache对象决定的
+3.当执行addServer时并不是立即连接memcached服务，而是通过hash计算后才决定连接哪个memcached服务器，
+  因此当大量加入服务器连接池，没有多余开销
+
+ 
+生命周期
+1.从数据放入到memcache开始计时，时间到了就销毁，时间为0，表示不过期
+2.重启memcached服务
+3.手动删除delete/flush_all
+
+
+session放入memcache
+1.修改php.ini
+ session.save_handler=[user|files|memcache] user自定义
+ session.save_path='tcp://127.0.0.1:11211,tcp://127.0.0.1:11210'  用逗号隔开
+
+2.以sessionID为key存储在memcache中
+
+<?php
+	//修改配置文件或者在程序中修改
+	ini_set('session.save_handler','memcache');
+	ini_set('session.save_path','tcp://127.0.0.1:11211,tcp://127.0.0.1:11210');
+	
+	session_start();
+	//echo session_id();
+	$_SESSION['name']='okokook';
+	$_SESSION['city']='西安';
+	echo $_SESSION['name'];
+?>
+
+
+memcached和session比较
+memcached主要目的是提速，因此它是一种无状态数据
+即数据不和用户绑定，session适合用户绑定的，是有状态数据
+
+memcached安全性
+1.win下启用防火墙(只允许本地或者内网访问)
+2.linux下也可以启动防火墙
+  iptables -a input -p tcp -s 127.0.0.1 -dport 11211 -j ACCEPT
+
+
+适合放在memcache中的数据
+变化频繁，具有不稳定性的数据，不需要实时入库(在线状态，在线人数)
+
