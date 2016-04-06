@@ -1,0 +1,45 @@
+smtp(Simple Mail Transfer Protocol)
+简单邮件传输协议
+
+1.自己->目标邮件服务器
+2.自己->本地邮件服务器->目标邮件服务器
+
+第一种
+1.首先找到目标邮件服务器IP 
+  nslookup -q=mx 163.com
+  telnet 找到的url 25(端口号)
+2.用smtp协议对话
+  helo ni                 //是否回应
+  mail from:<nicai@qq.com>  //哪个邮箱发送的
+  rcpt to:<1009928990@qq.com> //寄给谁
+
+  data                          //正式数据(354成功)
+  subject:nihao          //主题
+  to:duifang           //给谁的
+  from:ziji            //谁给的
+
+  --两次enter
+  正文
+  .                    //结束符enter
+
+
+第二种(esmtp需要登录的转发)
+通过smtp.163.com给qq发送
+
+telnet smtp.163.com 25
+helo ni //回应
+auth login //验证登陆
+enBmZWl2Q=  //base64编码的用户名
+enBmZmZWl2=  //base64编码的密码
+
+mail from:<nicai@qq.com>  //哪个邮箱发送的
+  rcpt to:<1009928990@qq.com> //寄给谁
+
+  data                          //正式数据(354成功)
+  subject:nihao          //主题
+  to:duifang           //给谁的
+  from:ziji            //谁给的
+
+  --两次enter
+  正文
+  .                    //结束符enter
