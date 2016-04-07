@@ -9,7 +9,7 @@ smtp(Simple Mail Transfer Protocol)
   nslookup -q=mx 163.com
   telnet 找到的url 25(端口号)
 2.用smtp协议对话
-  helo ni                 //是否回应
+  helo nihao                 //是否回应
   mail from:<nicai@qq.com>  //哪个邮箱发送的
   rcpt to:<1009928990@qq.com> //寄给谁
 
@@ -27,7 +27,7 @@ smtp(Simple Mail Transfer Protocol)
 通过smtp.163.com给qq发送
 
 telnet smtp.163.com 25
-helo ni //回应
+helo nihao //回应
 auth login //验证登陆
 enBmZWl2Q=  //base64编码的用户名
 enBmZmZWl2=  //base64编码的密码
@@ -43,3 +43,31 @@ mail from:<nicai@qq.com>  //哪个邮箱发送的
   --两次enter
   正文
   .                    //结束符enter
+
+
+
+php函数发送邮件
+
+mail()函数的作用
+1.连接到邮件服务器
+2.利用smtp协议，与该服务器交互
+3.并投邮件
+
+！！！
+1.mail函数不支持esmtp协议，即只能直投，不能登录
+2.由上条，我们只能直投至最终的收件服务器地址，而该地址，又是在php.ini中指定的
+
+所以
+要用mail()函数向某个邮箱发信
+1.查询邮件服务器地址(nslookup)
+2.把该地址写到php.ini中去
+ SMTP='163服务器'
+ sendmail_from='发件人'
+
+！！！不灵活
+1.dns查询对应邮箱mx记录(163,qq等)
+2.动态修改php.ini
+3.用转发smtp.163.com需要登录
+
+需要自己有一个不需要登录的匿名smtp服务器(作为转发)
+
