@@ -18,3 +18,40 @@ http://localhost/myblog/news.html
 4.      如何设置欢迎页面
 http://localhost/myblog/
 DirectoryIndex news.html index.html index.htm index.php
+
+
+
+
+
+apache2.4配置(不必注销documentroot路径)
+
+老版的allow from all=新版require all granted,老版deny from all=新版 require all denied
+
+故最新版配置虚拟目录如下
+
+
+#站点别名
+Alias /myblog "E:/Projects/php/project/myblog"
+
+<Directory "E:/Projects/php/project/myblog"> 
+Options Indexes MultiViews                         #不希望没有欢迎页显示目录 可以把 Indexes去掉(403)
+AllowOverride None
+Require all granted
+</Directory>
+
+
+
+或者
+
+<IfModule dir_module>
+    #direcotory相当于是欢迎页面
+    DirectoryIndex index.html index.htm index.php
+    #你的站点别名
+    Alias /myblog "E:/wamp"
+   <Directory E:/wamp>
+   #这是访问权限设置
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+   </Directory>
+</IfModule>
