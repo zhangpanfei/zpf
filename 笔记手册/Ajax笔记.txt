@@ -1,4 +1,4 @@
-创建Ajax对象
+﻿创建Ajax对象
 IE: var xhr=new ActiveXObject('Microsoft.XMLHTTP');
 W3C和IE8以上: var xhr=new XMLHttpRequest();
 
@@ -627,3 +627,64 @@ echo json_encode($arr);
 
 
 
+ajax上传进度条
+
+document.getElementById('btn').onclick=function(){
+	//构建表单
+	var form=new FormData();
+	form.append('fileName',document.getElementById('fileName').files[0]);
+	//创建ajax
+	var xhr=new XMLHttpRequest();
+	//上传进度
+	//上传进度
+	xhr.upload.onprogress=function(ev){
+	if(ev.lengthComputable){
+		var loaded=ev.loaded;  //已经上传的大小
+		var total=ev.total;    //总的大小
+		var progress=Math.round(loaded*100/total)+'%'; //计算百分比
+		document.getElementById('upInfo').innerHTML='当前上传进度为:'+progress;
+	}else{
+		document.getElementById('upInfo').innerHTML='上传进度不可用';
+	}
+			}
+	//上传完成后结果
+	xhr.onload=function(ev){
+		document.getElementById('upRes').innerHTML=ev.target.responseText;
+	}
+	xhr.open('POST','./upload.php');
+	xhr.send(form);
+}
+
+步骤详解
+1.当点击上传按钮时
+	//构建表单
+	var form=new FormData(); //h5表单对象
+	form.append('fileName',document.getElementById('fileName').files[0]); //在表单对象增加名为fileName的files[0]对象(要上传的文件)
+
+	其他用法
+	var from1=document.getElementById('form1'); //获取html表单对象
+	var form=new FormData(from1);  //讲获取到的html表单对象初始化为js表单对象
+	......//然后就可以通过原生(目前)ajax上传表单(包括文件)
+
+2.创建ajax，调用进度显示
+	//上传进度
+	xhr.upload.onprogress=function(ev){
+		if(ev.lengthComputable){
+			var loaded=ev.loaded
+			var total=ev.total
+			document.getElementById('upInfo').innerHTML='当前上传进度为:'+Math.round(loaded*100/total)+'%';
+		}else{
+			document.getElementById('upInfo').innerHTML='上传进度不可用';
+		}
+	}
+
+xhr对象的upload属性有个上传进度事件 该事件的回调函数参数里保存着 当前上传文件总大小(字节) ev.total 和点前上传了多少ev.loaded
+通过这两个属性可计算出上传进度
+
+3.上传完成后结果
+	xhr.onload=function(ev){
+		document.getElementById('upRes').innerHTML=ev.target.responseText;
+	}
+
+	ajax上传完成后回调函数参数里ev.target属性为当前xhr对象，ev.target.responseText获取后台返回的字符串
+	//如果后台返回的是json形式的字符串可用JSON.parse(str)解析成json对象 相对JSON.stringify(json)将json对象解析成字符串
