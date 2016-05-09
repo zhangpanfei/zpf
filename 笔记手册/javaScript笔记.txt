@@ -1,4 +1,4 @@
-js在用户的浏览器上执行
+﻿js在用户的浏览器上执行
 js是脚本语言/解释性语言
 js的位置可以向php一样出现在html代码任意地方(标签外)
 js必须用<script language="javascript"></script>包起来
@@ -701,3 +701,20 @@ var regExp=/(\d)(\d)\2\1/gi;  //1221,3663...
 设置和获取HTML对象的class值
 Obj.className='val';
 Obj.className;
+
+
+
+//将要上传的文件展示在页面
+document.getElementById('upFile').addEventListener('change',function(e){
+	var img=this.files[0];  		//待上传的文件对象
+	var imgObj=new Image();    		//构建图片对象
+	var reader=new FileReader();		//初始化FileReader对象
+	reader.readAsDataURL(img);		//将文件读取为DataURL数据(base64编码+文件类型头)
+	//reader.readAsText(img);		//将文件读取为文本
+	//reader.readAsBinaryString(img);	//将文件读取为二进制数据
+	reader.onload=function(e){
+		//imgObj.src=e.target.result;	//等同于当前reader.result
+		imgObj.src=this.result;		//将读取到的DataURL数据放在图片对象的src里
+	}
+	document.getElementById('imgArea').appendChild(imgObj); //将imgObj放在指定区域
+});

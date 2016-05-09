@@ -1,0 +1,123 @@
+PHP的正则表达式常用函数
+
+//匹配一次
+int preg_match(string $pattern,string $subject[,array &$match,int=1 PREG_OFFSET_CAPTURE,int $offset]);
+	参数2以后选填
+	$match匹配到的结果($match一维数组)
+	PREG_OFFSET_CAPTURE在匹配到的结果的中加入匹配到的位置($match二维数组)
+	$offset匹配第几个出现的符合规则的字符串($match二维数组)
+返回值为匹配到的次数(0|1)
+
+//匹配多次
+int preg_match_all(string $pattern,string $subject[,array &$match,int=1 PREG_OFFSET_CAPTURE,int $offset]);
+参数2以后选填
+	$match匹配到的结果($match二维数组)
+	PREG_OFFSET_CAPTURE在匹配到的结果的中加入匹配到的位置($match二维数组)
+	$offset匹配 到 第几个出现的符合规则的字符串($match二维数组)
+返回值为匹配到的次数
+
+//正则替换
+mixed preg_replace(mixed $pattern,mixed $replace,mixed $subject[,int $limit = -1 , int &$count] );
+参数3以后选填
+	$pattern,replace,$subject可为字符串，也可为一维数组
+	$replace替换成什么
+	$limit每个模式替换最大次数 -1表示无限
+	$count替换了多少次
+返回值为替换后的字符串或数组
+如果$subject是一个一位数组返回值将是替换后的一维数组
+$pattern可以是['\[1]\','\[2]\','\[3]\'] 表示多种替换
+$replace可以是字符串 也可以与支对应['one','two','three'](多了对应不理会)
+
+!!!子模式匹配
+$stu=new \stdClass();
+$stu->name='小白';
+$name='呵呵';
+$pattern=["/\{\$(\w+)\}/","/\{\$\-\>(\w+)\}/"];
+$subject="我讨厌你{$stu->name}";
+$replacement=['<?php echo $1;?>','<?php echo $1;?>'];  //这里的$1对应()里匹配的字符串
+echo preg_replace($pattern,$replacement,$subject);
+
+
+mixed preg_replace(mixed $pattern,mixed $replace,mixed $subject[,int $limit = -1 , int &$count] );
+preg_filter()等价于preg_replace() 除了它仅仅返回(可能经过转化)与目标匹配的结果
+
+//正则分割
+array preg_split ( string $pattern , string $subject);
+用正则表达式将字符串分割成一维数组(类似explode)
+
+//匹配符合模式的数组元素
+array preg_grep(string $pattern, array $input);
+	$arr=['a1','b2','cc'];
+	$pattern='|\d+|';
+	$resArr=preg_grep($pattern, $arr);
+	print_r($resArr);
+
+//转义正则表达式字符
+string preg_quote ( string $str);
+
+
+
+//正则
+
+1.界定符
+表示正则表达式的开始和结束
+/[0-9]/  |[0-9]| #[0-9]# {[0-9]}
+
+#辅助工具  regexpal
+
+2.原子
+
+可见字符直接匹配 (中文尽量转成unicode在进行匹配)
+
+不可见原子(肉眼看不到的)
+' '  空格
+\t  制表符
+\n	换行符
+
+3.元字符(分支分组)
+
+|	匹配多个分支				Duang~|duang~
+[]	匹配中括号里的所有(单个原子)  [Dd]uang~          
+[^]	匹配除了中括号里的所有		[^789]除了789  [78^9]匹配789^
+
+4.(元字符)原子的集合
+
+. <=> [^\n]  //除了换行的所有字符
+\d <=> [0-9]
+\D <=> [^0-9]
+\s <=> [\f\n\r\t\v]  //不可见原子
+\S <=> [^\f\n\r\t\v]
+\w <=> [0-9a-zA-Z_]
+\W <=> [^0-9a-zA-Z_]
+
+5.(元字符)限定符(量词)
+
+原子出现的个数
+{n} 	//出现n次
+{n,}	//至少出现n次
+{n,m}	//出现n~m次
+? <=> {0,1}
++ <=> {1,}
+* <=> {0,}
+
+6.边界控制
+
+^ 开始 (在元字符内表示非)
+$ 结束
+
+7.模式单元(子模式)(分组)
+ (D|d) <=> [Dd]
+
+8.匹配模式
+ 
+ 贪婪匹配(默认)
+ 懒惰匹配(加修正符U) '/\d*/U'
+
+9.修正符
+ 
+ U    懒惰匹配
+ i    忽略大小写
+ x    忽略正则表达式内的空白
+ .    让原子符匹配所有字符(包括换行符)
+ e    替换后的字符串会被当成php代码执行(php7已不再支持)
+

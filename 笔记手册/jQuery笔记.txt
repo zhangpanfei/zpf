@@ -1,4 +1,4 @@
-选择器
+﻿选择器
 获取页面元素对象的方式
 
 
@@ -787,3 +787,28 @@ if($flag=='tq1')
 	$json=file_get_contents($url);
 	echo $json;
 }
+
+
+
+
+
+ajax带文件提交表单
+$('#btn').click(function(){
+	var form=new FormData($('#form')[0]); //获取表单所有数据(包括文件数据)
+	$.ajax({
+		type:"POST",
+		dataType:'text',
+		url:'n.php',
+		data:form,   //FormData对象数据
+		async: false,   //关闭异步
+		cache: false,   //关闭浏览器缓存
+		contentType: false,  //关闭浏览器contentType
+		processData: false,  //关闭数据加工
+		success: function (returndata) {  
+			alert(returndata);  
+		},  
+		error: function (returndata) {  
+			alert(returndata);  
+		}  
+	});
+});
