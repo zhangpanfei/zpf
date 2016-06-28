@@ -1,0 +1,5 @@
+httpd.exe -k install   #∞≤◊∞
+
+httpd.exe -n "MyServiceName" ®Ct  #≈‰÷√ºÏ≤‚  httpd.exe -n apache2.4 ®Ct
+
+httpd.exe -k start  #∆Ù∂Ø
