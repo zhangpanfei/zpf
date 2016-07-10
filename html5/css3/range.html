@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>range</title>
+</head>
+<body>
+	红色:<input	name=red type=range value=255><span id=red>255</span><br>
+	绿色:<input	name=green type=range value=255><span id=green>255</span><br>
+	蓝色:<input	name=blue type=range value=255><span id=blue>255</span><br>
+</body>
+</html>
+<script type="text/javascript">
+	window.onload=function(){
+		var red=255;
+		var green=255;
+		var blue=255;
+		var inps=document.getElementsByTagName('input');
+		for(var i in inps){
+			inps[i].onmousemove=fun;
+		}
+		function fun(){
+			var val=this.value;
+			var name=this.name;
+			document.getElementById(name).innerHTML=val;
+			if(name=='red')red=val;
+			else if(name=='green')green=val;
+			else if(name=='blue')blue=val;
+			document.bgColor='RGB('+red+','+green+','+blue+')';
+		}
+	}
+</script>

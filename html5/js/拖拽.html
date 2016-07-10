@@ -1,0 +1,95 @@
+<!doctype html>
+<meta charset="UTF-8">
+<style>
+	#con{
+		background:green;
+		list-style:none;
+		width:200px;
+		height:200px;
+	}
+	#box{
+		background:blue;
+		list-style:none;
+		width:200px;
+		height:200px;
+	}
+	li{
+		list-style:none;
+		width:150px;
+		height:30px;
+		background:gray;
+		text-align:center;
+		margin-top:3px;
+		line-height:30px;
+	}
+</style>
+<div id='drag' style='background:red;width:100px;height:100px;position:absolute;display:none'>js拖拽</div>
+<div id='con'></div>
+<div id='box'>
+	<ul>
+		<li>oen</li>
+		<li>two</li>
+		<li>three</li>
+		<li>fore</li>
+		<li>five</li>
+	</ul>
+</div>
+<script>
+//js拖拽
+/*onload=function(){
+	var div=document.getElementById('drag');
+	//div.style.display='block';
+	div.onmousedown=function(){
+		document.onmousemove=function(e){
+			div.style.top=e.clientY+'px';
+			div.style.left=e.clientX+'px';
+		}
+	}
+}*/
+//h5拖拽
+window.onload=function(){
+	var lis=document.getElementsByTagName('li');
+	var box=document.getElementById('box');
+	var con=document.getElementById('con');
+	//添加可拖动属性
+	for(var i=0;i<lis.length;i++){
+		lis[i].draggable=true;
+		lis[i].flag=false;
+		//添加拖动开始事件
+		lis[i].ondragstart=function(){
+			this.flag=true;
+		}
+		//添加拖动结束事件
+		lis[i].ondragend=function(){
+			this.flag=false;
+		}
+	}
+	//进入事件
+	con.ondragenter=function(){
+		
+	}
+	//丢进事件
+	con.ondrop=function(){
+		for(var i=0;i<lis.length;i++){
+			if(lis[i].flag){
+				this.appendChild(lis[i]);
+			}
+		}
+	}
+
+	//********相反方向拖拽
+	//进入事件
+	box.ondragenter=function(){
+		
+	}
+	//丢进事件
+	box.ondrop=function(e){
+		for(var i=0;i<lis.length;i++){
+			if(lis[i].flag){
+				this.appendChild(lis[i]);
+			}
+		}
+	}
+
+}
+</script>

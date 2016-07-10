@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>iphone</title>
+	<style type="text/css">
+		#phone{
+			width: 250px;
+			height: 500px;
+			background: #252525;
+			margin: 50px auto;
+			border-radius:30px;
+			border: solid 10px #303030;
+			box-shadow: 3px 3px 3px 1px rgb(162,162,162);
+			position: relative;
+		}
+		#phone:before{
+			content: '';
+			width: 50px;
+			height: 10px;
+			display: block;
+			position: absolute;
+			top: -20px;
+			left: 160px;
+			border-radius: 5px 5px 0 0;
+			background: #252525;
+		}
+		#phone:after{
+			content: '';
+			width: 10px;
+			height: 50px;
+			display: block;
+			background: red;
+			position: absolute;
+			top: 75px;
+			left: -20px;
+			border-radius: 5px 0 0 5px;
+			background: #252525;
+		}
+		#camera{
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: red;
+			border: 5px solid #393939;
+			margin: 10px auto;
+			background: #080808;
+		}
+		#hook{
+			width:80px;
+			height: 5px;
+			background: #080808;
+			margin: 10px auto;
+			border: 5px solid #393939;
+			border-radius: 10px;
+		}
+		#screen{
+			width: 200px;
+			height: 380px;
+			background: #080808;
+			margin: 10px auto;
+			border: #121212 solid 5px;
+			display: table;
+			text-align: center;
+		}
+		#screen:before{
+			content: 'iphone 6s';
+			color: #FFFFFF;
+			font-size: 35px;
+			display: table-cell;
+			vertical-align: middle;
+			font-weight: bold;
+		}
+		#btn{
+			width: 30px;
+			height: 30px;
+			background: #151514;
+			border-radius: 50%;
+			margin: 3px auto 0;
+			box-shadow: 3px 3px 3px 1px black inset;
+			overflow: hidden;	/*阻止边界传导*/
+		}
+		#btn:before{
+			content: '';
+			display: block;
+			width: 15px;
+			height: 15px;
+			border: 2px solid #FFFFFF;
+			margin:5px auto;
+		}
+	</style>
+</head>
+<body>
+	<div id=phone>
+		<div id=camera></div>
+		<div id=hook></div>
+		<div id=screen></div>
+		<div id=btn></div>
+	</div>
+</body>
+</html>
