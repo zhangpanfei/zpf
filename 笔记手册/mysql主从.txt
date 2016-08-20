@@ -1,0 +1,42 @@
+主从mysql服务器准备
+master ip:168.168.1.8  user:root password:admin
+slave  ip:168.168.1.25 user:root password:admin
+
+
+master 配置
+
+1.进入到my.cnf文件
+
+开启 log_bin = /var/log/mysql/mysql-bin.log
+设置 server-id = 1
+
+2.重启mysql 然后进入mysql
+
+设置从服务器权限 
+grant replication slave,replication client on *.* to 'root'@'192.168.1.25' identified by 'admin';
+
+查看日志名和日志锚点
+show master status\G
+
+    File: mysql-bin.0000002
+Position: 412
+
+
+slave 配置
+
+1.进入到my.cnf文件
+
+开启 log_bin = /var/log/mysql/mysql-bin.log
+设置 server-id = 2                             #不能和主服务器相同
+
+2.重启mysql 然后进入mysql
+
+设置要同步的主服务器
+change master to matser_host='192.168.1.8',matser_user='root,'matser_password='admin',matser_log_file='mysql-bin.0000002',matser_log_pos=412;  #锚点不带引号
+
+开启从服务模式
+start slave
+
+3.查看slave情况
+
+show slave status\G 
