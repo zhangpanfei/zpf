@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>3D相册</title>
+	<style type="text/css">
+		body{
+			width: 100%;
+			background: black;
+		}
+		#banner{
+			position: relative;
+			margin-top: 50px;
+			width: 200px;
+			height: 350px;
+			transform: preserve-3d;
+			-webkit-transform: preserve-3d;
+			perspective: 800;
+			-webkit-perspective: 800;
+			cursor: pointer;
+		}
+		#banner img{
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			-webkit-box-reflect: below 0px -webkit-linear-gradient(top,rgba(0,0,0,.1),rgba(0,0,0,.5));
+			transition: .5s;
+		}
+		#banner img.left{
+			transform: rotateY(45deg);
+		}
+		#banner img.middle{
+			z-index: 999;
+			transform: translateZ(100px);
+		}
+		#banner img.right{
+			transform: rotateY(-45deg);
+			z-index: 100;
+		}
+	</style>
+</head>
+<body>
+	<div id='banner'>
+		<img src="img/1.jpg">
+		<img src="img/2.jpg">
+		<img src="img/3.jpg">
+		<img src="img/4.jpg">
+		<img src="img/5.jpg">
+		<img src="img/6.jpg">
+		<img src="img/7.jpg">
+	</div>
+	<script type="text/javascript">
+		// 分散图片
+		var imgL = document.getElementsByTagName('img').length;
+		// 中间图片的下标
+		var mIndex = parseInt(imgL/2);
+		// 分散函数
+		function addLeft()
+		{	
+			// 图片的宽
+			var imgW = document.getElementsByTagName('img')[0].offsetWidth;
+			// 屏幕的宽
+			var screenW = document.body.clientWidth;
+			// 居中
+			var mLeft = (screenW-imgW)/2;
+			//分散
+			for(var i=0;i<imgL;i++)
+			{
+				document.getElementsByTagName('img')[i].style.left=mLeft-110*(mIndex-i)+'px';
+			}
+		}
+		addLeft();
+
+		//旋转
+		function trunCate()
+		{
+			for(var i=0;i<imgL;i++)
+			{
+				var val='';
+				var zIndex = 500;
+				if(i<mIndex)
+				{
+					// 左边
+					val = 'left';
+					zIndex += i;
+				}else if(i==mIndex)
+				{
+					// 中间
+					val = 'middle';
+					zIndex = 999;
+				}else
+				{
+					// 右边
+					val = 'right';
+					zIndex -= i; 
+				}
+
+				// 改变class值
+				document.getElementsByTagName('img')[i].setAttribute('class',val);
+				// 改变z-index
+				document.getElementsByTagName('img')[i].style.zIndex=zIndex;
+			}
+		}
+
+		trunCate();
+		
+		// 点击事件
+		for(var i=0;i<imgL;i++)
+		{
+			document.getElementsByTagName('img')[i].index=i;
+			document.getElementsByTagName('img')[i].onclick=function(){
+				mIndex = this.index;
+				
+				addLeft();
+				trunCate();
+			}
+		}
+		// 窗体改变事件
+		window.onresize=function(){
+			addLeft();
+			trunCate();
+		}
+
+
+	</script>
+</body>
+</html>
